@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "type": "review-quest",
+  "slug": "sample-unit-review",
+  "title": "Unit 1 Review Quest",
+  "grade": "9-12",
+  "unit": "1",
+  "subject": "Career Planning",
+  "directions": "Answer each question to earn points. If you miss one, you will see a tip and can review the lesson.",
+  "directionsAudio": "",
+  "overview": {
+    "lessonsInUnit": 4,
+    "lessons": [
+      { "title": "Lesson 1" },
+      { "title": "Lesson 2" },
+      { "title": "Lesson 3" },
+      { "title": "Lesson 4" }
+    ]
+  },
+  "settings": {
+    "triesPerItem": 3,
+    "pointsPerCorrect": 100,
+    "masteryPercent": 80
+  },
+  "items": [
+    {
+      "id": "q1",
+      "type": "mc",
+      "selectAll": false,
+      "lessonIndex": 1,
+      "objective": "Interests, strengths, and values",
+      "prompt": "Why is it useful to know your interests, strengths, and values when planning a career?",
+      "promptImage": "",
+      "promptImageAlt": "",
+      "promptAudio": "",
+      "choices": [
+        { "id": "a", "text": "They help you choose work that fits you", "correct": true },
+        { "id": "b", "text": "They guarantee you the highest-paying job", "correct": false },
+        { "id": "c", "text": "They replace the need to research careers", "correct": false },
+        { "id": "d", "text": "They only matter once you already work", "correct": false }
+      ],
+      "explanation": "Knowing yourself helps you aim for careers that match your interests, strengths, and values.",
+      "lessonUrl": "",
+      "lessonLabel": "Review this lesson"
+    },
+    {
+      "id": "q2a",
+      "type": "mc",
+      "selectAll": true,
+      "lessonIndex": 2,
+      "objective": "Researching careers and the job market",
+      "prompt": "Which actions help you research careers and the changing job market? Select all that apply.",
+      "promptImage": "",
+      "promptImageAlt": "",
+      "promptAudio": "",
+      "choices": [
+        { "id": "a", "text": "Look up the skills and education a career usually needs", "correct": true },
+        { "id": "b", "text": "Check whether demand for that work is rising or falling", "correct": true },
+        { "id": "c", "text": "Assume popular careers will never change over time", "correct": false },
+        { "id": "d", "text": "Compare pay, duties, and work settings across careers", "correct": true }
+      ],
+      "explanation": "Strong career research covers skills, education, demand, pay, and day-to-day work.",
+      "lessonUrl": "",
+      "lessonLabel": "Review this lesson"
+    },
+    {
+      "id": "q2b",
+      "type": "mc",
+      "selectAll": false,
+      "lessonIndex": 2,
+      "objective": "Researching careers and the job market",
+      "prompt": "What is one reason the job market can change over time?",
+      "promptImage": "",
+      "promptImageAlt": "",
+      "promptAudio": "",
+      "choices": [
+        { "id": "a", "text": "New technology can change which jobs exist", "correct": true },
+        { "id": "b", "text": "Every career stays exactly the same forever", "correct": false },
+        { "id": "c", "text": "Job research only helps after you retire", "correct": false },
+        { "id": "d", "text": "Pay stays the same in every career field", "correct": false }
+      ],
+      "explanation": "Technology, demand, and other shifts can change which careers grow or shrink.",
+      "lessonUrl": "",
+      "lessonLabel": "Review this lesson"
+    },
+    {
+      "id": "q3a",
+      "type": "match",
+      "lessonIndex": 3,
+      "objective": "Education and training paths",
+      "prompt": "Match each education or training path to what it usually means.",
+      "promptImage": "",
+      "promptImageAlt": "",
+      "promptAudio": "",
+      "pairs": [
+        { "id": "p1", "left": "Apprenticeship", "right": "Learn a trade while working with a mentor" },
+        { "id": "p2", "left": "Certificate program", "right": "Short training for a specific skill or job" },
+        { "id": "p3", "left": "Associate degree", "right": "A college program that usually takes two years" },
+        { "id": "p4", "left": "Bachelor's degree", "right": "A college program that usually takes four years" }
+      ],
+      "explanation": "Different careers need different training paths, from certificates to degrees and apprenticeships.",
+      "lessonUrl": "",
+      "lessonLabel": "Review this lesson"
+    },
+    {
+      "id": "q3b",
+      "type": "mc",
+      "selectAll": false,
+      "lessonIndex": 3,
+      "objective": "Education and training paths",
+      "prompt": "What should you compare when choosing an education or training path?",
+      "promptImage": "",
+      "promptImageAlt": "",
+      "promptAudio": "",
+      "choices": [
+        { "id": "a", "text": "How well it fits the career, your goals, and cost", "correct": true },
+        { "id": "b", "text": "Which school campus has the nicest buildings", "correct": false },
+        { "id": "c", "text": "Whether your friends already finished that path", "correct": false },
+        { "id": "d", "text": "Which program title sounds the most impressive", "correct": false }
+      ],
+      "explanation": "A good training path fits the job requirements and is realistic for your time, goals, and budget.",
+      "lessonUrl": "",
+      "lessonLabel": "Review this lesson"
+    },
+    {
+      "id": "q4a",
+      "type": "sort",
+      "lessonIndex": 4,
+      "objective": "Goals, costs, and budget",
+      "prompt": "Sort each item into the group where it belongs.",
+      "promptImage": "",
+      "promptImageAlt": "",
+      "promptAudio": "",
+      "categories": [
+        { "id": "c1", "label": "Career goal planning" },
+        { "id": "c2", "label": "Costs and budget" }
+      ],
+      "cards": [
+        { "id": "i1", "text": "Set a short-term step toward a career", "category": "c1" },
+        { "id": "i2", "text": "Write a long-term career goal", "category": "c1" },
+        { "id": "i3", "text": "Estimate tuition or training fees", "category": "c2" },
+        { "id": "i4", "text": "Track monthly expenses while in school", "category": "c2" },
+        { "id": "i5", "text": "Break a big goal into smaller milestones", "category": "c1" },
+        { "id": "i6", "text": "Plan how to pay for tools or supplies", "category": "c2" }
+      ],
+      "explanation": "Career planning includes clear goals and a realistic look at costs and budgeting.",
+      "lessonUrl": "",
+      "lessonLabel": "Review this lesson"
+    },
+    {
+      "id": "q4b",
+      "type": "mc",
+      "selectAll": false,
+      "lessonIndex": 4,
+      "objective": "Goals, costs, and budget",
+      "prompt": "What makes a career goal more useful?",
+      "promptImage": "",
+      "promptImageAlt": "",
+      "promptAudio": "",
+      "choices": [
+        { "id": "a", "text": "It is clear and has steps you can take", "correct": true },
+        { "id": "b", "text": "It is vague and has no next step yet", "correct": false },
+        { "id": "c", "text": "It ignores time and money on purpose", "correct": false },
+        { "id": "d", "text": "It only counts if someone else picks it", "correct": false }
+      ],
+      "explanation": "Useful goals are clear and include steps you can actually take.",
+      "lessonUrl": "",
+      "lessonLabel": "Review this lesson"
+    }
+  ],
+  "feedback": {
+    "correct": "Nice work.",
+    "tryAgain": "Not quite. Try again.",
+    "outOfTries": "Here's a tip. Review the lesson, then continue."
+  },
+  "endMessage": "You finished this Review Quest."
+}

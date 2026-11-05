@@ -1,0 +1,1755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neutral-0: #FFFFFF; --neutral-200: #E5E5E5; --neutral-300: #D4D4D4; --neutral-400: #A3A3A3;
+    --neutral-500: #737373; --neutral-700: #404040; --neutral-900: #171717;
+    --lilac-bush-50: #F6F1FA; --lilac-bush-100: #E0CEED; --lilac-bush-600: #8F5CB4; --lilac-bush-700: #7E4BA3; --lilac-bush-800: #4D1A72;
+    --breaker-bay-50: #E9F8F8; --breaker-bay-600: #0CA3A1; --breaker-bay-800: #00615F;
+    --cello-50: #E7F6F9; --cello-600: #008FA9; --cello-800: #004D67;
+    --pearl-brush-50: #F9F6F3; --pearl-brush-100: #F1EBE3; --pearl-brush-200: #E4D8CC; --pearl-brush-500: #AB7E64; --pearl-brush-700: #84594A;
+    --cinnabar-50: #FEF1EF; --cinnabar-600: #DE5D46; --cinnabar-800: #9C1B04;
+    --highland-50: #EFFBF6; --highland-200: #AAE7CE; --highland-700: #3AA97A; --highland-800: #097849; --highland-900: #004819;
+    --font-primary: 'Poppins', sans-serif;
+    --font-secondary: 'Nunito Sans', sans-serif;
+    --bg: var(--pearl-brush-50);
+    --surface: var(--neutral-0);
+    --ink: var(--neutral-700);
+    --ink-strong: var(--neutral-900);
+    --ink-soft: var(--neutral-500);
+    --line: var(--neutral-300);
+    --btn-primary-bg: var(--lilac-bush-600);
+    --btn-primary-hover-bg: var(--lilac-bush-700);
+    --good-line: var(--highland-700); --good-bg: var(--highland-50); --good-badge: var(--highland-800); --good-ink: var(--highland-900);
+    --bad-line: var(--cinnabar-600); --bad-bg: var(--cinnabar-50); --bad-ink: var(--cinnabar-800);
+    --focus: var(--lilac-bush-700);
+    --modal-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    --frost-line: #D0B4E4;
+    --cat-1: var(--lilac-bush-700);  --cat-1-line: var(--lilac-bush-600);  --cat-1-bg: var(--lilac-bush-50);
+    --cat-2: var(--breaker-bay-800); --cat-2-line: var(--breaker-bay-600); --cat-2-bg: var(--breaker-bay-50);
+    --cat-3: var(--cello-800);       --cat-3-line: var(--cello-600);       --cat-3-bg: var(--cello-50);
+    --cat-4: var(--pearl-brush-700); --cat-4-line: var(--pearl-brush-500); --cat-4-bg: var(--pearl-brush-100);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-secondary); font-size: 18px; line-height: 1.5; }
+  .frosted {
+    background: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+    border: 2px solid var(--frost-line); border-radius: 20px;
+    box-shadow: 0 14px 34px rgba(77, 26, 114, 0.14), 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .frosted { background: rgba(255, 255, 255, 0.92); } }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 20px 16px 28px; }
+  h1 { font-family: var(--font-primary); color: var(--ink-strong); font-size: 1.5rem; font-weight: 600; line-height: 1.2; margin: 0 0 6px; }
+  .directions { color: var(--ink); margin: 0; }
+  .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  button { font: inherit; cursor: pointer; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1px solid var(--btn-primary-bg); border-radius: 9999px; padding: 12px 28px;
+    background: var(--btn-primary-bg); color: var(--neutral-0);
+    font-family: var(--font-primary); font-weight: 500; font-size: 16px; line-height: 1.2;
+    transition: background 120ms ease, border-color 120ms ease;
+  }
+  .btn:hover { background: var(--btn-primary-hover-bg); border-color: var(--btn-primary-hover-bg); }
+  .btn:disabled { background: var(--neutral-200); border-color: var(--neutral-200); color: var(--neutral-500); cursor: not-allowed; }
+  .btn.secondary { background: transparent; color: var(--neutral-700); border-color: var(--line); }
+  .btn.secondary:hover { background: var(--pearl-brush-100); }
+  .icon-btn {
+    border: 1px solid var(--line); background: var(--surface); color: var(--neutral-700);
+    width: 40px; height: 40px; border-radius: 9999px; display: inline-grid; place-items: center; flex: none; padding: 0;
+  }
+  .icon-btn:hover { background: var(--pearl-brush-100); }
+  .icon-btn svg { width: 20px; height: 20px; }
+  .icon-btn.playing { border-color: var(--lilac-bush-600); color: var(--lilac-bush-700); background: var(--lilac-bush-50); }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+  .center-card { padding: 40px 24px; text-align: center; max-width: 640px; margin: 24px auto; }
+  .center-card.start-card { max-width: 760px; text-align: left; }
+  .center-card h1 { font-size: 1.75rem; }
+  .center-card .directions { font-size: 1.1rem; margin: 10px 0 24px; }
+  .center-card.start-card .directions { margin-bottom: 16px; }
+  .center-card .row { justify-content: center; }
+  .center-card.start-card .row.start-actions { justify-content: center; margin-top: 4px; }
+  .center-card.start-card .row { justify-content: flex-start; }
+  .center-card.start-card h1 { text-align: left; }
+  body.centered .wrap { min-height: 100vh; padding-top: 24px; padding-bottom: 24px; display: flex; flex-direction: column; justify-content: center; }
+  body.centered .center-card { margin: 0 auto; width: 100%; }
+  .hero-icon { width: 72px; height: 72px; border-radius: 9999px; display: grid; place-items: center; margin: 0 auto 16px; background: var(--lilac-bush-50); color: var(--lilac-bush-700); }
+  .center-card.start-card .hero-icon { margin-left: 0; }
+  .hero-icon svg { width: 42px; height: 42px; }
+  .hero-icon.good { background: var(--highland-50); color: var(--highland-800); }
+  .start-meta {
+    display: inline-flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px;
+  }
+  .start-meta span {
+    background: var(--lilac-bush-50); color: var(--lilac-bush-700); border-radius: 9999px;
+    padding: 6px 12px; font-size: .85rem; font-weight: 700;
+  }
+  .road-block {
+    background: var(--pearl-brush-100); border: 1px solid var(--pearl-brush-200);
+    border-radius: 18px; padding: 16px 14px 18px; margin: 0 0 20px;
+  }
+  .center-card.start-card .road-block:last-child { margin-bottom: 0; }
+  .road-block h2 {
+    font-family: var(--font-primary); font-weight: 600; font-size: 1rem;
+    color: var(--ink-strong); margin: 0 0 12px; text-align: left;
+  }
+  .quest-road {
+    position: relative; overflow: hidden; border-radius: 14px; background: #fff;
+  }
+  .road-art {
+    display: block; width: 100%; height: auto; vertical-align: top;
+  }
+  .road-trail {
+    position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;
+  }
+  .road-trail path.road-guide {
+    fill: none; stroke: none;
+  }
+  .road-trail path.road-progress {
+    fill: none; stroke: var(--lilac-bush-600); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 3 11; opacity: .95;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .road-trail path.road-progress { transition: none; }
+  }
+  .road-stops {
+    position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; z-index: 2;
+  }
+  .road-stops li {
+    position: absolute; width: 92px; display: flex; flex-direction: column; align-items: center;
+    text-align: center; gap: 4px; transform: translate(-50%, -50%); pointer-events: none;
+  }
+  .road-stops li.available,
+  .road-stops li.done,
+  .road-stops li.current { pointer-events: auto; }
+  .road-stop-btn {
+    border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; font: inherit; color: inherit;
+  }
+  .road-stop-btn:disabled { cursor: default; }
+  .road-stop-dot {
+    width: 34px; height: 34px; border-radius: 9999px; background: var(--lilac-bush-600); color: #fff;
+    display: grid; place-items: center; font-family: var(--font-primary); font-weight: 700; font-size: .85rem;
+    border: 3px solid #fff; box-shadow: 0 2px 8px rgba(77, 26, 114, 0.18);
+  }
+  .road-stops li.locked .road-stop-dot {
+    background: var(--neutral-300); color: var(--neutral-500); box-shadow: none;
+  }
+  .road-stops li.locked .road-stop-label { color: var(--neutral-500); }
+  .road-stops li.done .road-stop-dot {
+    background: var(--highland-800); color: #fff;
+  }
+  .road-stops li.current .road-stop-dot {
+    box-shadow: 0 0 0 4px var(--lilac-bush-100), 0 2px 8px rgba(77, 26, 114, 0.18);
+  }
+  .road-stop-label {
+    font-size: .75rem; font-weight: 700; color: var(--ink-strong); line-height: 1.2;
+    max-width: 92px; background: rgba(255,255,255,0.88); border-radius: 8px; padding: 2px 6px;
+  }
+  .road-help {
+    margin: 10px 0 0; font-size: .9rem; color: var(--ink-soft); font-weight: 600; text-align: left;
+  }
+
+  .hud-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%; margin-bottom: 14px; }
+  .hud-nav .btn { padding: 8px 16px; font-size: 14px; }
+  .q-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .q-head-top {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .q-lesson {
+    margin: 0; font-family: var(--font-primary); font-weight: 600; font-size: .95rem; color: var(--lilac-bush-700);
+  }
+  .q-points { margin: 0; font-weight: 700; font-size: .9rem; color: var(--ink-soft); }
+  .q-points span { color: var(--lilac-bush-700); }
+  .q-number {
+    margin: 0; font-family: var(--font-primary); font-weight: 600;
+    font-size: 1.35rem; color: var(--ink-strong); line-height: 1.2;
+  }
+  .q-steps { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 2px 0 0; }
+  .q-step {
+    width: 10px; height: 10px; border-radius: 9999px; background: var(--pearl-brush-200); border: 0; padding: 0;
+  }
+  .q-step.done, .q-step.current { background: var(--lilac-bush-600); }
+  .q-step.current { box-shadow: 0 0 0 3px var(--lilac-bush-100); }
+  .progress-track { width: 100%; height: 8px; background: var(--pearl-brush-200); border-radius: 9999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--lilac-bush-600); width: 0; transition: width 200ms ease; }
+
+  .prompt-card { padding: 0 0 14px; margin: 0 0 14px; border-bottom: 1px solid var(--pearl-brush-200); }
+  .prompt-text {
+    font-family: var(--font-primary); font-weight: 600; color: var(--ink-strong);
+    font-size: 1.25rem; margin: 0; line-height: 1.35;
+  }
+  .prompt-card img { display: block; max-width: 100%; max-height: 180px; object-fit: contain; margin: 10px 0; border-radius: 12px; background: var(--neutral-0); }
+  .road-block .choice { background: var(--surface); border-color: var(--pearl-brush-200); }
+  .road-block .footer { margin-top: 14px; }
+
+  .choices { display: grid; gap: 10px; }
+  .choice {
+    display: flex; align-items: center; gap: 12px; text-align: left; width: 100%;
+    background: var(--surface); border: 2px solid var(--line); border-radius: 16px;
+    padding: 12px 14px; color: var(--ink-strong); font-weight: 600; transition: border-color 120ms ease, background 120ms ease;
+  }
+  .choice:hover { border-color: var(--lilac-bush-600); background: var(--lilac-bush-50); }
+  .choice.selected { border-color: var(--lilac-bush-600); background: var(--lilac-bush-50); box-shadow: 0 0 0 3px var(--lilac-bush-100); }
+  .choice.correct { border-color: var(--good-line); background: var(--good-bg); }
+  .choice.wrong { border-color: var(--bad-line); background: var(--bad-bg); }
+  .choice:disabled { cursor: default; }
+  .choice-mark {
+    flex: none; min-width: 1.4em; display: inline-grid; place-items: center;
+    font-family: var(--font-primary); font-weight: 700; font-size: 1rem;
+    color: var(--lilac-bush-700); background: transparent; border: 0; line-height: 1;
+  }
+  .choice-mark svg { width: 18px; height: 18px; }
+  .choice.select-all .choice-mark {
+    width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--neutral-400);
+    background: var(--neutral-0); color: transparent;
+  }
+  .choice.select-all.selected .choice-mark {
+    background: var(--lilac-bush-600); border-color: var(--lilac-bush-600); color: #fff;
+  }
+  .choice.correct .choice-mark { color: var(--good-ink); }
+  .choice.select-all.correct .choice-mark,
+  .choice.select-all.selected.correct .choice-mark {
+    background: var(--highland-800); border-color: var(--highland-800); color: #fff;
+  }
+  .choice.wrong .choice-mark { color: var(--bad-ink); }
+  .choice-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+
+  .match-help { margin: 0 0 12px; color: var(--ink-soft); font-weight: 600; }
+  .match-board { position: relative; }
+  .match-lines {
+    position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible;
+  }
+  .match-lines path {
+    fill: none; stroke: var(--lilac-bush-600); stroke-width: 3; stroke-linecap: round;
+  }
+  .match-lines path.correct { stroke: var(--highland-700); }
+  .match-lines path.wrong { stroke: var(--cinnabar-600); }
+  .match-grid { position: relative; z-index: 2; display: grid; gap: 48px; grid-template-columns: 1fr 1fr; align-items: start; }
+  @media (max-width: 640px) {
+    .match-grid { grid-template-columns: 1fr; gap: 16px; }
+    .match-lines { display: none; }
+  }
+  .match-col h3 { font-family: var(--font-primary); font-size: 1rem; margin: 0 0 10px; color: var(--ink-strong); }
+  .match-list { display: grid; gap: 10px; }
+  .match-item {
+    position: relative; display: flex; align-items: center; width: 100%; text-align: left;
+    background: var(--surface); border: 2px solid var(--line); border-radius: 14px; min-height: 56px; padding: 12px 16px;
+    font-weight: 700; color: var(--ink-strong); transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+  }
+  .match-item .label { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .match-item.selected { border-color: var(--lilac-bush-600); background: var(--lilac-bush-50); box-shadow: 0 0 0 3px var(--lilac-bush-100); z-index: 1; }
+  .match-item.linked { border-color: var(--lilac-bush-600); background: var(--lilac-bush-50); }
+  .match-item.correct { border-color: var(--good-line); background: var(--good-bg); color: var(--good-ink); }
+  .match-item.wrong { border-color: var(--bad-line); background: var(--bad-bg); color: var(--bad-ink); animation: shake .45s; }
+  .match-item:disabled { cursor: default; }
+
+  .bins { display: grid; gap: 16px; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); }
+  @media (max-width: 640px) { .bins { grid-template-columns: 1fr; } }
+  .bin { background: var(--surface); border-radius: 16px; border: 2px solid var(--cat-line); display: flex; flex-direction: column; min-width: 0; }
+  .bin-head { background: var(--cat-bg); padding: 10px 14px; border-radius: 14px 14px 0 0; text-align: center; font-family: var(--font-primary); font-weight: 600; color: var(--cat); }
+  .zone { flex: 1; min-height: 100px; padding: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; border-radius: 0 0 14px 14px; cursor: pointer; }
+  .zone.hint { background: repeating-linear-gradient(45deg, transparent 0 10px, var(--pearl-brush-50) 10px 20px); }
+  .bin.over .zone { background: var(--cat-bg); }
+  .bank-wrap { margin-top: 14px; background: var(--surface); border-radius: 16px; border: 1px solid var(--pearl-brush-200); padding: 14px 16px; }
+  .bank-title { font-family: var(--font-primary); font-weight: 600; margin: 0 0 10px; }
+  .bank { display: flex; flex-wrap: wrap; gap: 10px; min-height: 56px; }
+  .card {
+    position: relative; background: var(--neutral-0); border: 1px solid var(--line); border-radius: 12px;
+    padding: 8px 12px; min-width: 96px; max-width: 200px; min-height: 48px;
+    display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center;
+    font-weight: 700; color: var(--ink-strong); cursor: grab; touch-action: none; user-select: none;
+  }
+  .card.selected { border: 2px solid var(--lilac-bush-600); padding: 7px 11px; background: var(--lilac-bush-50); }
+  .card.locked { border: 2px solid var(--good-line); background: var(--good-bg); cursor: default; }
+  .card.wrong { border: 2px solid var(--bad-line); background: var(--bad-bg); animation: shake .45s; }
+  .card.ghosted { opacity: .3; }
+  .drag-clone { position: fixed; z-index: 1000; pointer-events: none; transform: rotate(-3deg) scale(1.04); box-shadow: var(--modal-shadow); }
+
+  .footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+  .status { font-weight: 700; color: var(--ink-soft); min-height: 1.5em; flex: 1; }
+  .status.good { color: var(--good-ink); }
+  .status.bad { color: var(--bad-ink); }
+  .feedback-box { margin-top: 14px; border-radius: 16px; padding: 14px 16px; }
+  .feedback-box.good { background: var(--good-bg); color: var(--good-ink); border: 1px solid var(--highland-200); }
+  .feedback-box.bad { background: var(--bad-bg); color: var(--bad-ink); border: 1px solid var(--cinnabar-50); }
+  .feedback-box a { color: inherit; font-weight: 700; }
+  .stars { display: flex; justify-content: center; gap: 8px; margin: 12px 0 18px; }
+  .stars svg { width: 36px; height: 36px; color: var(--pearl-brush-200); }
+  .stars svg.on { color: var(--lilac-bush-600); }
+  .obj-list { text-align: left; max-width: 420px; margin: 0 auto 20px; }
+  .obj-list h2 { font-family: var(--font-primary); font-size: 1rem; margin: 16px 0 8px; }
+  .obj-list ul { margin: 0; padding-left: 1.2em; }
+  .obj-list li { margin-bottom: 4px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .error { background: var(--bad-bg); color: var(--bad-ink); border-radius: 16px; padding: 20px; font-weight: 700; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+  @media (prefers-reduced-motion: reduce) { .card.wrong, .match-item.wrong { animation: none; } .drag-clone { transform: none; } .progress-fill, .btn, .choice { transition: none; } }
+</style>
+</head>
+<body class="centered">
+<div class="wrap">
+  <div id="loading" class="screen center-card frosted"><p class="directions">Loading…</p></div>
+  <div id="error" class="screen error" hidden></div>
+
+  <section id="start" class="screen center-card start-card frosted" hidden>
+    <div class="hero-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 14.2 8l4.8.4-3.7 3.2 1.1 4.7L12 14.2 7.6 16.3l1.1-4.7L5 8.4 9.8 8z"/><path d="M7 20h10"/></svg>
+    </div>
+    <div class="start-meta" id="startMeta" hidden></div>
+    <h1 id="startTitle"></h1>
+    <p id="startDirections" class="directions"></p>
+    <div class="road-block" id="roadBlock" hidden>
+      <h2 id="roadHeading">Lessons in this unit</h2>
+      <div class="quest-road" id="questRoad">
+        <img class="road-art" id="roadArt" src="assets/road-path.jpg" alt="" width="1024" height="341">
+        <svg class="road-trail" id="roadTrail" viewBox="0 0 1024 341" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <ol class="road-stops" id="roadStops"></ol>
+      </div>
+      <p class="road-help" id="roadHelp" hidden></p>
+    </div>
+    <div class="row start-actions">
+      <button id="startListen" class="btn secondary" type="button" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        Listen
+      </button>
+      <button id="startBtn" class="btn" type="button">Begin the quest</button>
+    </div>
+  </section>
+
+  <section id="activity" class="screen center-card start-card frosted" hidden>
+    <div class="hud-nav">
+      <button id="menuBtn" class="btn secondary" type="button">Road map</button>
+      <button id="prevBtn" class="btn secondary" type="button">Previous question</button>
+    </div>
+    <div class="q-head">
+      <div class="q-head-top">
+        <p class="q-lesson" id="lessonLabel">Lesson 1</p>
+        <p class="q-points">Points <span id="pointsVal">0</span></p>
+      </div>
+      <h2 class="q-number" id="progressLabel">Question 1 of 1</h2>
+      <div class="q-steps" id="questionSteps" aria-hidden="true"></div>
+      <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="road-block">
+      <div class="prompt-card">
+        <p class="prompt-text" id="promptText"></p>
+        <img id="promptImage" alt="" hidden>
+        <button id="promptListen" class="icon-btn" type="button" aria-label="Listen to the question" hidden></button>
+      </div>
+      <div id="workArea"></div>
+      <div id="itemFeedback" class="feedback-box" hidden></div>
+      <div class="footer">
+        <div id="status" class="status" aria-live="polite"></div>
+        <button id="checkBtn" class="btn" type="button">Check</button>
+        <button id="nextBtn" class="btn" type="button" hidden>Next question</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="end" class="screen center-card frosted" hidden>
+    <div class="hero-icon good" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg>
+    </div>
+    <h1 id="endMessage"></h1>
+    <div class="stars" id="stars" aria-hidden="true"></div>
+    <p id="endSummary" class="directions"></p>
+    <div class="obj-list" id="objResults"></div>
+    <div class="row"><button id="againBtn" class="btn" type="button">Play again</button></div>
+  </section>
+  <div id="announcer" class="sr-only" aria-live="assertive"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  var STAR = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg>';
+  var DEFAULTS = {
+    correct: "Nice work.",
+    tryAgain: "Not quite. Try again.",
+    outOfTries: "Here's a tip. Review the lesson, then continue.",
+    endMessage: "You finished this Review Quest."
+  };
+
+  var params = new URLSearchParams(location.search);
+  var isPreview = params.get("preview") === "1" || location.protocol === "about:";
+  var base = "";
+  var content = null;
+  var run = null;
+  var progress = null;
+  var audio = new Audio();
+  var playingBtn = null;
+  var trailTShown = null;
+  var trailAnimFrame = null;
+  var animateTrailOnRender = false;
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function progressKey() {
+    var slug = (content && (content.slug || content.title)) || "preview";
+    return "review-quest-progress-v1:" + slug;
+  }
+
+  function blankProgress() {
+    return { completedLessons: {}, results: {}, points: 0 };
+  }
+
+  function loadProgress() {
+    progress = blankProgress();
+    if (isPreview) return;
+    try {
+      var raw = localStorage.getItem(progressKey());
+      if (!raw) return;
+      var parsed = JSON.parse(raw);
+      progress.completedLessons = parsed.completedLessons || {};
+      progress.results = parsed.results || {};
+      progress.points = parseInt(parsed.points, 10) || 0;
+    } catch (e) {}
+  }
+
+  function saveProgress() {
+    if (isPreview || !progress) return;
+    try { localStorage.setItem(progressKey(), JSON.stringify(progress)); } catch (e) {}
+  }
+
+  function lessonCount() {
+    return Math.max(1, (content.overview && content.overview.lessonsInUnit) || 1);
+  }
+
+  function itemsForLesson(lessonIndex) {
+    var list = content.items.filter(function (it) { return Number(it.lessonIndex || 1) === Number(lessonIndex); });
+    if (list.length) return list;
+    // Older sets without lessonIndex play as one lesson.
+    if (Number(lessonIndex) === 1) return content.items.slice();
+    return [];
+  }
+
+  function isLessonComplete(lessonIndex) {
+    return !!(progress && progress.completedLessons[lessonIndex]);
+  }
+
+  function isLessonUnlocked(lessonIndex) {
+    if (Number(lessonIndex) <= 1) return true;
+    return isLessonComplete(Number(lessonIndex) - 1);
+  }
+
+  function nextPlayableLesson() {
+    var n = lessonCount();
+    for (var L = 1; L <= n; L++) {
+      if (isLessonUnlocked(L) && !isLessonComplete(L) && itemsForLesson(L).length) return L;
+    }
+    return null;
+  }
+
+  function allLessonsComplete() {
+    var n = lessonCount();
+    for (var L = 1; L <= n; L++) {
+      if (itemsForLesson(L).length && !isLessonComplete(L)) return false;
+    }
+    return true;
+  }
+
+  function showError(msg) {
+    hideAll();
+    $("error").textContent = msg;
+    $("error").hidden = false;
+  }
+
+  function resolveMedia(path) {
+    if (!path) return "";
+    if (/^(data:|blob:|https?:|\/)/i.test(path)) return path;
+    return base + path;
+  }
+
+  if (isPreview) {
+    window.addEventListener("message", function (e) {
+      var d = e.data;
+      if (d && d.type === "review-ping") { e.source.postMessage({ type: "review-player-ready" }, "*"); return; }
+      if (!d || d.type !== "review-preview") return;
+      content = normalize(d.content);
+      begin(d.screen || "start");
+    });
+    if (window.parent !== window) window.parent.postMessage({ type: "review-player-ready" }, "*");
+  } else {
+    var set = params.get("set");
+    if (!set || !/^[a-z0-9][a-z0-9-]*$/.test(set)) {
+      showError("This activity is missing its content. The link should end with ?set= and the activity name.");
+    } else {
+      base = "sets/" + set + "/";
+      fetch(base + "content.json", { cache: "no-cache" })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (json) { content = normalize(json); begin("start"); })
+        .catch(function () { showError("We couldn't load this activity (" + set + "). Check that the link is correct."); });
+    }
+  }
+
+  function normalizeOverview(c) {
+    var o = c.overview || {};
+    var lessonsInUnit = clampInt(o.lessonsInUnit, 1, 20, 4);
+    var lessons = [];
+    for (var i = 0; i < lessonsInUnit; i++) lessons.push({ title: "Lesson " + (i + 1) });
+    return {
+      lessonsInUnit: lessonsInUnit,
+      lessons: lessons
+    };
+  }
+
+  function normalize(c) {
+    c = c || {};
+    var settings = c.settings || {};
+    var items = (c.items || []).filter(Boolean).map(normalizeItem).filter(Boolean);
+    return {
+      title: c.title || "Review Quest",
+      slug: c.slug || "",
+      grade: c.grade || "",
+      unit: String(c.unit || ""),
+      subject: c.subject || "",
+      directions: c.directions || "",
+      directionsAudio: c.directionsAudio || "",
+      overview: normalizeOverview(c),
+      settings: {
+        triesPerItem: clampInt(settings.triesPerItem, 1, 5, 3),
+        pointsPerCorrect: clampInt(settings.pointsPerCorrect, 10, 1000, 100),
+        masteryPercent: clampInt(settings.masteryPercent, 50, 100, 80)
+      },
+      items: items,
+      feedback: {
+        correct: (c.feedback && c.feedback.correct) || DEFAULTS.correct,
+        tryAgain: (c.feedback && c.feedback.tryAgain) || DEFAULTS.tryAgain,
+        outOfTries: (c.feedback && c.feedback.outOfTries) || DEFAULTS.outOfTries
+      },
+      endMessage: c.endMessage || DEFAULTS.endMessage
+    };
+  }
+
+  function clampInt(v, min, max, fallback) {
+    var n = parseInt(v, 10);
+    if (isNaN(n)) return fallback;
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function normalizeItem(it) {
+    if (!it || !it.type) return null;
+    var type = it.type;
+    if (type === "select_all") type = "mc";
+    var baseItem = {
+      id: it.id || ("q" + Math.random().toString(36).slice(2, 8)),
+      type: type,
+      lessonIndex: Math.max(1, parseInt(it.lessonIndex, 10) || 1),
+      objective: (it.objective || "").trim(),
+      prompt: (it.prompt || "").trim(),
+      promptImage: it.promptImage || "",
+      promptImageAlt: it.promptImageAlt || "",
+      promptAudio: it.promptAudio || "",
+      explanation: (it.explanation || "").trim(),
+      lessonUrl: (it.lessonUrl || "").trim(),
+      lessonLabel: (it.lessonLabel || "").trim() || "Review this lesson"
+    };
+    if (type === "mc") {
+      var choices = (it.choices || []).filter(function (ch) { return ch && (ch.text || "").trim(); }).map(function (ch, i) {
+        return { id: ch.id || ("ch" + i), text: String(ch.text).trim(), correct: !!ch.correct };
+      });
+      if (choices.length < 2 || !choices.some(function (ch) { return ch.correct; })) return null;
+      baseItem.selectAll = !!(it.selectAll || it.type === "select_all");
+      if (!baseItem.selectAll) {
+        var seen = false;
+        choices.forEach(function (ch) { if (ch.correct) { if (seen) ch.correct = false; seen = true; } });
+      }
+      baseItem.choices = choices;
+      return baseItem;
+    }
+    if (type === "match") {
+      var pairs = (it.pairs || []).filter(function (p) { return p && (p.left || "").trim() && (p.right || "").trim(); }).map(function (p, i) {
+        return { id: p.id || ("p" + i), left: String(p.left).trim(), right: String(p.right).trim() };
+      });
+      if (pairs.length < 2) return null;
+      baseItem.pairs = pairs;
+      return baseItem;
+    }
+    if (type === "sort") {
+      var cats = (it.categories || []).filter(function (cat) { return cat && (cat.label || "").trim(); }).map(function (cat, i) {
+        return { id: cat.id || ("c" + i), label: String(cat.label).trim() };
+      });
+      var catIds = cats.map(function (cat) { return cat.id; });
+      var cards = (it.cards || []).filter(function (card) { return card && (card.text || "").trim() && catIds.indexOf(card.category) !== -1; }).map(function (card, i) {
+        return { id: card.id || ("card" + i), text: String(card.text).trim(), category: card.category };
+      });
+      if (cats.length < 2 || cards.length < 2) return null;
+      baseItem.categories = cats;
+      baseItem.cards = cards;
+      return baseItem;
+    }
+    return null;
+  }
+
+  function hideAll() {
+    ["loading", "error", "start", "activity", "end"].forEach(function (id) { $(id).hidden = true; });
+    document.body.classList.add("centered");
+  }
+
+  function begin(screen) {
+    stopAudio();
+    document.title = content.title || "Review Quest";
+    loadProgress();
+    resetRun(null);
+    if (screen === "activity") {
+      var lesson = nextPlayableLesson() || 1;
+      startLesson(lesson);
+    } else if (screen === "end") showEnd();
+    else showStart();
+  }
+
+  function resetRun(lessonIndex) {
+    run = {
+      lessonIndex: lessonIndex || null,
+      order: [],
+      index: 0,
+      points: progress ? progress.points : 0,
+      results: Object.assign({}, progress && progress.results || {}),
+      itemState: null,
+      itemStates: {}
+    };
+  }
+
+  function startLesson(lessonIndex) {
+    var items = itemsForLesson(lessonIndex);
+    if (!items.length) {
+      showError("This lesson does not have any questions yet.");
+      return;
+    }
+    resetRun(lessonIndex);
+    run.order = items.map(function (it) { return it.id; });
+    run.index = 0;
+    showActivity();
+  }
+
+  function markLessonComplete(lessonIndex) {
+    if (!progress) loadProgress();
+    progress.completedLessons[lessonIndex] = true;
+    progress.points = run.points;
+    progress.results = Object.assign({}, progress.results, run.results);
+    saveProgress();
+  }
+
+  function clearProgress() {
+    progress = blankProgress();
+    saveProgress();
+    trailTShown = null;
+    if (trailAnimFrame) {
+      cancelAnimationFrame(trailAnimFrame);
+      trailAnimFrame = null;
+    }
+  }
+
+  function flagProgress() {
+    return 0.98;
+  }
+
+  function trailTargetProgress(lessonTotal, nextLesson) {
+    if (allLessonsComplete()) return flagProgress();
+    if (nextLesson) return stopProgress(nextLesson - 1, lessonTotal);
+    return stopProgress(0, lessonTotal);
+  }
+
+  function buildTrailPathD(guide, startT, endT) {
+    var len = guide.getTotalLength();
+    var startLen = Math.max(0, startT) * len;
+    var endLen = Math.min(1, endT) * len;
+    if (endLen <= startLen) return "";
+    var steps = Math.max(16, Math.ceil((endLen - startLen) / 8));
+    var pts = [];
+    for (var s = 0; s <= steps; s++) {
+      var pt = guide.getPointAtLength(startLen + (endLen - startLen) * (s / steps));
+      pts.push(pt);
+    }
+    return "M " + pts.map(function (pt) {
+      return pt.x.toFixed(1) + " " + pt.y.toFixed(1);
+    }).join(" L ");
+  }
+
+  function setProgressPath(trail, d) {
+    var existing = trail.querySelector("path.road-progress");
+    if (!d) {
+      if (existing) existing.remove();
+      return null;
+    }
+    var path = existing;
+    if (!path) {
+      path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("class", "road-progress");
+      trail.appendChild(path);
+    }
+    path.setAttribute("d", d);
+    return path;
+  }
+
+  function renderTrailTo(endT, animate) {
+    var trail = $("roadTrail");
+    var lessons = content.overview.lessons || [];
+    if (!trail || !lessons.length) return;
+    var guide = ensureRoadGuide(trail);
+    var startT = stopProgress(0, lessons.length);
+    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (trailAnimFrame) {
+      cancelAnimationFrame(trailAnimFrame);
+      trailAnimFrame = null;
+    }
+    if (!animate || reduceMotion || endT <= (trailTShown == null ? -1 : trailTShown) + 0.001) {
+      setProgressPath(trail, buildTrailPathD(guide, startT, endT));
+      trailTShown = endT;
+      return;
+    }
+    var fromT = trailTShown == null ? startT : trailTShown;
+    var toT = endT;
+    setProgressPath(trail, buildTrailPathD(guide, startT, fromT));
+    var duration = Math.max(900, Math.min(1800, (toT - fromT) * 2600));
+    var started = null;
+    function frame(now) {
+      if (started == null) started = now;
+      var p = Math.min(1, (now - started) / duration);
+      // Ease out so it settles on the stop or flag.
+      var eased = 1 - Math.pow(1 - p, 3);
+      var cur = fromT + (toT - fromT) * eased;
+      setProgressPath(trail, buildTrailPathD(guide, startT, cur));
+      trailTShown = cur;
+      if (p < 1) trailAnimFrame = requestAnimationFrame(frame);
+      else {
+        trailAnimFrame = null;
+        trailTShown = toT;
+        setProgressPath(trail, buildTrailPathD(guide, startT, toT));
+      }
+    }
+    trailAnimFrame = requestAnimationFrame(frame);
+  }
+
+  function currentItem() {
+    var id = run.order[run.index];
+    for (var i = 0; i < content.items.length; i++) if (content.items[i].id === id) return content.items[i];
+    return null;
+  }
+
+  function showStart(opts) {
+    opts = opts || {};
+    hideAll();
+    document.body.classList.add("centered");
+    $("startTitle").textContent = content.title;
+    $("startDirections").textContent = content.directions;
+    $("startDirections").hidden = !content.directions;
+    $("startListen").hidden = !content.directionsAudio;
+    animateTrailOnRender = !!opts.animateTrail;
+    renderStartOverview();
+    animateTrailOnRender = false;
+    $("start").hidden = false;
+  }
+
+  function renderStartOverview() {
+    var meta = $("startMeta");
+    var bits = [];
+    if (content.grade) bits.push("Grade " + content.grade);
+    if (content.unit) bits.push("Unit " + content.unit);
+    if (content.subject) bits.push(content.subject);
+    bits.push(content.overview.lessonsInUnit + " lessons");
+    meta.innerHTML = "";
+    if (bits.length) {
+      bits.forEach(function (b) {
+        var span = document.createElement("span");
+        span.textContent = b;
+        meta.appendChild(span);
+      });
+      meta.hidden = false;
+    } else {
+      meta.hidden = true;
+    }
+
+    var roadBlock = $("roadBlock");
+    var stops = $("roadStops");
+    var trail = $("roadTrail");
+    var help = $("roadHelp");
+    stops.innerHTML = "";
+    if (trail) trail.innerHTML = "";
+    var lessons = content.overview.lessons || [];
+    if (!lessons.length) {
+      roadBlock.hidden = true;
+      if (help) help.hidden = true;
+      $("startBtn").textContent = "Begin the quest";
+      return;
+    }
+    $("roadHeading").textContent = content.unit
+      ? ("Lessons in Unit " + content.unit)
+      : "Lessons in this unit";
+    var art = $("roadArt");
+    if (art) {
+      try { art.src = new URL("assets/road-path.jpg", location.href).href; }
+      catch (e) { art.src = "assets/road-path.jpg"; }
+    }
+
+    var nextLesson = nextPlayableLesson();
+    lessons.forEach(function (lesson, i) {
+      var lessonIndex = i + 1;
+      var pt = roadStopPoint(i, lessons.length);
+      var done = isLessonComplete(lessonIndex);
+      var unlocked = isLessonUnlocked(lessonIndex);
+      var current = nextLesson === lessonIndex;
+
+      var li = document.createElement("li");
+      li.style.left = pt.x + "%";
+      li.style.top = pt.y + "%";
+      li.className = done ? "done" : current ? "current" : unlocked ? "available" : "locked";
+
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "road-stop-btn";
+      btn.disabled = !unlocked;
+      btn.setAttribute("aria-label",
+        (done ? "Completed. " : current ? "Up next. " : unlocked ? "Available. " : "Locked. ") +
+        (lesson.title || ("Lesson " + lessonIndex))
+      );
+
+      var dot = document.createElement("span");
+      dot.className = "road-stop-dot";
+      if (done) {
+        dot.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+      } else {
+        dot.textContent = String(lessonIndex);
+      }
+      var label = document.createElement("span");
+      label.className = "road-stop-label";
+      label.textContent = lesson.title || ("Lesson " + lessonIndex);
+      btn.appendChild(dot);
+      btn.appendChild(label);
+      if (unlocked) {
+        btn.addEventListener("click", function () { stopAudio(); startLesson(lessonIndex); });
+      }
+      li.appendChild(btn);
+      stops.appendChild(li);
+    });
+
+    // Dotted trail follows the road to the open lesson, or all the way to the flag when done.
+    var completedAny = false;
+    for (var c = 1; c <= lessons.length; c++) {
+      if (isLessonComplete(c)) { completedAny = true; break; }
+    }
+    if (trail && lessons.length && (completedAny || allLessonsComplete() || (nextLesson && nextLesson > 1))) {
+      ensureRoadGuide(trail);
+      renderTrailTo(trailTargetProgress(lessons.length, nextLesson), animateTrailOnRender);
+    } else if (trail) {
+      setProgressPath(trail, "");
+    }
+
+    if (help) {
+      if (allLessonsComplete()) {
+        help.textContent = "You made it to the flag. Nice work on this unit.";
+        help.hidden = false;
+        $("startBtn").textContent = "See results";
+      } else if (nextLesson) {
+        help.textContent = isLessonComplete(1) || nextLesson > 1
+          ? ("Lesson " + nextLesson + " is open. Tap a bright stop or continue.")
+          : "Start at Lesson 1.";
+        help.hidden = false;
+        $("startBtn").textContent = nextLesson === 1 ? "Begin the quest" : ("Continue to Lesson " + nextLesson);
+      } else {
+        help.hidden = true;
+        $("startBtn").textContent = "Begin the quest";
+      }
+    }
+    roadBlock.hidden = false;
+  }
+
+  // Centerline traced from the road art (1024x341), lightly smoothed.
+  function roadPathD() {
+    var raw = [
+      [20,188],[44,186],[68,174],[92,171],[116,167],[140,163],[164,167],[188,175],
+      [212,185],[236,197],[260,210],[284,221],[308,225],[332,228],[356,229],[380,226],
+      [404,221],[428,210],[452,196],[476,181],[500,162],[524,144],[548,131],[572,120],
+      [596,112],[620,107],[644,106],[668,108],[692,110],[716,114],[740,126],[764,133],
+      [788,143],[812,148],[836,155],[860,154],[884,152],[908,144],[932,136],[956,130],[968,127]
+    ];
+    var pts = raw.map(function (p, i) {
+      if (i === 0 || i === raw.length - 1) return p;
+      var a = raw[i - 1], b = raw[i], c = raw[i + 1];
+      return [Math.round((a[0] + b[0] + c[0]) / 3), Math.round((a[1] + b[1] + c[1]) / 3)];
+    });
+    return "M " + pts.map(function (p) { return p[0] + " " + p[1]; }).join(" L ");
+  }
+
+  function ensureRoadGuide(svg) {
+    var guide = svg.querySelector("[data-road-guide]");
+    if (guide) return guide;
+    guide = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    guide.setAttribute("d", roadPathD());
+    guide.setAttribute("data-road-guide", "1");
+    guide.setAttribute("class", "road-guide");
+    guide.setAttribute("fill", "none");
+    guide.setAttribute("stroke", "none");
+    guide.setAttribute("aria-hidden", "true");
+    svg.appendChild(guide);
+    return guide;
+  }
+
+  function stopProgress(index, total) {
+    if (total <= 1) return 0.12;
+    return 0.12 + (index / (total - 1)) * 0.76;
+  }
+
+  function roadStopPoint(index, total) {
+    var svg = $("roadTrail");
+    if (!svg) return { x: 50, y: 50 };
+    var guide = ensureRoadGuide(svg);
+    var len = guide.getTotalLength();
+    var pt = guide.getPointAtLength(stopProgress(index, total) * len);
+    return { x: (pt.x / 1024) * 100, y: (pt.y / 341) * 100 };
+  }
+
+  function showActivity() {
+    if (!run || !run.order.length) {
+      showError("This Review Quest has no playable questions yet.");
+      return;
+    }
+    hideAll();
+    document.body.classList.remove("centered");
+    $("activity").hidden = false;
+    loadItem();
+  }
+
+  function updateHud() {
+    var n = run.order.length;
+    var i = Math.min(run.index + 1, n);
+    if ($("lessonLabel")) {
+      $("lessonLabel").textContent = run.lessonIndex ? ("Lesson " + run.lessonIndex) : "Review";
+    }
+    $("progressLabel").textContent = n === 1 ? "Question 1" : ("Question " + i + " of " + n);
+    var filled = run.index + ((run.itemState && run.itemState.resolved) ? 1 : 0);
+    $("progressFill").style.width = Math.round((filled / Math.max(n, 1)) * 100) + "%";
+    $("pointsVal").textContent = String(run.points);
+    $("prevBtn").disabled = run.index <= 0;
+    renderQuestionSteps(i, n);
+  }
+
+  function renderQuestionSteps(current, total) {
+    var wrap = $("questionSteps");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    if (total <= 1) {
+      wrap.hidden = true;
+      return;
+    }
+    wrap.hidden = false;
+    for (var s = 1; s <= total; s++) {
+      var dot = document.createElement("span");
+      dot.className = "q-step" + (s < current ? " done" : s === current ? " current" : "");
+      dot.title = "Question " + s;
+      wrap.appendChild(dot);
+    }
+  }
+
+  function loadItem() {
+    var item = currentItem();
+    if (!item) {
+      finishLesson();
+      return;
+    }
+    stopAudio();
+    if (run.itemStates[item.id]) run.itemState = run.itemStates[item.id];
+    else {
+      run.itemState = makeItemState(item);
+      run.itemStates[item.id] = run.itemState;
+    }
+    updateHud();
+    $("promptText").textContent = item.prompt;
+    var img = $("promptImage");
+    if (item.promptImage) {
+      img.src = resolveMedia(item.promptImage);
+      img.alt = item.promptImageAlt || "";
+      img.hidden = false;
+    } else {
+      img.removeAttribute("src");
+      img.hidden = true;
+    }
+    $("promptListen").hidden = !item.promptAudio;
+    $("promptListen").innerHTML = SPEAKER;
+    $("itemFeedback").hidden = true;
+    $("itemFeedback").innerHTML = "";
+    $("status").textContent = "";
+    $("status").className = "status";
+
+    if (run.itemState.resolved) {
+      $("checkBtn").hidden = true;
+      $("nextBtn").hidden = false;
+      $("nextBtn").textContent = run.index >= run.order.length - 1 ? "Back to road" : "Next question";
+      if (run.results[item.id]) {
+        showItemFeedback(item, !!run.results[item.id].correct);
+        $("status").className = "status " + (run.results[item.id].correct ? "good" : "bad");
+        $("status").textContent = run.results[item.id].correct ? content.feedback.correct : content.feedback.outOfTries;
+      }
+      if (item.type === "mc") renderMcReveal(item, !!run.results[item.id] && run.results[item.id].correct);
+      else renderWorkArea(item);
+      return;
+    }
+
+    $("checkBtn").hidden = false;
+    $("checkBtn").disabled = true;
+    $("checkBtn").textContent = "Check";
+    $("nextBtn").hidden = true;
+    $("nextBtn").textContent = "Next question";
+    renderWorkArea(item);
+  }
+
+  function finishLesson() {
+    if (run && run.lessonIndex) markLessonComplete(run.lessonIndex);
+    // Always return to the road so students see the trail move, including to the flag.
+    showStart({ animateTrail: true });
+    if (allLessonsComplete()) {
+      setTimeout(function () {
+        if (allLessonsComplete()) showEnd();
+      }, 2200);
+    }
+  }
+
+  function makeItemState(item) {
+    if (item.type === "mc") {
+      return {
+        selected: {},
+        choiceOrder: shuffle(item.choices.map(function (ch) { return ch.id; })),
+        triesLeft: content.settings.triesPerItem,
+        resolved: false
+      };
+    }
+    if (item.type === "match") {
+      return {
+        leftOrder: shuffle(item.pairs.map(function (p) { return p.id; })),
+        rightOrder: shuffle(item.pairs.map(function (p) { return p.id; })),
+        selectedLeft: null,
+        selectedRight: null,
+        links: {},
+        locked: {},
+        resultClass: {},
+        triesLeft: content.settings.triesPerItem,
+        resolved: false
+      };
+    }
+    return {
+      place: {},
+      locked: {},
+      order: shuffle(item.cards.map(function (c) { return c.id; })),
+      selectedId: null,
+      triesLeft: content.settings.triesPerItem,
+      resolved: false
+    };
+  }
+
+  function renderWorkArea(item) {
+    var area = $("workArea");
+    area.innerHTML = "";
+    if (item.type === "mc") renderMc(area, item);
+    else if (item.type === "match") renderMatch(area, item);
+    else renderSort(area, item);
+  }
+
+  function choiceLetter(i) {
+    return String.fromCharCode(65 + (i % 26));
+  }
+
+  function buildChoiceButton(item, ch, letterIndex, opts) {
+    opts = opts || {};
+    var st = run.itemState;
+    var selected = !!st.selected[ch.id];
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "choice" + (item.selectAll ? " select-all" : "") + (selected ? " selected" : "");
+    if (opts.correctClass) btn.classList.add(opts.correctClass);
+    btn.disabled = !!opts.disabled;
+    btn.setAttribute("aria-pressed", selected ? "true" : "false");
+
+    var mark = document.createElement("span");
+    mark.className = "choice-mark";
+    mark.setAttribute("aria-hidden", "true");
+    if (item.selectAll) {
+      mark.innerHTML = selected || opts.showCheck
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+        : "";
+    } else {
+      mark.textContent = choiceLetter(letterIndex);
+    }
+
+    var text = document.createElement("span");
+    text.className = "choice-text";
+    text.textContent = ch.text;
+
+    btn.appendChild(mark);
+    btn.appendChild(text);
+    btn.setAttribute("aria-label", (item.selectAll ? (selected ? "Selected. " : "Not selected. ") : choiceLetter(letterIndex) + ". ") + ch.text);
+    return btn;
+  }
+
+  function renderMc(area, item) {
+    var hint = document.createElement("p");
+    hint.className = "directions";
+    hint.style.marginBottom = "10px";
+    hint.textContent = item.selectAll ? "Select all that apply." : "Choose one answer.";
+    area.appendChild(hint);
+    var list = document.createElement("div");
+    list.className = "choices";
+    list.setAttribute("role", item.selectAll ? "group" : "radiogroup");
+    list.setAttribute("aria-label", "Answer choices");
+    var st = run.itemState;
+    st.choiceOrder.forEach(function (id, idx) {
+      var ch = item.choices.filter(function (c) { return c.id === id; })[0];
+      var btn = buildChoiceButton(item, ch, idx);
+      btn.disabled = st.resolved;
+      btn.addEventListener("click", function () {
+        if (st.resolved) return;
+        if (item.selectAll) {
+          st.selected[id] = !st.selected[id];
+        } else {
+          st.selected = {};
+          st.selected[id] = true;
+        }
+        renderWorkArea(item);
+        updateCheckEnabled();
+      });
+      list.appendChild(btn);
+    });
+    area.appendChild(list);
+    updateCheckEnabled();
+  }
+
+  function renderMatch(area, item) {
+    var st = run.itemState;
+    var linkedCount = Object.keys(st.links).length;
+    var help = document.createElement("p");
+    help.className = "match-help";
+    if (st.resolved) {
+      help.textContent = "Review your matches below.";
+    } else if (st.selectedLeft && !st.selectedRight) {
+      var sel = item.pairs.filter(function (p) { return p.id === st.selectedLeft; })[0];
+      help.textContent = "Selected \u201c" + sel.left + "\u201d. Now tap its match on the right.";
+    } else if (st.selectedRight && !st.selectedLeft) {
+      var selR = item.pairs.filter(function (p) { return p.id === st.selectedRight; })[0];
+      help.textContent = "Selected \u201c" + selR.right + "\u201d. Now tap its match on the left.";
+    } else {
+      help.textContent = "Tap a term, then tap a definition to connect them. Press Check when every term has a line.";
+    }
+    area.appendChild(help);
+
+    var board = document.createElement("div");
+    board.className = "match-board";
+    board.id = "matchBoard";
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "match-lines");
+    svg.setAttribute("aria-hidden", "true");
+    board.appendChild(svg);
+
+    var grid = document.createElement("div");
+    grid.className = "match-grid";
+    var left = document.createElement("div");
+    left.className = "match-col";
+    left.innerHTML = "<h3>Terms</h3>";
+    var leftList = document.createElement("div");
+    leftList.className = "match-list";
+    var right = document.createElement("div");
+    right.className = "match-col";
+    right.innerHTML = "<h3>Definitions</h3>";
+    var rightList = document.createElement("div");
+    rightList.className = "match-list";
+
+    st.leftOrder.forEach(function (id) {
+      var pair = item.pairs.filter(function (p) { return p.id === id; })[0];
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.matchId = id;
+      btn.dataset.matchSide = "left";
+      var cls = "match-item left";
+      if (st.selectedLeft === id) cls += " selected";
+      else if (st.resultClass[id]) cls += " " + st.resultClass[id];
+      else if (st.links[id] || st.locked[id]) cls += st.locked[id] ? " correct" : " linked";
+      btn.className = cls;
+      btn.disabled = st.resolved || !!st.locked[id];
+      btn.innerHTML = '<span class="label"></span>';
+      btn.querySelector(".label").textContent = pair.left;
+      btn.setAttribute("aria-label", "Term: " + pair.left + (st.links[id] ? ". Connected." : ""));
+      btn.addEventListener("click", function () {
+        if (st.resolved || st.locked[id]) return;
+        if (st.selectedLeft === id) { st.selectedLeft = null; }
+        else { st.selectedLeft = id; }
+        linkMatchPair(item);
+        renderWorkArea(item);
+      });
+      leftList.appendChild(btn);
+    });
+
+    st.rightOrder.forEach(function (id) {
+      var pair = item.pairs.filter(function (p) { return p.id === id; })[0];
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.matchId = id;
+      btn.dataset.matchSide = "right";
+      var usedBy = Object.keys(st.links).filter(function (leftId) { return st.links[leftId] === id; })[0];
+      var cls = "match-item right";
+      if (st.selectedRight === id) cls += " selected";
+      else if (usedBy && st.resultClass[usedBy]) cls += " " + st.resultClass[usedBy];
+      else if (usedBy) cls += st.locked[usedBy] ? " correct" : " linked";
+      btn.className = cls;
+      btn.disabled = st.resolved || !!(usedBy && st.locked[usedBy]);
+      btn.innerHTML = '<span class="label"></span>';
+      btn.querySelector(".label").textContent = pair.right;
+      btn.setAttribute("aria-label", "Definition: " + pair.right + (usedBy ? ". Connected." : ""));
+      btn.addEventListener("click", function () {
+        if (st.resolved || (usedBy && st.locked[usedBy])) return;
+        if (st.selectedRight === id) { st.selectedRight = null; }
+        else { st.selectedRight = id; }
+        linkMatchPair(item);
+        renderWorkArea(item);
+      });
+      rightList.appendChild(btn);
+    });
+
+    left.appendChild(leftList);
+    right.appendChild(rightList);
+    grid.appendChild(left);
+    grid.appendChild(right);
+    board.appendChild(grid);
+    area.appendChild(board);
+
+    if (!st.resolved) {
+      $("status").className = "status";
+      $("status").textContent = linkedCount + " of " + item.pairs.length + " connected";
+    }
+    $("checkBtn").hidden = false;
+    updateCheckEnabled();
+    requestAnimationFrame(function () { drawMatchLines(item); });
+  }
+
+  function linkMatchPair(item) {
+    var st = run.itemState;
+    if (!st.selectedLeft || !st.selectedRight) return;
+    var left = st.selectedLeft;
+    var right = st.selectedRight;
+    st.selectedLeft = null;
+    st.selectedRight = null;
+    st.resultClass = {};
+    Object.keys(st.links).forEach(function (leftId) {
+      if (st.links[leftId] === right && !st.locked[leftId]) delete st.links[leftId];
+    });
+    st.links[left] = right;
+    announce("Connected.");
+  }
+
+  function drawMatchLines(item) {
+    var board = document.getElementById("matchBoard");
+    if (!board) return;
+    var svg = board.querySelector(".match-lines");
+    if (!svg) return;
+    var st = run.itemState;
+    var rect = board.getBoundingClientRect();
+    svg.setAttribute("viewBox", "0 0 " + Math.max(rect.width, 1) + " " + Math.max(rect.height, 1));
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    Object.keys(st.links).forEach(function (leftId) {
+      var rightId = st.links[leftId];
+      var leftEl = board.querySelector('.match-item[data-match-side="left"][data-match-id="' + cssEscape(leftId) + '"]');
+      var rightEl = board.querySelector('.match-item[data-match-side="right"][data-match-id="' + cssEscape(rightId) + '"]');
+      if (!leftEl || !rightEl) return;
+      var a = leftEl.getBoundingClientRect();
+      var b = rightEl.getBoundingClientRect();
+      var x1 = a.right - rect.left;
+      var y1 = a.top + a.height / 2 - rect.top;
+      var x2 = b.left - rect.left;
+      var y2 = b.top + b.height / 2 - rect.top;
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", "M " + x1 + " " + y1 + " L " + x2 + " " + y2);
+      var cls = st.resultClass[leftId] || (st.locked[leftId] ? "correct" : "");
+      if (cls) path.setAttribute("class", cls);
+      svg.appendChild(path);
+    });
+  }
+
+  function renderSort(area, item) {
+    var st = run.itemState;
+    var bins = document.createElement("div");
+    bins.className = "bins";
+    bins.style.setProperty("--cols", Math.min(item.categories.length, 4));
+    item.categories.forEach(function (cat, idx) {
+      var n = (idx % 4) + 1;
+      var bin = document.createElement("div");
+      bin.className = "bin";
+      bin.style.setProperty("--cat", "var(--cat-" + n + ")");
+      bin.style.setProperty("--cat-bg", "var(--cat-" + n + "-bg)");
+      bin.style.setProperty("--cat-line", "var(--cat-" + n + "-line)");
+      bin.dataset.drop = cat.id;
+      bin.tabIndex = 0;
+      bin.setAttribute("role", "button");
+      bin.setAttribute("aria-label", "Group: " + cat.label);
+      var head = document.createElement("div");
+      head.className = "bin-head";
+      head.textContent = cat.label;
+      bin.appendChild(head);
+      var zone = document.createElement("div");
+      zone.className = "zone" + (st.selectedId ? " hint" : "");
+      st.order.forEach(function (id) {
+        if (st.place[id] === cat.id) zone.appendChild(makeSortCard(item, id));
+      });
+      bin.appendChild(zone);
+      bin.addEventListener("click", function (e) {
+        if (e.target.closest(".card")) return;
+        if (st.selectedId && !st.locked[st.selectedId]) moveSort(item, st.selectedId, cat.id);
+      });
+      bin.addEventListener("keydown", function (e) {
+        if (e.target !== bin) return;
+        if ((e.key === "Enter" || e.key === " ") && st.selectedId) { e.preventDefault(); moveSort(item, st.selectedId, cat.id); }
+      });
+      bins.appendChild(bin);
+    });
+    area.appendChild(bins);
+    var bankWrap = document.createElement("div");
+    bankWrap.className = "bank-wrap";
+    bankWrap.innerHTML = '<h2 class="bank-title">Cards to sort</h2>';
+    var bank = document.createElement("div");
+    bank.className = "bank";
+    bank.dataset.drop = "bank";
+    var left = 0;
+    st.order.forEach(function (id) {
+      if (!st.place[id]) { bank.appendChild(makeSortCard(item, id)); left++; }
+    });
+    if (!left) {
+      var empty = document.createElement("div");
+      empty.style.color = "var(--ink-soft)";
+      empty.textContent = "All cards are sorted. Press Check when you're ready.";
+      bank.appendChild(empty);
+    }
+    bank.addEventListener("click", function (e) {
+      if (e.target.closest(".card")) return;
+      if (st.selectedId && st.place[st.selectedId]) moveSort(item, st.selectedId, null);
+    });
+    bankWrap.appendChild(bank);
+    area.appendChild(bankWrap);
+    $("checkBtn").hidden = false;
+    $("checkBtn").disabled = left > 0 || st.resolved;
+  }
+
+  function makeSortCard(item, id) {
+    var st = run.itemState;
+    var card = item.cards.filter(function (c) { return c.id === id; })[0];
+    var el = document.createElement("div");
+    el.className = "card" + (st.locked[id] ? " locked" : "") + (st.selectedId === id ? " selected" : "");
+    el.dataset.id = id;
+    el.tabIndex = st.locked[id] || st.resolved ? -1 : 0;
+    el.setAttribute("role", "button");
+    el.textContent = card.text;
+    if (!st.locked[id] && !st.resolved) wireSortCard(el, item, id);
+    return el;
+  }
+
+  function wireSortCard(el, item, id) {
+    var st = run.itemState;
+    var start = null, clone = null, over = null;
+    el.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); st.selectedId = st.selectedId === id ? null : id; renderWorkArea(item); }
+    });
+    el.addEventListener("pointerdown", function (e) {
+      if (e.button !== 0) return;
+      start = { x: e.clientX, y: e.clientY, dx: 0, dy: 0 };
+      var r = el.getBoundingClientRect();
+      start.dx = e.clientX - r.left; start.dy = e.clientY - r.top;
+      el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener("pointermove", function (e) {
+      if (!start) return;
+      if (!clone) {
+        if (Math.abs(e.clientX - start.x) + Math.abs(e.clientY - start.y) < 8) return;
+        clone = el.cloneNode(true);
+        clone.classList.add("drag-clone");
+        clone.style.width = el.offsetWidth + "px";
+        document.body.appendChild(clone);
+        el.classList.add("ghosted");
+      }
+      clone.style.left = (e.clientX - start.dx) + "px";
+      clone.style.top = (e.clientY - start.dy) + "px";
+      var target = dropTargetAt(e.clientX, e.clientY);
+      if (target !== over) {
+        if (over) over.classList.remove("over");
+        over = target;
+        if (over) over.classList.add("over");
+      }
+    });
+    function finish(e, cancelled) {
+      if (!start) return;
+      var wasDrag = !!clone;
+      if (clone) { clone.remove(); clone = null; }
+      if (over) { over.classList.remove("over"); over = null; }
+      el.classList.remove("ghosted");
+      start = null;
+      if (cancelled) return;
+      if (wasDrag) {
+        var target = dropTargetAt(e.clientX, e.clientY);
+        if (target) moveSort(item, id, target.dataset.drop === "bank" ? null : target.dataset.drop);
+      } else {
+        st.selectedId = st.selectedId === id ? null : id;
+        renderWorkArea(item);
+      }
+    }
+    el.addEventListener("pointerup", function (e) { finish(e, false); });
+    el.addEventListener("pointercancel", function (e) { finish(e, true); });
+  }
+
+  function dropTargetAt(x, y) {
+    var hit = document.elementFromPoint(x, y);
+    return hit ? hit.closest("[data-drop]") : null;
+  }
+
+  function moveSort(item, id, catId) {
+    var st = run.itemState;
+    if (st.locked[id] || st.resolved) return;
+    st.place[id] = catId;
+    st.selectedId = null;
+    renderWorkArea(item);
+  }
+
+  function updateCheckEnabled() {
+    var item = currentItem();
+    var st = run.itemState;
+    if (!item || !st || st.resolved) { $("checkBtn").disabled = true; return; }
+    if (item.type === "mc") {
+      $("checkBtn").disabled = !Object.keys(st.selected).some(function (k) { return st.selected[k]; });
+    } else if (item.type === "match") {
+      $("checkBtn").disabled = Object.keys(st.links).length < item.pairs.length;
+    }
+  }
+
+  function checkAnswer() {
+    var item = currentItem();
+    var st = run.itemState;
+    if (!item || !st || st.resolved) return;
+    if (item.type === "mc") checkMc(item);
+    else if (item.type === "match") checkMatch(item);
+    else if (item.type === "sort") checkSort(item);
+  }
+
+  function checkMatch(item) {
+    var st = run.itemState;
+    var wrong = [];
+    st.resultClass = {};
+    item.pairs.forEach(function (pair) {
+      if (st.locked[pair.id]) {
+        st.resultClass[pair.id] = "correct";
+        return;
+      }
+      if (st.links[pair.id] === pair.id) {
+        st.locked[pair.id] = true;
+        st.resultClass[pair.id] = "correct";
+      } else {
+        wrong.push(pair.id);
+        st.resultClass[pair.id] = "wrong";
+      }
+    });
+    if (!wrong.length) {
+      renderWorkArea(item);
+      finishItem(item, true);
+      return;
+    }
+    st.triesLeft -= 1;
+    renderWorkArea(item);
+    if (st.triesLeft <= 0) {
+      setTimeout(function () {
+        item.pairs.forEach(function (pair) {
+          st.links[pair.id] = pair.id;
+          st.locked[pair.id] = true;
+          st.resultClass[pair.id] = "correct";
+        });
+        finishItem(item, false);
+      }, 900);
+      return;
+    }
+    $("status").className = "status bad";
+    $("status").textContent = content.feedback.tryAgain + " " + st.triesLeft + " tr" + (st.triesLeft === 1 ? "y" : "ies") + " left.";
+    announce($("status").textContent);
+    setTimeout(function () {
+      wrong.forEach(function (id) {
+        delete st.links[id];
+        delete st.resultClass[id];
+      });
+      st.selectedLeft = null;
+      st.selectedRight = null;
+      renderWorkArea(item);
+      $("status").className = "status bad";
+      $("status").textContent = content.feedback.tryAgain + " " + st.triesLeft + " tr" + (st.triesLeft === 1 ? "y" : "ies") + " left.";
+    }, 1100);
+  }
+
+  function checkMc(item) {
+    var st = run.itemState;
+    var ok = item.choices.every(function (ch) { return !!st.selected[ch.id] === !!ch.correct; });
+    if (ok) {
+      finishItem(item, true);
+      return;
+    }
+    st.triesLeft -= 1;
+    if (st.triesLeft <= 0) {
+      finishItem(item, false);
+      return;
+    }
+    $("status").className = "status bad";
+    $("status").textContent = content.feedback.tryAgain + " " + st.triesLeft + " tr" + (st.triesLeft === 1 ? "y" : "ies") + " left.";
+    announce($("status").textContent);
+    // Keep choices clickable so students can change or clear answers and try again.
+    renderWorkArea(item);
+    updateCheckEnabled();
+  }
+
+  function checkSort(item) {
+    var st = run.itemState;
+    var wrong = [];
+    item.cards.forEach(function (card) {
+      if (st.locked[card.id]) return;
+      if (st.place[card.id] === card.category) st.locked[card.id] = true;
+      else wrong.push(card.id);
+    });
+    if (!wrong.length) {
+      finishItem(item, true);
+      return;
+    }
+    st.triesLeft -= 1;
+    renderWorkArea(item);
+    wrong.forEach(function (id) {
+      var el = document.querySelector('.card[data-id="' + cssEscape(id) + '"]');
+      if (el) el.classList.add("wrong");
+    });
+    if (st.triesLeft <= 0) {
+      setTimeout(function () { finishItem(item, false); }, 700);
+      return;
+    }
+    $("status").className = "status bad";
+    $("status").textContent = content.feedback.tryAgain + " " + st.triesLeft + " tr" + (st.triesLeft === 1 ? "y" : "ies") + " left.";
+    setTimeout(function () {
+      wrong.forEach(function (id) { st.place[id] = null; });
+      renderWorkArea(item);
+      $("status").className = "status bad";
+      $("status").textContent = content.feedback.tryAgain + " " + st.triesLeft + " tr" + (st.triesLeft === 1 ? "y" : "ies") + " left.";
+    }, 900);
+  }
+
+  function renderMcReveal(item, finalOk) {
+    var st = run.itemState;
+    var area = $("workArea");
+    area.innerHTML = "";
+    var hint = document.createElement("p");
+    hint.className = "directions";
+    hint.style.marginBottom = "10px";
+    hint.textContent = item.selectAll ? "Select all that apply." : "Choose one answer.";
+    area.appendChild(hint);
+    var list = document.createElement("div");
+    list.className = "choices";
+    st.choiceOrder.forEach(function (id, idx) {
+      var ch = item.choices.filter(function (c) { return c.id === id; })[0];
+      var correctClass = "";
+      if (finalOk || st.resolved) {
+        if (ch.correct) correctClass = "correct";
+        else if (st.selected[id]) correctClass = "wrong";
+      } else if (st.selected[id]) {
+        correctClass = ch.correct ? "correct" : "wrong";
+      }
+      var btn = buildChoiceButton(item, ch, idx, {
+        disabled: true,
+        correctClass: correctClass,
+        showCheck: item.selectAll && (st.selected[id] || (st.resolved && ch.correct))
+      });
+      list.appendChild(btn);
+    });
+    area.appendChild(list);
+  }
+
+  function finishItem(item, correct) {
+    var st = run.itemState;
+    st.resolved = true;
+    run.results[item.id] = { correct: !!correct, objective: item.objective || "General" };
+    if (correct) {
+      run.points += content.settings.pointsPerCorrect;
+      $("pointsVal").textContent = String(run.points);
+      $("status").className = "status good";
+      $("status").textContent = content.feedback.correct;
+      showItemFeedback(item, true);
+    } else {
+      $("status").className = "status bad";
+      $("status").textContent = content.feedback.outOfTries;
+      showItemFeedback(item, false);
+      if (item.type === "mc") {
+        item.choices.forEach(function (ch) { st.selected[ch.id] = !!ch.correct; });
+        renderMcReveal(item, false);
+      } else if (item.type === "sort") {
+        item.cards.forEach(function (card) { st.place[card.id] = card.category; st.locked[card.id] = true; });
+        renderWorkArea(item);
+      } else if (item.type === "match") {
+        item.pairs.forEach(function (p) {
+          st.links[p.id] = p.id;
+          st.locked[p.id] = true;
+          st.resultClass[p.id] = "correct";
+        });
+        renderWorkArea(item);
+      }
+    }
+    if (progress) {
+      progress.points = run.points;
+      progress.results = Object.assign({}, progress.results, run.results);
+      saveProgress();
+    }
+    announce($("status").textContent);
+    $("checkBtn").hidden = true;
+    $("nextBtn").hidden = false;
+    $("nextBtn").textContent = run.index >= run.order.length - 1 ? "Back to road" : "Next question";
+    $("nextBtn").focus();
+    updateHud();
+  }
+
+  function showItemFeedback(item, correct) {
+    var box = $("itemFeedback");
+    box.hidden = false;
+    box.className = "feedback-box " + (correct ? "good" : "bad");
+    var html = "<div>" + escapeHtml(item.explanation || (correct ? content.feedback.correct : content.feedback.outOfTries)) + "</div>";
+    if (item.lessonUrl) {
+      html += '<div style="margin-top:8px"><a href="' + escapeAttr(item.lessonUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.lessonLabel) + "</a></div>";
+    }
+    box.innerHTML = html;
+  }
+
+  function showEnd() {
+    hideAll();
+    document.body.classList.add("centered");
+    var results = Object.assign({}, progress && progress.results || {}, run && run.results || {});
+    var points = (run && run.points != null) ? run.points : (progress && progress.points) || 0;
+    var total = content.items.length;
+    var correct = 0;
+    var byObj = {};
+    content.items.forEach(function (it) {
+      var r = results[it.id];
+      var obj = (it.objective || "General");
+      if (!byObj[obj]) byObj[obj] = { correct: 0, total: 0 };
+      byObj[obj].total += 1;
+      if (r && r.correct) { correct += 1; byObj[obj].correct += 1; }
+    });
+    var pct = total ? Math.round((correct / total) * 100) : 0;
+    var stars = pct >= content.settings.masteryPercent ? 3 : pct >= Math.round(content.settings.masteryPercent * 0.66) ? 2 : pct > 0 ? 1 : 0;
+    $("endMessage").textContent = content.endMessage;
+    $("endSummary").textContent = "You earned " + points + " points and got " + correct + " of " + total + " correct (" + pct + "%).";
+    var starWrap = $("stars");
+    starWrap.innerHTML = "";
+    for (var i = 0; i < 3; i++) {
+      var s = document.createElement("span");
+      s.innerHTML = STAR;
+      if (i < stars) s.querySelector("svg").classList.add("on");
+      starWrap.appendChild(s);
+    }
+    starWrap.setAttribute("aria-label", stars + " of 3 stars");
+    var list = $("objResults");
+    var strong = [];
+    var weak = [];
+    Object.keys(byObj).forEach(function (obj) {
+      var row = byObj[obj];
+      var line = obj + " (" + row.correct + " of " + row.total + ")";
+      if (row.correct === row.total) strong.push(line);
+      else weak.push(line);
+    });
+    var html = "";
+    if (strong.length) html += "<h2>Looking strong</h2><ul>" + strong.map(function (x) { return "<li>" + escapeHtml(x) + "</li>"; }).join("") + "</ul>";
+    if (weak.length) html += "<h2>Practice more</h2><ul>" + weak.map(function (x) { return "<li>" + escapeHtml(x) + "</li>"; }).join("") + "</ul>";
+    if (!strong.length && !weak.length) html = "";
+    list.innerHTML = html;
+    $("end").hidden = false;
+    $("againBtn").focus();
+  }
+
+  function announce(msg) {
+    var a = $("announcer");
+    a.textContent = "";
+    setTimeout(function () { a.textContent = msg; }, 30);
+  }
+
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function cssEscape(s) { return (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/"/g, '\\"'); }
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
+  function escapeAttr(s) { return escapeHtml(s).replace(/`/g, "&#96;"); }
+
+  function stopAudio() {
+    audio.pause();
+    if (playingBtn) playingBtn.classList.remove("playing");
+    playingBtn = null;
+  }
+  function playAudio(src, btn) {
+    if (!src) return;
+    if (playingBtn === btn && !audio.paused) { stopAudio(); return; }
+    stopAudio();
+    audio.src = resolveMedia(src);
+    audio.play().catch(function () {});
+    playingBtn = btn;
+    if (btn) btn.classList.add("playing");
+  }
+  audio.addEventListener("ended", stopAudio);
+
+  $("startBtn").addEventListener("click", function () {
+    stopAudio();
+    if (allLessonsComplete()) {
+      showEnd();
+      return;
+    }
+    var lesson = nextPlayableLesson() || 1;
+    startLesson(lesson);
+  });
+  $("startListen").addEventListener("click", function () { playAudio(content.directionsAudio, $("startListen")); });
+  $("promptListen").addEventListener("click", function () {
+    var item = currentItem();
+    if (item) playAudio(item.promptAudio, $("promptListen"));
+  });
+  $("menuBtn").addEventListener("click", function () {
+    stopAudio();
+    if (progress && run) {
+      progress.points = run.points;
+      progress.results = Object.assign({}, progress.results, run.results);
+      saveProgress();
+    }
+    showStart();
+  });
+  $("prevBtn").addEventListener("click", function () {
+    if (!run || run.index <= 0) return;
+    stopAudio();
+    run.index -= 1;
+    loadItem();
+  });
+  $("checkBtn").addEventListener("click", checkAnswer);
+  $("nextBtn").addEventListener("click", function () {
+    var st = run && run.itemState;
+    // Allow browsing forward to unanswered questions, or finish after the last resolved one.
+    if (run.index >= run.order.length - 1) {
+      if (st && st.resolved) finishLesson();
+      return;
+    }
+    stopAudio();
+    run.index += 1;
+    loadItem();
+  });
+  $("againBtn").addEventListener("click", function () {
+    clearProgress();
+    resetRun(null);
+    showStart();
+  });
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.2.11/iframeResizer.contentWindow.min.js"></script>
+</body>
+</html>
