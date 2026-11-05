@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Review Quest</title>
+<title>Unit review</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -303,9 +303,6 @@
   <div id="error" class="screen error" hidden></div>
 
   <section id="start" class="screen center-card start-card frosted" hidden>
-    <div class="hero-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 14.2 8l4.8.4-3.7 3.2 1.1 4.7L12 14.2 7.6 16.3l1.1-4.7L5 8.4 9.8 8z"/><path d="M7 20h10"/></svg>
-    </div>
     <div class="start-meta" id="startMeta" hidden></div>
     <h1 id="startTitle"></h1>
     <p id="startDirections" class="directions"></p>
@@ -323,7 +320,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
         Listen
       </button>
-      <button id="startBtn" class="btn" type="button">Begin the quest</button>
+      <button id="startBtn" class="btn" type="button">Begin</button>
     </div>
   </section>
 
@@ -358,9 +355,6 @@
   </section>
 
   <section id="end" class="screen center-card frosted" hidden>
-    <div class="hero-icon good" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg>
-    </div>
     <h1 id="endMessage"></h1>
     <div class="stars" id="stars" aria-hidden="true"></div>
     <p id="endSummary" class="directions"></p>
@@ -380,7 +374,7 @@
     correct: "Nice work.",
     tryAgain: "Not quite. Try again.",
     outOfTries: "Here's a tip. Review the lesson, then continue.",
-    endMessage: "You finished this Review Quest."
+    endMessage: "You finished this review."
   };
 
   var params = new URLSearchParams(location.search);
@@ -511,7 +505,7 @@
     var settings = c.settings || {};
     var items = (c.items || []).filter(Boolean).map(normalizeItem).filter(Boolean);
     return {
-      title: c.title || "Review Quest",
+      title: c.title || "Unit review",
       slug: c.slug || "",
       grade: c.grade || "",
       unit: String(c.unit || ""),
@@ -601,7 +595,7 @@
 
   function begin(screen) {
     stopAudio();
-    document.title = content.title || "Review Quest";
+    document.title = content.title || "Unit review";
     loadProgress();
     resetRun(null);
     if (screen === "activity") {
@@ -783,7 +777,7 @@
     if (!lessons.length) {
       roadBlock.hidden = true;
       if (help) help.hidden = true;
-      $("startBtn").textContent = "Begin the quest";
+      $("startBtn").textContent = "Begin";
       return;
     }
     $("roadHeading").textContent = content.unit
@@ -858,10 +852,10 @@
           ? ("Lesson " + nextLesson + " is open. Tap a bright stop or continue.")
           : "Start at Lesson 1.";
         help.hidden = false;
-        $("startBtn").textContent = nextLesson === 1 ? "Begin the quest" : ("Continue to Lesson " + nextLesson);
+        $("startBtn").textContent = nextLesson === 1 ? "Begin" : ("Continue to Lesson " + nextLesson);
       } else {
         help.hidden = true;
-        $("startBtn").textContent = "Begin the quest";
+        $("startBtn").textContent = "Begin";
       }
     }
     roadBlock.hidden = false;
@@ -914,7 +908,7 @@
 
   function showActivity() {
     if (!run || !run.order.length) {
-      showError("This Review Quest has no playable questions yet.");
+      showError("This review has no playable questions yet.");
       return;
     }
     hideAll();

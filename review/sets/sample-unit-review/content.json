@@ -2,7 +2,7 @@
   "version": 1,
   "type": "review-quest",
   "slug": "sample-unit-review",
-  "title": "Unit 1 Review Quest",
+  "title": "Unit 1 Review",
   "grade": "9-12",
   "unit": "1",
   "subject": "Career Planning",
@@ -173,5 +173,5 @@
     "tryAgain": "Not quite. Try again.",
     "outOfTries": "Here's a tip. Review the lesson, then continue."
   },
-  "endMessage": "You finished this Review Quest."
+  "endMessage": "You finished this review."
 }
