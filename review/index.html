@@ -153,8 +153,8 @@
     box-shadow: 0 0 0 4px var(--lilac-bush-100), 0 2px 8px rgba(77, 26, 114, 0.18);
   }
   .road-stop-label {
-    font-size: .75rem; font-weight: 700; color: var(--ink-strong); line-height: 1.2;
-    max-width: 92px; background: rgba(255,255,255,0.88); border-radius: 8px; padding: 2px 6px;
+    font-size: .72rem; font-weight: 700; color: var(--ink-strong); line-height: 1.2;
+    max-width: 110px; background: rgba(255,255,255,0.88); border-radius: 8px; padding: 2px 6px;
   }
   .road-help {
     margin: 10px 0 0; font-size: .9rem; color: var(--ink-soft); font-weight: 600; text-align: left;
@@ -169,8 +169,6 @@
   .q-lesson {
     margin: 0; font-family: var(--font-primary); font-weight: 600; font-size: .95rem; color: var(--lilac-bush-700);
   }
-  .q-points { margin: 0; font-weight: 700; font-size: .9rem; color: var(--ink-soft); }
-  .q-points span { color: var(--lilac-bush-700); }
   .q-number {
     margin: 0; font-family: var(--font-primary); font-weight: 600;
     font-size: 1.35rem; color: var(--ink-strong); line-height: 1.2;
@@ -284,13 +282,11 @@
   .feedback-box.good { background: var(--good-bg); color: var(--good-ink); border: 1px solid var(--highland-200); }
   .feedback-box.bad { background: var(--bad-bg); color: var(--bad-ink); border: 1px solid var(--cinnabar-50); }
   .feedback-box a { color: inherit; font-weight: 700; }
-  .stars { display: flex; justify-content: center; gap: 8px; margin: 12px 0 18px; }
-  .stars svg { width: 36px; height: 36px; color: var(--pearl-brush-200); }
-  .stars svg.on { color: var(--lilac-bush-600); }
-  .obj-list { text-align: left; max-width: 420px; margin: 0 auto 20px; }
-  .obj-list h2 { font-family: var(--font-primary); font-size: 1rem; margin: 16px 0 8px; }
+  .obj-list { text-align: left; max-width: 420px; margin: 12px auto 20px; }
+  .obj-list h2 { font-family: var(--font-primary); font-size: 1rem; margin: 16px 0 8px; color: var(--ink-strong); }
   .obj-list ul { margin: 0; padding-left: 1.2em; }
-  .obj-list li { margin-bottom: 4px; }
+  .obj-list li { margin-bottom: 6px; }
+  .obj-list a { color: var(--lilac-bush-700); font-weight: 700; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .error { background: var(--bad-bg); color: var(--bad-ink); border-radius: 16px; padding: 20px; font-weight: 700; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
@@ -332,7 +328,6 @@
     <div class="q-head">
       <div class="q-head-top">
         <p class="q-lesson" id="lessonLabel">Lesson 1</p>
-        <p class="q-points">Points <span id="pointsVal">0</span></p>
       </div>
       <h2 class="q-number" id="progressLabel">Question 1 of 1</h2>
       <div class="q-steps" id="questionSteps" aria-hidden="true"></div>
@@ -356,10 +351,9 @@
 
   <section id="end" class="screen center-card frosted" hidden>
     <h1 id="endMessage"></h1>
-    <div class="stars" id="stars" aria-hidden="true"></div>
     <p id="endSummary" class="directions"></p>
     <div class="obj-list" id="objResults"></div>
-    <div class="row"><button id="againBtn" class="btn" type="button">Play again</button></div>
+    <div class="row"><button id="againBtn" class="btn" type="button">Start over</button></div>
   </section>
   <div id="announcer" class="sr-only" aria-live="assertive"></div>
 </div>
@@ -369,7 +363,6 @@
   "use strict";
 
   var SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
-  var STAR = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg>';
   var DEFAULTS = {
     correct: "Nice work.",
     tryAgain: "Not quite. Try again.",
@@ -420,6 +413,12 @@
 
   function lessonCount() {
     return Math.max(1, (content.overview && content.overview.lessonsInUnit) || 1);
+  }
+
+  function lessonTitleFor(index) {
+    var lessons = (content.overview && content.overview.lessons) || [];
+    var lesson = lessons[Number(index) - 1];
+    return (lesson && lesson.title) || ("Lesson " + index);
   }
 
   function itemsForLesson(lessonIndex) {
@@ -492,8 +491,12 @@
   function normalizeOverview(c) {
     var o = c.overview || {};
     var lessonsInUnit = clampInt(o.lessonsInUnit, 1, 20, 4);
+    var src = Array.isArray(o.lessons) ? o.lessons : [];
     var lessons = [];
-    for (var i = 0; i < lessonsInUnit; i++) lessons.push({ title: "Lesson " + (i + 1) });
+    for (var i = 0; i < lessonsInUnit; i++) {
+      var title = (src[i] && src[i].title) ? String(src[i].title).trim() : "";
+      lessons.push({ title: title || ("Lesson " + (i + 1)) });
+    }
     return {
       lessonsInUnit: lessonsInUnit,
       lessons: lessons
@@ -547,7 +550,9 @@
       promptImage: it.promptImage || "",
       promptImageAlt: it.promptImageAlt || "",
       promptAudio: it.promptAudio || "",
-      explanation: (it.explanation || "").trim(),
+      correctFeedback: (it.correctFeedback || "").trim(),
+      incorrectFeedback: (it.incorrectFeedback || it.explanation || "").trim(),
+      explanation: (it.incorrectFeedback || it.explanation || "").trim(),
       lessonUrl: (it.lessonUrl || "").trim(),
       lessonLabel: (it.lessonLabel || "").trim() || "Review this lesson"
     };
@@ -849,10 +854,10 @@
         $("startBtn").textContent = "See results";
       } else if (nextLesson) {
         help.textContent = isLessonComplete(1) || nextLesson > 1
-          ? ("Lesson " + nextLesson + " is open. Tap a bright stop or continue.")
-          : "Start at Lesson 1.";
+          ? (lessonTitleFor(nextLesson) + " is open. Tap a bright stop or continue.")
+          : ("Start at " + lessonTitleFor(1) + ".");
         help.hidden = false;
-        $("startBtn").textContent = nextLesson === 1 ? "Begin" : ("Continue to Lesson " + nextLesson);
+        $("startBtn").textContent = nextLesson === 1 ? "Begin" : ("Continue to " + lessonTitleFor(nextLesson));
       } else {
         help.hidden = true;
         $("startBtn").textContent = "Begin";
@@ -921,12 +926,11 @@
     var n = run.order.length;
     var i = Math.min(run.index + 1, n);
     if ($("lessonLabel")) {
-      $("lessonLabel").textContent = run.lessonIndex ? ("Lesson " + run.lessonIndex) : "Review";
+      $("lessonLabel").textContent = run.lessonIndex ? lessonTitleFor(run.lessonIndex) : "Review";
     }
     $("progressLabel").textContent = n === 1 ? "Question 1" : ("Question " + i + " of " + n);
     var filled = run.index + ((run.itemState && run.itemState.resolved) ? 1 : 0);
     $("progressFill").style.width = Math.round((filled / Math.max(n, 1)) * 100) + "%";
-    $("pointsVal").textContent = String(run.points);
     $("prevBtn").disabled = run.index <= 0;
     renderQuestionSteps(i, n);
   }
@@ -1567,8 +1571,6 @@
     st.resolved = true;
     run.results[item.id] = { correct: !!correct, objective: item.objective || "General" };
     if (correct) {
-      run.points += content.settings.pointsPerCorrect;
-      $("pointsVal").textContent = String(run.points);
       $("status").className = "status good";
       $("status").textContent = content.feedback.correct;
       showItemFeedback(item, true);
@@ -1604,12 +1606,17 @@
     updateHud();
   }
 
+  function itemFeedbackText(item, correct) {
+    if (correct) return item.correctFeedback || content.feedback.correct;
+    return item.incorrectFeedback || item.explanation || content.feedback.outOfTries;
+  }
+
   function showItemFeedback(item, correct) {
     var box = $("itemFeedback");
     box.hidden = false;
     box.className = "feedback-box " + (correct ? "good" : "bad");
-    var html = "<div>" + escapeHtml(item.explanation || (correct ? content.feedback.correct : content.feedback.outOfTries)) + "</div>";
-    if (item.lessonUrl) {
+    var html = "<div>" + escapeHtml(itemFeedbackText(item, correct)) + "</div>";
+    if (!correct && item.lessonUrl) {
       html += '<div style="margin-top:8px"><a href="' + escapeAttr(item.lessonUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.lessonLabel) + "</a></div>";
     }
     box.innerHTML = html;
@@ -1619,43 +1626,41 @@
     hideAll();
     document.body.classList.add("centered");
     var results = Object.assign({}, progress && progress.results || {}, run && run.results || {});
-    var points = (run && run.points != null) ? run.points : (progress && progress.points) || 0;
-    var total = content.items.length;
-    var correct = 0;
-    var byObj = {};
+    var byLesson = {};
     content.items.forEach(function (it) {
+      var li = Number(it.lessonIndex || 1);
+      if (!byLesson[li]) byLesson[li] = { missed: false, link: "", linkLabel: "" };
       var r = results[it.id];
-      var obj = (it.objective || "General");
-      if (!byObj[obj]) byObj[obj] = { correct: 0, total: 0 };
-      byObj[obj].total += 1;
-      if (r && r.correct) { correct += 1; byObj[obj].correct += 1; }
+      if (!(r && r.correct)) byLesson[li].missed = true;
+      if (!byLesson[li].link && it.lessonUrl) {
+        byLesson[li].link = it.lessonUrl;
+        byLesson[li].linkLabel = it.lessonLabel || "Open this lesson";
+      }
     });
-    var pct = total ? Math.round((correct / total) * 100) : 0;
-    var stars = pct >= content.settings.masteryPercent ? 3 : pct >= Math.round(content.settings.masteryPercent * 0.66) ? 2 : pct > 0 ? 1 : 0;
-    $("endMessage").textContent = content.endMessage;
-    $("endSummary").textContent = "You earned " + points + " points and got " + correct + " of " + total + " correct (" + pct + "%).";
-    var starWrap = $("stars");
-    starWrap.innerHTML = "";
-    for (var i = 0; i < 3; i++) {
-      var s = document.createElement("span");
-      s.innerHTML = STAR;
-      if (i < stars) s.querySelector("svg").classList.add("on");
-      starWrap.appendChild(s);
-    }
-    starWrap.setAttribute("aria-label", stars + " of 3 stars");
+    var revisit = Object.keys(byLesson).map(Number).sort(function (a, b) { return a - b; }).filter(function (li) {
+      return byLesson[li].missed;
+    });
+
+    $("endMessage").textContent = content.endMessage || "You finished this review.";
+    $("endSummary").textContent = revisit.length
+      ? "If anything felt shaky, these lessons are good ones to open again."
+      : "You made it through every lesson. Nice work.";
+
     var list = $("objResults");
-    var strong = [];
-    var weak = [];
-    Object.keys(byObj).forEach(function (obj) {
-      var row = byObj[obj];
-      var line = obj + " (" + row.correct + " of " + row.total + ")";
-      if (row.correct === row.total) strong.push(line);
-      else weak.push(line);
-    });
     var html = "";
-    if (strong.length) html += "<h2>Looking strong</h2><ul>" + strong.map(function (x) { return "<li>" + escapeHtml(x) + "</li>"; }).join("") + "</ul>";
-    if (weak.length) html += "<h2>Practice more</h2><ul>" + weak.map(function (x) { return "<li>" + escapeHtml(x) + "</li>"; }).join("") + "</ul>";
-    if (!strong.length && !weak.length) html = "";
+    if (revisit.length) {
+      html += "<h2>Lessons to look at again</h2><ul>";
+      revisit.forEach(function (li) {
+        var title = lessonTitleFor(li);
+        var row = byLesson[li];
+        if (row.link) {
+          html += "<li><a href=\"" + escapeAttr(row.link) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + escapeHtml(title) + "</a></li>";
+        } else {
+          html += "<li>" + escapeHtml(title) + "</li>";
+        }
+      });
+      html += "</ul>";
+    }
     list.innerHTML = html;
     $("end").hidden = false;
     $("againBtn").focus();

@@ -45,7 +45,7 @@
   .btn.link { border: 0; background: none; color: var(--brand-ink); padding: 4px 6px; }
   .btn.link:hover { text-decoration: underline; background: none; }
   .btn.confirming { background: var(--bad-line); border-color: var(--bad-line); color: #fff; }
-  .layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 16px; max-width: 920px; margin: 0 auto; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 16px; max-width: 1100px; margin: 0 auto; }
   .layout.preview-open { max-width: 1500px; }
   @media (min-width: 1100px) {
     .layout.preview-open { grid-template-columns: minmax(420px, 560px) minmax(0, 1fr); align-items: start; }
@@ -112,20 +112,111 @@
   }
   .coach .btn.generate { width: 100%; justify-content: center; padding: 12px 16px; margin-top: 4px; }
   .coach-skip { margin-top: 10px; }
-  #items { display: grid; gap: 16px; margin-bottom: 4px; }
-  .lesson-section {
-    border: 1px solid var(--line-soft); border-radius: 18px; padding: 14px;
-    background: var(--pearl-brush-50);
+  .write-split {
+    display: grid; grid-template-columns: 220px minmax(0, 1fr);
+    gap: 14px; align-items: start; margin-bottom: 4px;
   }
-  .lesson-section-head {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    margin-bottom: 12px; flex-wrap: wrap;
+  .write-split.outline-collapsed {
+    grid-template-columns: 48px minmax(0, 1fr);
   }
-  .lesson-section-head h3 {
+  @media (max-width: 719px) {
+    .write-split,
+    .write-split.outline-collapsed {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .plan-outline {
+    border: 1px solid var(--line-soft); border-radius: 16px; padding: 0;
+    background: #fff; position: sticky; top: 72px; overflow: hidden; min-width: 0;
+  }
+  .plan-outline > summary {
+    list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px;
+    padding: 12px; flex-wrap: wrap;
+  }
+  .plan-outline > summary::-webkit-details-marker { display: none; }
+  .plan-outline > summary .plan-chevron {
+    flex: none; width: 18px; height: 18px; color: var(--ink-soft);
+    transition: transform .15s ease;
+    transform: rotate(-90deg);
+  }
+  .plan-outline[open] > summary .plan-chevron { transform: rotate(180deg); }
+  .plan-outline > summary h3 {
     margin: 0; font-family: var(--font-primary); font-weight: 600;
-    font-size: 1rem; color: var(--ink-strong);
+    font-size: .95rem; color: var(--ink-strong); flex: 1; min-width: 0;
   }
-  .lesson-section-head .muted { margin: 0; }
+  .plan-outline > summary .plan-total {
+    margin: 0; color: var(--ink-soft); font-size: .8rem; font-weight: 600;
+  }
+  .plan-outline:not([open]) > summary {
+    flex-direction: column; align-items: center; justify-content: flex-start;
+    gap: 12px; padding: 12px 6px; min-height: 140px; flex-wrap: nowrap;
+  }
+  .plan-outline:not([open]) > summary .plan-chevron { transform: rotate(-90deg); }
+  .plan-outline:not([open]) > summary h3 {
+    flex: none; writing-mode: vertical-rl; transform: rotate(180deg);
+    font-size: .85rem; letter-spacing: 0.02em;
+  }
+  .plan-outline:not([open]) > summary .plan-total { display: none; }
+  .plan-outline-body { padding: 0 12px 12px; }
+  .plan-outline-body > .plan-total {
+    margin: 0 0 10px; color: var(--ink-soft); font-size: .85rem; font-weight: 600;
+  }
+  .plan-outline ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .plan-outline .plan-lesson > button {
+    width: 100%; text-align: left; border: 0; background: transparent; padding: 0;
+    cursor: pointer; color: inherit; font: inherit;
+  }
+  .plan-outline .plan-lesson-title {
+    display: flex; justify-content: space-between; gap: 8px; align-items: baseline;
+    font-family: var(--font-primary); font-weight: 600; font-size: .88rem; color: var(--ink-strong);
+  }
+  .plan-outline .plan-lesson-title span { color: var(--ink-soft); font-weight: 600; font-size: .8rem; }
+  .plan-outline .plan-lesson.active .plan-lesson-title { color: var(--brand-ink); }
+  .plan-outline .plan-qs {
+    list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px;
+  }
+  .plan-outline .plan-qs button {
+    width: 100%; text-align: left; border: 0; background: transparent; padding: 3px 0;
+    cursor: pointer; color: var(--ink-soft); font-size: .8rem; font-weight: 600;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .plan-outline .plan-qs button:hover,
+  .plan-outline .plan-qs button.active { color: var(--brand-ink); }
+  .plan-outline .plan-dot {
+    flex: none; width: 8px; height: 8px; border-radius: 9999px; margin-top: 5px;
+    background: var(--brand);
+  }
+  .plan-outline .plan-q-label {
+    flex: 1; min-width: 0; line-height: 1.3;
+  }
+  .plan-outline .plan-empty { color: var(--ink-soft); font-size: .8rem; margin: 4px 0 0 8px; }
+  #items { display: grid; gap: 12px; min-width: 0; }
+  .lesson-section {
+    border: 1px solid var(--line-soft); border-radius: 18px; padding: 0;
+    background: var(--pearl-brush-50); overflow: hidden;
+  }
+  .lesson-section > summary {
+    list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; flex-wrap: wrap;
+  }
+  .lesson-section > summary::-webkit-details-marker { display: none; }
+  .lesson-section > summary .lesson-chevron {
+    flex: none; width: 22px; height: 22px; color: var(--ink-soft);
+    transition: transform .15s ease;
+  }
+  .lesson-section[open] > summary .lesson-chevron { transform: rotate(180deg); }
+  .lesson-section > summary .lesson-title-wrap { flex: 1; min-width: 140px; }
+  .lesson-section > summary .lesson-title-input {
+    width: 100%; border: 1px solid transparent; background: transparent;
+    font-family: var(--font-primary); font-weight: 600; font-size: 1rem;
+    color: var(--ink-strong); padding: 4px 8px; border-radius: 10px;
+  }
+  .lesson-section > summary .lesson-title-input:hover,
+  .lesson-section > summary .lesson-title-input:focus {
+    border-color: var(--line); background: #fff;
+  }
+  .lesson-section > summary .muted { margin: 0; white-space: nowrap; }
+  .lesson-section-body { padding: 0 14px 14px; }
   .lesson-items {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -208,6 +299,7 @@
   .field > span { display: block; font-weight: 600; color: var(--neutral-700); margin-bottom: 4px; font-size: .9rem; }
   .field > span em { font-weight: 600; color: var(--ink-soft); font-style: normal; }
   input[type=text], input[type=number], textarea, select { width: 100%; border: 1px solid var(--neutral-400); border-radius: 16px; padding: 10px 14px; background: #fff; color: var(--neutral-700); }
+  ::placeholder { color: var(--neutral-400); }
   input:focus, textarea:focus, select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--lilac-bush-100); outline: none; }
   input.invalid, select.invalid, textarea.invalid { border-color: var(--bad-line); background: #FEF1EF; }
   textarea { resize: vertical; min-height: 60px; }
@@ -219,7 +311,7 @@
     border: 1px solid var(--line-soft); border-radius: 18px; padding: 14px; margin: 0;
     background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.04); border-left: 5px solid var(--brand);
   }
-  .entry[data-type=select_all] { border-left-color: #0CA3A1; }
+  .entry[data-type=select_all] { border-left-color: #E67E22; }
   .entry[data-type=match] { border-left-color: #008FA9; }
   .entry[data-type=sort] { border-left-color: #AB7E64; }
   .entry-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
@@ -257,15 +349,35 @@
     background: var(--brand-soft); color: var(--brand-ink); border-radius: 12px; padding: 8px 12px;
     font-size: .85rem; margin: 0 0 12px; font-weight: 600;
   }
-  .icon { width: 32px; height: 32px; border-radius: 9999px; border: 1px solid var(--line); background: #fff; color: var(--neutral-700); display: grid; place-items: center; padding: 0; }
+  .icon { width: 32px; height: 32px; border-radius: 9999px; border: 1px solid var(--line); background: #fff; color: var(--neutral-700); display: grid; place-items: center; padding: 0; flex: none; }
   .icon svg { width: 16px; height: 16px; }
   .icon:hover { background: var(--pearl-brush-100); }
+  .icon:disabled { opacity: .45; cursor: not-allowed; }
   .icon.danger:hover { color: var(--bad); border-color: var(--bad-line); }
   .sub { border: 1px solid var(--line-soft); border-radius: 14px; padding: 12px; margin-top: 8px; background: var(--pearl-brush-50); }
   .sub-title { font-weight: 700; margin: 0 0 8px; color: var(--ink-strong); font-size: .9rem; }
   .sub-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
   .sub-row input[type=text] { flex: 1; min-width: 0; }
   .sub-row .correct-toggle { flex: none; display: flex; align-items: center; gap: 4px; font-size: .85rem; font-weight: 700; white-space: nowrap; }
+  .sort-setup { display: grid; gap: 14px; }
+  .sort-section-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;
+  }
+  .sort-section-head .sub-title { margin: 0; }
+  .sort-section-head .count { font-weight: 600; color: var(--ink-soft); font-size: .85rem; }
+  .sort-help { margin: 0 0 10px; color: var(--ink-soft); font-size: .85rem; }
+  .sort-entry {
+    border: 1px solid var(--line-soft); border-radius: 16px; padding: 10px; margin-bottom: 10px; background: #fff;
+  }
+  .sort-entry .entry-head { display: flex; align-items: center; gap: 8px; margin-bottom: 0; flex-wrap: wrap; }
+  .sort-entry .entry-num {
+    flex: none; width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center;
+    font-weight: 800; font-size: .85rem; color: #fff; background: var(--brand);
+  }
+  .sort-entry .entry-head input[type=text] { flex: 1; min-width: 120px; }
+  .sort-entry .entry-head select { width: auto; min-width: 132px; max-width: 170px; flex: none; }
+  .sort-entry .entry-tools { display: flex; gap: 4px; flex: none; margin-left: 0; }
+  .sort-add-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .settings-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
   .meta-grid { margin-bottom: 8px; }
   .muted { color: var(--ink-soft); font-size: .85rem; }
@@ -289,9 +401,13 @@
   .result strong { font-family: var(--font-primary); font-weight: 600; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .type-badge { display: inline-block; font-size: .75rem; font-weight: 700; background: var(--brand-soft); color: var(--brand-ink); border-radius: 9999px; padding: 4px 10px; }
+  .type-badge[data-type=mc] { background: var(--lilac-bush-50); color: var(--lilac-bush-700); }
+  .type-badge[data-type=select_all] { background: #FEF3E8; color: #C45F10; }
+  .type-badge[data-type=match] { background: #E7F6F9; color: #004D67; }
+  .type-badge[data-type=sort] { background: var(--pearl-brush-100); color: var(--pearl-brush-700); }
 </style>
 </head>
-<body>
+<body spellcheck="true">
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">Unit Review Studio <small id="saveState">Draft saved in this browser</small></div>
@@ -363,10 +479,10 @@
           <select id="subject" aria-label="Course">
             <option value="Applied Mathematics">Applied Mathematics</option>
             <option value="Business Innovation &amp; Startups">Business Innovation &amp; Startups</option>
-            <option value="Career Planning">Career Planning</option>
+            <option value="Career Planning" selected>Career Planning</option>
             <option value="Child Development (Sem. A)">Child Development (Sem. A)</option>
             <option value="Criminology &amp; Forensics">Criminology &amp; Forensics</option>
-            <option value="Entrepreneurship" selected>Entrepreneurship</option>
+            <option value="Entrepreneurship">Entrepreneurship</option>
             <option value="Financial Math">Financial Math</option>
             <option value="Gaming &amp; eSports">Gaming &amp; eSports</option>
             <option value="Gaming Unlocked">Gaming Unlocked</option>
@@ -379,19 +495,19 @@
           <input type="number" id="lessonsInUnit" min="1" max="20" value="4">
         </label>
       </div>
-      <p class="muted" style="margin:0 0 12px">The start road will show Lesson 1 through Lesson N for this unit.</p>
       <details class="settings">
-        <summary>Scoring options</summary>
+        <summary>Tries per question</summary>
         <div class="settings-grid">
-          <label class="field"><span>Tries per question</span><input type="number" id="tries" min="1" max="5" value="3"></label>
-          <label class="field"><span>Points per correct</span><input type="number" id="points" min="10" max="1000" step="10" value="100"></label>
-          <label class="field"><span>Mastery percent for 3 stars</span><input type="number" id="mastery" min="50" max="100" value="80"></label>
+          <label class="field"><span>Tries before a tip</span><input type="number" id="tries" min="1" max="5" value="3"></label>
         </div>
       </details>
 
       <h2 style="margin-top:20px">Write questions</h2>
-      <p class="help" id="questionsHelp">Each lesson gets its own section. Add at least one question per lesson.</p>
-      <div id="items"></div>
+      <p class="help" id="questionsHelp">Use the outline to jump around. Open a lesson to add or edit its questions.</p>
+      <div class="write-split">
+        <details class="plan-outline" id="planOutline" aria-label="Question outline"></details>
+        <div id="items"></div>
+      </div>
       <div class="step-nav">
         <span></span>
         <button class="btn primary" type="button" data-goto="2">Name and publish</button>
@@ -402,7 +518,7 @@
       <h2>Name and publish</h2>
       <p class="help">Give it a student-facing title, then Publish.</p>
       <label class="field"><span>Title students see</span><input type="text" id="title" maxlength="80" placeholder="Unit 1 Review"></label>
-      <label class="field"><span>Directions for students</span><textarea id="directions" maxlength="300" placeholder="Answer each challenge to earn points."></textarea></label>
+      <label class="field"><span>Directions for students</span><textarea id="directions" maxlength="300" placeholder="Answer each question as you move along the road." spellcheck="true"></textarea></label>
       <details class="settings">
         <summary>Edit feedback messages</summary>
         <label class="field"><span>When the answer is correct</span><input type="text" id="fbCorrect" maxlength="120"></label>
@@ -599,8 +715,8 @@
     box-shadow: 0 0 0 4px var(--lilac-bush-100), 0 2px 8px rgba(77, 26, 114, 0.18);
   }
   .road-stop-label {
-    font-size: .75rem; font-weight: 700; color: var(--ink-strong); line-height: 1.2;
-    max-width: 92px; background: rgba(255,255,255,0.88); border-radius: 8px; padding: 2px 6px;
+    font-size: .72rem; font-weight: 700; color: var(--ink-strong); line-height: 1.2;
+    max-width: 110px; background: rgba(255,255,255,0.88); border-radius: 8px; padding: 2px 6px;
   }
   .road-help {
     margin: 10px 0 0; font-size: .9rem; color: var(--ink-soft); font-weight: 600; text-align: left;
@@ -615,8 +731,6 @@
   .q-lesson {
     margin: 0; font-family: var(--font-primary); font-weight: 600; font-size: .95rem; color: var(--lilac-bush-700);
   }
-  .q-points { margin: 0; font-weight: 700; font-size: .9rem; color: var(--ink-soft); }
-  .q-points span { color: var(--lilac-bush-700); }
   .q-number {
     margin: 0; font-family: var(--font-primary); font-weight: 600;
     font-size: 1.35rem; color: var(--ink-strong); line-height: 1.2;
@@ -730,13 +844,11 @@
   .feedback-box.good { background: var(--good-bg); color: var(--good-ink); border: 1px solid var(--highland-200); }
   .feedback-box.bad { background: var(--bad-bg); color: var(--bad-ink); border: 1px solid var(--cinnabar-50); }
   .feedback-box a { color: inherit; font-weight: 700; }
-  .stars { display: flex; justify-content: center; gap: 8px; margin: 12px 0 18px; }
-  .stars svg { width: 36px; height: 36px; color: var(--pearl-brush-200); }
-  .stars svg.on { color: var(--lilac-bush-600); }
-  .obj-list { text-align: left; max-width: 420px; margin: 0 auto 20px; }
-  .obj-list h2 { font-family: var(--font-primary); font-size: 1rem; margin: 16px 0 8px; }
+  .obj-list { text-align: left; max-width: 420px; margin: 12px auto 20px; }
+  .obj-list h2 { font-family: var(--font-primary); font-size: 1rem; margin: 16px 0 8px; color: var(--ink-strong); }
   .obj-list ul { margin: 0; padding-left: 1.2em; }
-  .obj-list li { margin-bottom: 4px; }
+  .obj-list li { margin-bottom: 6px; }
+  .obj-list a { color: var(--lilac-bush-700); font-weight: 700; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .error { background: var(--bad-bg); color: var(--bad-ink); border-radius: 16px; padding: 20px; font-weight: 700; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
@@ -778,7 +890,6 @@
     <div class="q-head">
       <div class="q-head-top">
         <p class="q-lesson" id="lessonLabel">Lesson 1</p>
-        <p class="q-points">Points <span id="pointsVal">0</span></p>
       </div>
       <h2 class="q-number" id="progressLabel">Question 1 of 1</h2>
       <div class="q-steps" id="questionSteps" aria-hidden="true"></div>
@@ -802,10 +913,9 @@
 
   <section id="end" class="screen center-card frosted" hidden>
     <h1 id="endMessage"></h1>
-    <div class="stars" id="stars" aria-hidden="true"></div>
     <p id="endSummary" class="directions"></p>
     <div class="obj-list" id="objResults"></div>
-    <div class="row"><button id="againBtn" class="btn" type="button">Play again</button></div>
+    <div class="row"><button id="againBtn" class="btn" type="button">Start over</button></div>
   </section>
   <div id="announcer" class="sr-only" aria-live="assertive"></div>
 </div>
@@ -815,7 +925,6 @@
   "use strict";
 
   var SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
-  var STAR = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg>';
   var DEFAULTS = {
     correct: "Nice work.",
     tryAgain: "Not quite. Try again.",
@@ -866,6 +975,12 @@
 
   function lessonCount() {
     return Math.max(1, (content.overview && content.overview.lessonsInUnit) || 1);
+  }
+
+  function lessonTitleFor(index) {
+    var lessons = (content.overview && content.overview.lessons) || [];
+    var lesson = lessons[Number(index) - 1];
+    return (lesson && lesson.title) || ("Lesson " + index);
   }
 
   function itemsForLesson(lessonIndex) {
@@ -938,8 +1053,12 @@
   function normalizeOverview(c) {
     var o = c.overview || {};
     var lessonsInUnit = clampInt(o.lessonsInUnit, 1, 20, 4);
+    var src = Array.isArray(o.lessons) ? o.lessons : [];
     var lessons = [];
-    for (var i = 0; i < lessonsInUnit; i++) lessons.push({ title: "Lesson " + (i + 1) });
+    for (var i = 0; i < lessonsInUnit; i++) {
+      var title = (src[i] && src[i].title) ? String(src[i].title).trim() : "";
+      lessons.push({ title: title || ("Lesson " + (i + 1)) });
+    }
     return {
       lessonsInUnit: lessonsInUnit,
       lessons: lessons
@@ -993,7 +1112,9 @@
       promptImage: it.promptImage || "",
       promptImageAlt: it.promptImageAlt || "",
       promptAudio: it.promptAudio || "",
-      explanation: (it.explanation || "").trim(),
+      correctFeedback: (it.correctFeedback || "").trim(),
+      incorrectFeedback: (it.incorrectFeedback || it.explanation || "").trim(),
+      explanation: (it.incorrectFeedback || it.explanation || "").trim(),
       lessonUrl: (it.lessonUrl || "").trim(),
       lessonLabel: (it.lessonLabel || "").trim() || "Review this lesson"
     };
@@ -1295,10 +1416,10 @@
         $("startBtn").textContent = "See results";
       } else if (nextLesson) {
         help.textContent = isLessonComplete(1) || nextLesson > 1
-          ? ("Lesson " + nextLesson + " is open. Tap a bright stop or continue.")
-          : "Start at Lesson 1.";
+          ? (lessonTitleFor(nextLesson) + " is open. Tap a bright stop or continue.")
+          : ("Start at " + lessonTitleFor(1) + ".");
         help.hidden = false;
-        $("startBtn").textContent = nextLesson === 1 ? "Begin" : ("Continue to Lesson " + nextLesson);
+        $("startBtn").textContent = nextLesson === 1 ? "Begin" : ("Continue to " + lessonTitleFor(nextLesson));
       } else {
         help.hidden = true;
         $("startBtn").textContent = "Begin";
@@ -1367,12 +1488,11 @@
     var n = run.order.length;
     var i = Math.min(run.index + 1, n);
     if ($("lessonLabel")) {
-      $("lessonLabel").textContent = run.lessonIndex ? ("Lesson " + run.lessonIndex) : "Review";
+      $("lessonLabel").textContent = run.lessonIndex ? lessonTitleFor(run.lessonIndex) : "Review";
     }
     $("progressLabel").textContent = n === 1 ? "Question 1" : ("Question " + i + " of " + n);
     var filled = run.index + ((run.itemState && run.itemState.resolved) ? 1 : 0);
     $("progressFill").style.width = Math.round((filled / Math.max(n, 1)) * 100) + "%";
-    $("pointsVal").textContent = String(run.points);
     $("prevBtn").disabled = run.index <= 0;
     renderQuestionSteps(i, n);
   }
@@ -2013,8 +2133,6 @@
     st.resolved = true;
     run.results[item.id] = { correct: !!correct, objective: item.objective || "General" };
     if (correct) {
-      run.points += content.settings.pointsPerCorrect;
-      $("pointsVal").textContent = String(run.points);
       $("status").className = "status good";
       $("status").textContent = content.feedback.correct;
       showItemFeedback(item, true);
@@ -2050,12 +2168,17 @@
     updateHud();
   }
 
+  function itemFeedbackText(item, correct) {
+    if (correct) return item.correctFeedback || content.feedback.correct;
+    return item.incorrectFeedback || item.explanation || content.feedback.outOfTries;
+  }
+
   function showItemFeedback(item, correct) {
     var box = $("itemFeedback");
     box.hidden = false;
     box.className = "feedback-box " + (correct ? "good" : "bad");
-    var html = "<div>" + escapeHtml(item.explanation || (correct ? content.feedback.correct : content.feedback.outOfTries)) + "</div>";
-    if (item.lessonUrl) {
+    var html = "<div>" + escapeHtml(itemFeedbackText(item, correct)) + "</div>";
+    if (!correct && item.lessonUrl) {
       html += '<div style="margin-top:8px"><a href="' + escapeAttr(item.lessonUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.lessonLabel) + "</a></div>";
     }
     box.innerHTML = html;
@@ -2065,43 +2188,41 @@
     hideAll();
     document.body.classList.add("centered");
     var results = Object.assign({}, progress && progress.results || {}, run && run.results || {});
-    var points = (run && run.points != null) ? run.points : (progress && progress.points) || 0;
-    var total = content.items.length;
-    var correct = 0;
-    var byObj = {};
+    var byLesson = {};
     content.items.forEach(function (it) {
+      var li = Number(it.lessonIndex || 1);
+      if (!byLesson[li]) byLesson[li] = { missed: false, link: "", linkLabel: "" };
       var r = results[it.id];
-      var obj = (it.objective || "General");
-      if (!byObj[obj]) byObj[obj] = { correct: 0, total: 0 };
-      byObj[obj].total += 1;
-      if (r && r.correct) { correct += 1; byObj[obj].correct += 1; }
+      if (!(r && r.correct)) byLesson[li].missed = true;
+      if (!byLesson[li].link && it.lessonUrl) {
+        byLesson[li].link = it.lessonUrl;
+        byLesson[li].linkLabel = it.lessonLabel || "Open this lesson";
+      }
     });
-    var pct = total ? Math.round((correct / total) * 100) : 0;
-    var stars = pct >= content.settings.masteryPercent ? 3 : pct >= Math.round(content.settings.masteryPercent * 0.66) ? 2 : pct > 0 ? 1 : 0;
-    $("endMessage").textContent = content.endMessage;
-    $("endSummary").textContent = "You earned " + points + " points and got " + correct + " of " + total + " correct (" + pct + "%).";
-    var starWrap = $("stars");
-    starWrap.innerHTML = "";
-    for (var i = 0; i < 3; i++) {
-      var s = document.createElement("span");
-      s.innerHTML = STAR;
-      if (i < stars) s.querySelector("svg").classList.add("on");
-      starWrap.appendChild(s);
-    }
-    starWrap.setAttribute("aria-label", stars + " of 3 stars");
+    var revisit = Object.keys(byLesson).map(Number).sort(function (a, b) { return a - b; }).filter(function (li) {
+      return byLesson[li].missed;
+    });
+
+    $("endMessage").textContent = content.endMessage || "You finished this review.";
+    $("endSummary").textContent = revisit.length
+      ? "If anything felt shaky, these lessons are good ones to open again."
+      : "You made it through every lesson. Nice work.";
+
     var list = $("objResults");
-    var strong = [];
-    var weak = [];
-    Object.keys(byObj).forEach(function (obj) {
-      var row = byObj[obj];
-      var line = obj + " (" + row.correct + " of " + row.total + ")";
-      if (row.correct === row.total) strong.push(line);
-      else weak.push(line);
-    });
     var html = "";
-    if (strong.length) html += "<h2>Looking strong</h2><ul>" + strong.map(function (x) { return "<li>" + escapeHtml(x) + "</li>"; }).join("") + "</ul>";
-    if (weak.length) html += "<h2>Practice more</h2><ul>" + weak.map(function (x) { return "<li>" + escapeHtml(x) + "</li>"; }).join("") + "</ul>";
-    if (!strong.length && !weak.length) html = "";
+    if (revisit.length) {
+      html += "<h2>Lessons to look at again</h2><ul>";
+      revisit.forEach(function (li) {
+        var title = lessonTitleFor(li);
+        var row = byLesson[li];
+        if (row.link) {
+          html += "<li><a href=\"" + escapeAttr(row.link) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + escapeHtml(title) + "</a></li>";
+        } else {
+          html += "<li>" + escapeHtml(title) + "</li>";
+        }
+      });
+      html += "</ul>";
+    }
     list.innerHTML = html;
     $("end").hidden = false;
     $("againBtn").focus();
@@ -2209,6 +2330,14 @@
   function studentLink(slug) { return CONFIG.liveBase + "?set=" + slug; }
 
   var TYPE_LABELS = { mc: "Multiple choice", select_all: "Select all", match: "Match", sort: "Sort" };
+  var TYPE_COLORS = {
+    mc: "#8F5CB4",
+    select_all: "#E67E22",
+    match: "#008FA9",
+    sort: "#AB7E64"
+  };
+  var SORT_LIMITS = { minCats: 2, maxCats: 4, minCards: 2, maxCards: 24 };
+  var CAT_COLORS = ["#7E4BA3", "#00615F", "#84594A", "#004D67"];
   var DEFAULT_FB = {
     correct: "Nice work.",
     tryAgain: "Not quite. Try again.",
@@ -2230,6 +2359,8 @@
   var coachSkipped = {};
   var studioStep = 1;
   var openItemId = null;
+  var openLessons = {};
+  var outlineOpen = true;
   var previewOpen = false;
   var welcomeDismissed = false;
   var MARKS = {
@@ -2260,6 +2391,8 @@
       promptImage: "",
       promptImageAlt: "",
       promptAudio: "",
+      correctFeedback: "",
+      incorrectFeedback: "",
       explanation: "",
       lessonUrl: "",
       lessonLabel: "Review this lesson",
@@ -2273,15 +2406,68 @@
     } else if (type === "match") {
       item.pairs = [newPair(), newPair(), newPair()];
     } else {
-      var c1 = newCat(); c1.label = "";
-      var c2 = newCat(); c2.label = "";
-      item.categories = [c1, c2];
-      item.cards = [newCard(c1.id), newCard(c1.id), newCard(c2.id), newCard(c2.id)];
+      item.categories = [newCat(), newCat()];
+      item.cards = [newCard(""), newCard(""), newCard(""), newCard("")];
     }
     return item;
   }
 
-  var DEFAULT_DIRECTIONS = "Answer each challenge to earn points. If you miss one, you will see a tip and can review the lesson.";
+  function sortGroupName(cat, i) {
+    return (cat && cat.label && cat.label.trim()) ? cat.label.trim() : ("Group " + (i + 1));
+  }
+  var SORT_GROUP_EXAMPLES = ["Group A", "Group B", "Group C", "Group D"];
+  var SORT_CARD_EXAMPLES = ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5", "Card 6"];
+  var MATCH_PAIR_EXAMPLES = [
+    { left: "Term 1", right: "Meaning 1" },
+    { left: "Term 2", right: "Meaning 2" },
+    { left: "Term 3", right: "Meaning 3" },
+    { left: "Term 4", right: "Meaning 4" }
+  ];
+  var MC_CHOICE_EXAMPLES = ["Choice A", "Choice B", "Choice C", "Choice D"];
+  var TYPE_EXAMPLES = {
+    mc: {
+      objective: "Sample topic",
+      prompt: "Sample question",
+      correct: "Sample correct feedback",
+      incorrect: "Sample incorrect feedback"
+    },
+    select_all: {
+      objective: "Sample topic",
+      prompt: "Sample question",
+      correct: "Sample correct feedback",
+      incorrect: "Sample incorrect feedback"
+    },
+    match: {
+      objective: "Sample topic",
+      prompt: "Sample question",
+      correct: "Sample correct feedback",
+      incorrect: "Sample incorrect feedback"
+    },
+    sort: {
+      objective: "Sample topic",
+      prompt: "Sample question",
+      correct: "Sample correct feedback",
+      incorrect: "Sample incorrect feedback"
+    }
+  };
+  function typeExample(item) {
+    return TYPE_EXAMPLES[itemTypeKey(item)] || TYPE_EXAMPLES.mc;
+  }
+  function sortGroupPlaceholder(i) {
+    return SORT_GROUP_EXAMPLES[i] || ("Group " + (i + 1));
+  }
+  function sortCardPlaceholder(i) {
+    return SORT_CARD_EXAMPLES[i % SORT_CARD_EXAMPLES.length];
+  }
+  function matchPairPlaceholder(i, side) {
+    var ex = MATCH_PAIR_EXAMPLES[i % MATCH_PAIR_EXAMPLES.length];
+    return ex[side];
+  }
+  function mcChoicePlaceholder(i) {
+    return MC_CHOICE_EXAMPLES[i % MC_CHOICE_EXAMPLES.length];
+  }
+
+  var DEFAULT_DIRECTIONS = "Answer each question as you move along the road. If you miss one, you will see a tip and can review the lesson.";
 
   function defaultOverview() {
     return syncOverview({ lessonsInUnit: 4 });
@@ -2290,12 +2476,38 @@
   function syncOverview(overview) {
     var o = overview || {};
     var lessonsInUnit = Math.max(1, Math.min(20, parseInt(o.lessonsInUnit, 10) || 4));
+    var src = Array.isArray(o.lessons) ? o.lessons : [];
     var lessons = [];
-    for (var i = 0; i < lessonsInUnit; i++) lessons.push({ title: "Lesson " + (i + 1) });
+    for (var i = 0; i < lessonsInUnit; i++) {
+      var title = (src[i] && src[i].title) ? String(src[i].title).trim() : "";
+      lessons.push({ title: title || ("Lesson " + (i + 1)) });
+    }
     return {
       lessonsInUnit: lessonsInUnit,
       lessons: lessons
     };
+  }
+
+  function lessonTitle(lessonIndex) {
+    var lessons = (content.overview && content.overview.lessons) || [];
+    var lesson = lessons[Number(lessonIndex) - 1];
+    return (lesson && lesson.title) || ("Lesson " + lessonIndex);
+  }
+
+  function setLessonTitle(lessonIndex, title) {
+    content.overview = syncOverview(content.overview);
+    var idx = Number(lessonIndex) - 1;
+    if (!content.overview.lessons[idx]) content.overview.lessons[idx] = { title: "" };
+    content.overview.lessons[idx].title = String(title || "").trim() || ("Lesson " + lessonIndex);
+  }
+
+  function isLessonOpen(lessonIndex) {
+    if (openItemId) {
+      var openItem = content.items.filter(function (it) { return it.id === openItemId; })[0];
+      if (openItem && Number(openItem.lessonIndex) === Number(lessonIndex)) return true;
+    }
+    if (Object.prototype.hasOwnProperty.call(openLessons, lessonIndex)) return !!openLessons[lessonIndex];
+    return Number(lessonIndex) === 1;
   }
 
   function itemsForLesson(lessonIndex, list) {
@@ -2339,7 +2551,7 @@
       title: "",
       grade: "9-12",
       unit: "1",
-      subject: "Entrepreneurship",
+      subject: "Career Planning",
       directions: DEFAULT_DIRECTIONS,
       directionsAudio: "",
       overview: overview,
@@ -2366,6 +2578,8 @@
       var type = raw.type === "select_all" ? "select_all" : (raw.selectAll ? "select_all" : raw.type);
       var fallbackLesson = hadLessonIndex ? 1 : Math.min(overview.lessonsInUnit, i + 1);
       var item = Object.assign(newItem(type, raw.lessonIndex || fallbackLesson), raw);
+      if (!item.incorrectFeedback && item.explanation) item.incorrectFeedback = item.explanation;
+      if (!item.correctFeedback) item.correctFeedback = "";
       item.type = raw.type === "select_all" ? "mc" : (raw.type || "mc");
       item.selectAll = !!(raw.selectAll || raw.type === "select_all");
       item.lessonIndex = Math.max(1, parseInt(raw.lessonIndex, 10) || fallbackLesson);
@@ -2522,11 +2736,11 @@
     }
     if ($("unit")) $("unit").value = String(content.unit || "1");
     if ($("subject")) {
-      var course = content.subject || "Entrepreneurship";
+      var course = content.subject || "Career Planning";
       $("subject").value = course;
       if ($("subject").value !== course) {
-        content.subject = "Entrepreneurship";
-        $("subject").value = "Entrepreneurship";
+        content.subject = "Career Planning";
+        $("subject").value = "Career Planning";
       }
     }
     content.overview = syncOverview(content.overview);
@@ -2535,8 +2749,6 @@
     $("title").value = content.title;
     $("directions").value = content.directions || DEFAULT_DIRECTIONS;
     $("tries").value = content.settings.triesPerItem;
-    $("points").value = content.settings.pointsPerCorrect;
-    $("mastery").value = content.settings.masteryPercent;
     $("fbCorrect").value = content.feedback.correct;
     $("fbTry").value = content.feedback.tryAgain;
     $("fbOut").value = content.feedback.outOfTries;
@@ -2551,35 +2763,179 @@
     if (!wrap) return;
     wrap.innerHTML = "";
     syncLessonItems();
+    content.overview = syncOverview(content.overview);
     var lessonCount = content.overview.lessonsInUnit;
     for (var L = 1; L <= lessonCount; L++) {
       wrap.appendChild(renderLessonSection(L));
     }
+    renderPlanOutline();
+  }
+
+  function questionOutlineLabel(item, localIdx) {
+    var label = (item.objective || "").trim() || (item.prompt || "").trim() || ("Question " + (localIdx + 1));
+    if (label.length > 36) label = label.slice(0, 34) + "…";
+    return label;
+  }
+
+  function renderPlanOutline() {
+    var aside = $("planOutline");
+    if (!aside) return;
+    var split = aside.closest(".write-split");
+    if (split) split.classList.toggle("outline-collapsed", !outlineOpen);
+    aside.innerHTML = "";
+    var lessonCount = content.overview.lessonsInUnit;
+    var total = content.items.length;
+    var summary = h("summary");
+    summary.appendChild(h("span", {
+      class: "plan-chevron",
+      html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
+    }));
+    summary.appendChild(h("h3", { text: "Outline" }));
+    summary.appendChild(h("span", {
+      class: "plan-total",
+      text: total + (total === 1 ? " question" : " questions")
+    }));
+    aside.appendChild(summary);
+
+    var body = h("div", { class: "plan-outline-body" });
+    body.appendChild(h("p", {
+      class: "plan-total",
+      text: lessonCount + (lessonCount === 1 ? " lesson" : " lessons") + " in this unit"
+    }));
+    var list = h("ol");
+    for (var L = 1; L <= lessonCount; L++) {
+      (function (lessonIndex) {
+        var lessonItems = itemsForLesson(lessonIndex);
+        var li = h("li", { class: "plan-lesson" + (isLessonOpen(lessonIndex) ? " active" : "") });
+        var titleBtn = h("button", {
+          type: "button",
+          onclick: function () { focusLesson(lessonIndex); }
+        });
+        titleBtn.appendChild(h("div", { class: "plan-lesson-title" }, [
+          document.createTextNode(lessonTitle(lessonIndex)),
+          h("span", { text: String(lessonItems.length) })
+        ]));
+        li.appendChild(titleBtn);
+        if (!lessonItems.length) {
+          li.appendChild(h("p", { class: "plan-empty", text: "No questions yet" }));
+        } else {
+          var qs = h("ul", { class: "plan-qs" });
+          lessonItems.forEach(function (item, localIdx) {
+            var typeKey = itemTypeKey(item);
+            var btn = h("button", {
+              type: "button",
+              class: openItemId === item.id ? "active" : "",
+              onclick: function () { focusQuestion(item.id, lessonIndex); }
+            });
+            btn.appendChild(h("span", {
+              class: "plan-dot",
+              style: "background:" + (TYPE_COLORS[typeKey] || TYPE_COLORS.mc),
+              title: TYPE_LABELS[typeKey] || typeKey,
+              "aria-hidden": "true"
+            }));
+            btn.appendChild(h("span", {
+              class: "plan-q-label",
+              text: questionOutlineLabel(item, localIdx)
+            }));
+            qs.appendChild(h("li", {}, [btn]));
+          });
+          li.appendChild(qs);
+        }
+        list.appendChild(li);
+      })(L);
+    }
+    body.appendChild(list);
+    aside.appendChild(body);
+    aside.open = !!outlineOpen;
+    aside.ontoggle = function () {
+      outlineOpen = aside.open;
+      if (split) split.classList.toggle("outline-collapsed", !outlineOpen);
+    };
+  }
+
+  function focusLesson(lessonIndex) {
+    openLessons[lessonIndex] = true;
+    renderItemsOnly();
+    setTimeout(function () {
+      var el = document.querySelector('.lesson-section[data-lesson="' + lessonIndex + '"]');
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 40);
+  }
+
+  function focusQuestion(itemId, lessonIndex) {
+    openLessons[lessonIndex] = true;
+    openItemId = itemId;
+    renderItemsOnly();
+    setTimeout(function () {
+      var el = document.querySelector('.entry[data-id="' + itemId + '"]');
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 40);
   }
 
   function renderLessonSection(lessonIndex) {
     var lessonItems = itemsForLesson(lessonIndex);
-    var section = h("section", { class: "lesson-section", "data-lesson": String(lessonIndex) });
-    section.appendChild(h("div", { class: "lesson-section-head" }, [
-      h("h3", { text: "Lesson " + lessonIndex }),
-      h("p", { class: "muted", text: lessonItems.length + (lessonItems.length === 1 ? " question" : " questions") })
-    ]));
+    var open = isLessonOpen(lessonIndex);
+    var section = h("details", {
+      class: "lesson-section",
+      "data-lesson": String(lessonIndex),
+      open: open ? true : null
+    });
+    section.addEventListener("toggle", function () {
+      openLessons[lessonIndex] = section.open;
+      renderPlanOutline();
+    });
+
+    var titleInput = h("input", {
+      type: "text",
+      class: "lesson-title-input",
+      value: lessonTitle(lessonIndex),
+      maxlength: "40",
+      "aria-label": "Lesson " + lessonIndex + " title",
+      onclick: function (e) { e.preventDefault(); e.stopPropagation(); },
+      onmousedown: function (e) { e.stopPropagation(); }
+    });
+    titleInput.addEventListener("input", function () {
+      setLessonTitle(lessonIndex, titleInput.value);
+      changed(false);
+      renderPlanOutline();
+    });
+    titleInput.addEventListener("blur", function () {
+      setLessonTitle(lessonIndex, titleInput.value);
+      titleInput.value = lessonTitle(lessonIndex);
+      changed(false);
+      renderPlanOutline();
+    });
+
+    var summary = h("summary");
+    summary.appendChild(h("span", {
+      class: "lesson-chevron",
+      html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
+    }));
+    summary.appendChild(h("div", { class: "lesson-title-wrap" }, [titleInput]));
+    summary.appendChild(h("p", {
+      class: "muted",
+      text: lessonItems.length + (lessonItems.length === 1 ? " question" : " questions")
+    }));
+    section.appendChild(summary);
+
+    var body = h("div", { class: "lesson-section-body" });
     var grid = h("div", { class: "lesson-items" });
     lessonItems.forEach(function (item, localIdx) {
       var globalIdx = content.items.indexOf(item);
       grid.appendChild(renderItem(item, globalIdx, localIdx, lessonIndex));
     });
-    section.appendChild(grid);
-    section.appendChild(h("div", { class: "lesson-add" }, [
+    body.appendChild(grid);
+    body.appendChild(h("div", { class: "lesson-add" }, [
       h("button", {
         type: "button",
         class: "add-question-btn",
-        title: "Add a question to Lesson " + lessonIndex,
-        "aria-label": "Add a question to Lesson " + lessonIndex,
+        title: "Add a question to " + lessonTitle(lessonIndex),
+        "aria-label": "Add a question to " + lessonTitle(lessonIndex),
         html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
         onclick: function () { addQuestionToLesson(lessonIndex); }
       })
     ]));
+    section.appendChild(body);
     return section;
   }
 
@@ -2587,6 +2943,7 @@
     var item = newItem("mc", lessonIndex);
     content.items.push(item);
     openItemId = item.id;
+    openLessons[lessonIndex] = true;
     studioStep = 1;
     changed(true);
     showStep(1);
@@ -2636,7 +2993,7 @@
       item.objective = v;
       generateArmed[item.id] = false;
       changed(false);
-    }, "Example: Traits of entrepreneurs", false));
+    }, typeExample(item).objective, false));
 
     var genBtn = h("button", {
       type: "button",
@@ -2679,7 +3036,7 @@
       ? [
           h("span", { class: "collapse-chevron", html: ICONS.chevron, "aria-hidden": "true" }),
           h("span", { class: "entry-num", text: String(displayNum) }),
-          h("span", { class: "type-badge", text: TYPE_LABELS[typeKey] || typeKey }),
+          h("span", { class: "type-badge", "data-type": typeKey, text: TYPE_LABELS[typeKey] || typeKey }),
           h("span", { class: "sum-text" }, [
             h("div", { class: "sum-title", text: summaryLabel }),
             h("div", { class: "sum-meta", text: summaryMeta })
@@ -2688,7 +3045,7 @@
       : [
           h("span", { class: "tile-top" }, [
             h("span", { class: "entry-num", text: String(displayNum) }),
-            h("span", { class: "type-badge", text: TYPE_LABELS[typeKey] || typeKey })
+            h("span", { class: "type-badge", "data-type": typeKey, text: TYPE_LABELS[typeKey] || typeKey })
           ]),
           h("span", { class: "sum-text" }, [
             h("div", { class: "sum-title", text: summaryLabel }),
@@ -2742,11 +3099,12 @@
       return entry;
     }
 
+    var ex = typeExample(item);
     var objField = fieldText("Objective", item.objective, function (v) {
       item.objective = v;
       generateArmed[item.id] = false;
       changed(false);
-    }, "Example: Traits of entrepreneurs", !item.objective.trim());
+    }, ex.objective, !item.objective.trim());
     var genBtn = h("button", {
       type: "button",
       class: "btn small generate" + (generateArmed[item.id] ? " confirming" : ""),
@@ -2756,13 +3114,21 @@
     });
     body.appendChild(h("div", { class: "obj-row" }, [objField, genBtn]));
 
-    body.appendChild(fieldText("Question prompt", item.prompt, function (v) { item.prompt = v; changed(false); }, "What does an entrepreneur do?", !item.prompt.trim()));
+    body.appendChild(fieldText("Question prompt", item.prompt, function (v) { item.prompt = v; changed(false); }, ex.prompt, !item.prompt.trim()));
 
     if (item.type === "mc") body.appendChild(renderChoices(item));
     else if (item.type === "match") body.appendChild(renderPairs(item));
     else if (item.type === "sort") body.appendChild(renderSortEditor(item));
 
-    body.appendChild(fieldText("One-line tip after they finish", item.explanation, function (v) { item.explanation = v; changed(false); }, "Short tip for this question", !item.explanation.trim()));
+    body.appendChild(fieldText("Correct feedback", item.correctFeedback, function (v) {
+      item.correctFeedback = v;
+      changed(false);
+    }, ex.correct, !item.correctFeedback.trim()));
+    body.appendChild(fieldText("Incorrect feedback", item.incorrectFeedback, function (v) {
+      item.incorrectFeedback = v;
+      item.explanation = v;
+      changed(false);
+    }, ex.incorrect, !item.incorrectFeedback.trim()));
 
     var extras = h("details", { class: "settings" });
     extras.appendChild(h("summary", { text: "Lesson link (optional)" }));
@@ -2776,7 +3142,7 @@
 
   function itemHasDraftContent(item) {
     if ((item.prompt || "").trim()) return true;
-    if ((item.explanation || "").trim()) return true;
+    if ((item.correctFeedback || "").trim() || (item.incorrectFeedback || "").trim() || (item.explanation || "").trim()) return true;
     if (item.type === "mc" && item.choices.some(function (ch) { return (ch.text || "").trim(); })) return true;
     if (item.type === "match" && item.pairs.some(function (p) { return (p.left || "").trim() || (p.right || "").trim(); })) return true;
     if (item.type === "sort" && (
@@ -2844,7 +3210,11 @@
   function applyGeneratedDraft(item, draft) {
     if (!draft) return;
     if (draft.prompt) item.prompt = draft.prompt;
-    if (draft.explanation) item.explanation = draft.explanation;
+    if (draft.correctFeedback) item.correctFeedback = draft.correctFeedback;
+    if (draft.incorrectFeedback || draft.explanation) {
+      item.incorrectFeedback = draft.incorrectFeedback || draft.explanation;
+      item.explanation = item.incorrectFeedback;
+    }
     if (draft.lessonLabel) item.lessonLabel = draft.lessonLabel;
     if (item.type === "mc" && Array.isArray(draft.choices) && draft.choices.length >= 2) {
       item.choices = draft.choices.map(function (ch) {
@@ -2888,6 +3258,8 @@
     if (typeKey === "mc") {
       return {
         prompt: "Which of these best shows understanding of " + topic + "?",
+        correctFeedback: "Yes. That choice matches " + topic + ".",
+        incorrectFeedback: "Look for the choice that best matches " + topic + ".",
         explanation: "Look for the choice that best matches " + topic + ".",
         lessonLabel: "Review this lesson",
         choices: [
@@ -2901,7 +3273,9 @@
     if (typeKey === "select_all") {
       return {
         prompt: "Which of these connect to " + topic + "? Select all that apply.",
-        explanation: "More than one choice can be correct. Think about every part of " + topic + ".",
+        correctFeedback: "Nice. You found the choices that connect to " + topic + ".",
+        incorrectFeedback: "Think about every part of " + topic + ". More than one choice can be correct.",
+        explanation: "Think about every part of " + topic + ". More than one choice can be correct.",
         lessonLabel: "Review this lesson",
         choices: [
           { text: "A true statement about " + topic, correct: true },
@@ -2914,6 +3288,8 @@
     if (typeKey === "match") {
       return {
         prompt: "Match each idea to the meaning that fits " + topic + ".",
+        correctFeedback: "Each term is matched to the right meaning.",
+        incorrectFeedback: "Connect each term to the definition that belongs with " + topic + ".",
         explanation: "Connect each term to the definition that belongs with " + topic + ".",
         lessonLabel: "Review this lesson",
         pairs: [
@@ -2927,6 +3303,8 @@
     var c2 = uid("c");
     return {
       prompt: "Sort each example into the group where it belongs for " + topic + ".",
+      correctFeedback: "Every card is in the right group.",
+      incorrectFeedback: "Decide which group fits each example of " + topic + ".",
       explanation: "Decide which group fits each example of " + topic + ".",
       lessonLabel: "Review this lesson",
       categories: [
@@ -2943,7 +3321,7 @@
   }
 
   function fieldText(label, value, onInput, placeholder, invalid) {
-    var input = h("input", { type: "text", value: value || "", placeholder: placeholder || "" });
+    var input = h("input", { type: "text", value: value || "", placeholder: placeholder || "", spellcheck: "true" });
     if (invalid) input.classList.add("invalid");
     input.addEventListener("input", function () { onInput(input.value); input.classList.toggle("invalid", invalid && !input.value.trim()); });
     return h("label", { class: "field" }, [h("span", { text: label }), input]);
@@ -2954,7 +3332,7 @@
     box.appendChild(h("div", { class: "sub-title", text: item.selectAll ? "Answer choices. Mark every correct one." : "Answer choices. Mark the one correct answer." }));
     item.choices.forEach(function (ch, i) {
       var row = h("div", { class: "sub-row" });
-      var text = h("input", { type: "text", value: ch.text, placeholder: "Choice " + (i + 1), "aria-label": "Choice " + (i + 1) });
+      var text = h("input", { type: "text", value: ch.text, placeholder: mcChoicePlaceholder(i), "aria-label": "Choice " + (i + 1) });
       if (!ch.text.trim()) text.classList.add("invalid");
       text.addEventListener("input", function () { ch.text = text.value; changed(false); });
       var toggle = h("label", { class: "correct-toggle" }, [
@@ -2988,8 +3366,8 @@
     box.appendChild(h("div", { class: "sub-title", text: "Pairs. Each row is one correct match." }));
     item.pairs.forEach(function (p, i) {
       var row = h("div", { class: "sub-row" });
-      var left = h("input", { type: "text", value: p.left, placeholder: "Term", "aria-label": "Pair " + (i + 1) + " term" });
-      var right = h("input", { type: "text", value: p.right, placeholder: "Definition", "aria-label": "Pair " + (i + 1) + " definition" });
+      var left = h("input", { type: "text", value: p.left, placeholder: matchPairPlaceholder(i, "left"), "aria-label": "Pair " + (i + 1) + " term" });
+      var right = h("input", { type: "text", value: p.right, placeholder: matchPairPlaceholder(i, "right"), "aria-label": "Pair " + (i + 1) + " definition" });
       if (!p.left.trim()) left.classList.add("invalid");
       if (!p.right.trim()) right.classList.add("invalid");
       left.addEventListener("input", function () { p.left = left.value; changed(false); });
@@ -3008,52 +3386,139 @@
   }
 
   function renderSortEditor(item) {
-    var box = h("div", { class: "sub" });
-    box.appendChild(h("div", { class: "muted", text: "Groups", style: "margin-bottom:8px;font-weight:700" }));
+    var box = h("div", { class: "sub sort-setup" });
+
+    var groups = h("div", { class: "sort-section" });
+    var gHead = h("div", { class: "sort-section-head" });
+    gHead.appendChild(h("div", { class: "sub-title", text: "Groups" }));
+    gHead.appendChild(h("span", { class: "count", text: item.categories.length + " of " + SORT_LIMITS.maxCats }));
+    groups.appendChild(gHead);
+    groups.appendChild(h("p", { class: "sort-help", text: "The bins students sort into. Use 2 to 4 groups. The light text is only an example." }));
     item.categories.forEach(function (cat, i) {
-      var row = h("div", { class: "sub-row" });
-      var input = h("input", { type: "text", value: cat.label, placeholder: "Group name", "aria-label": "Group " + (i + 1) });
-      if (!cat.label.trim()) input.classList.add("invalid");
-      input.addEventListener("input", function () { cat.label = input.value; changed(false); });
-      row.appendChild(input);
-      row.appendChild(h("button", { type: "button", class: "btn small danger", text: "Remove", disabled: item.categories.length <= 2 ? true : null, onclick: function () {
-        var id = cat.id;
-        item.categories.splice(i, 1);
-        item.cards.forEach(function (card) { if (card.category === id) card.category = ""; });
-        changed(true);
-      } }));
-      box.appendChild(row);
+      var entry = h("div", { class: "sort-entry" });
+      var name = h("input", {
+        type: "text", value: cat.label, maxlength: "40",
+        placeholder: sortGroupPlaceholder(i),
+        "aria-label": "Group " + (i + 1) + " name"
+      });
+      if (!cat.label.trim()) name.classList.add("invalid");
+      name.addEventListener("input", function () { cat.label = name.value; changed(false); });
+      var tools = h("div", { class: "entry-tools" }, [
+        h("button", {
+          type: "button", class: "icon danger", title: "Remove group",
+          "aria-label": "Remove group " + (i + 1), html: ICONS.trash,
+          disabled: item.categories.length <= SORT_LIMITS.minCats ? true : null,
+          onclick: function () {
+            var id = cat.id;
+            item.categories.splice(i, 1);
+            item.cards.forEach(function (card) { if (card.category === id) card.category = ""; });
+            changed(true);
+          }
+        })
+      ]);
+      entry.appendChild(h("div", { class: "entry-head" }, [
+        h("span", { class: "entry-num", style: "background:" + CAT_COLORS[i % CAT_COLORS.length], text: String(i + 1) }),
+        name,
+        tools
+      ]));
+      groups.appendChild(entry);
     });
-    if (item.categories.length < 4) {
-      box.appendChild(h("button", { type: "button", class: "btn small", text: "+ Add group", style: "margin-bottom:10px", onclick: function () {
-        item.categories.push(newCat()); changed(true);
-      } }));
+    var gAdd = h("div", { class: "sort-add-row" });
+    var addGroupBtn = h("button", {
+      type: "button", class: "btn small", text: "+ Add group",
+      disabled: item.categories.length >= SORT_LIMITS.maxCats ? true : null,
+      onclick: function () {
+        if (item.categories.length >= SORT_LIMITS.maxCats) return;
+        item.categories.push(newCat());
+        changed(true);
+      }
+    });
+    gAdd.appendChild(addGroupBtn);
+    if (item.categories.length >= SORT_LIMITS.maxCats) {
+      gAdd.appendChild(h("span", { class: "muted", text: "That's the most groups allowed." }));
     }
-    box.appendChild(h("div", { class: "muted", text: "Cards", style: "margin:10px 0 8px;font-weight:700" }));
+    groups.appendChild(gAdd);
+    box.appendChild(groups);
+
+    var cards = h("div", { class: "sort-section" });
+    var cHead = h("div", { class: "sort-section-head" });
+    cHead.appendChild(h("div", { class: "sub-title", text: "Cards" }));
+    cHead.appendChild(h("span", { class: "count", text: item.cards.length + " of " + SORT_LIMITS.maxCards }));
+    cards.appendChild(cHead);
+    cards.appendChild(h("p", { class: "sort-help", text: "The cards students sort. The light text is only an example. Type over it, then choose a group." }));
     item.cards.forEach(function (card, i) {
-      var row = h("div", { class: "sub-row" });
-      var text = h("input", { type: "text", value: card.text, placeholder: "Card text", "aria-label": "Card " + (i + 1) });
+      var entry = h("div", { class: "sort-entry" });
+      var text = h("input", {
+        type: "text", value: card.text, maxlength: "60",
+        placeholder: sortCardPlaceholder(i),
+        "aria-label": "Card " + (i + 1) + " text"
+      });
       if (!card.text.trim()) text.classList.add("invalid");
       text.addEventListener("input", function () { card.text = text.value; changed(false); });
       var sel = h("select", { "aria-label": "Card " + (i + 1) + " group" });
       sel.appendChild(h("option", { value: "", text: "Choose group" }));
       item.categories.forEach(function (cat, ci) {
-        var o = h("option", { value: cat.id, text: cat.label || ("Group " + (ci + 1)) });
+        var o = h("option", { value: cat.id, text: sortGroupName(cat, ci) });
         if (card.category === cat.id) o.selected = true;
         sel.appendChild(o);
       });
       if (!card.category) sel.classList.add("invalid");
-      sel.addEventListener("change", function () { card.category = sel.value; changed(false); });
-      row.appendChild(text);
-      row.appendChild(sel);
-      row.appendChild(h("button", { type: "button", class: "btn small danger", text: "Remove", disabled: item.cards.length <= 2 ? true : null, onclick: function () {
-        item.cards.splice(i, 1); changed(true);
-      } }));
-      box.appendChild(row);
+      sel.addEventListener("change", function () {
+        card.category = sel.value;
+        sel.classList.toggle("invalid", !sel.value);
+        changed(false);
+      });
+      var tools = h("div", { class: "entry-tools" }, [
+        h("button", {
+          type: "button", class: "icon", title: "Duplicate card",
+          "aria-label": "Duplicate card " + (i + 1), html: ICONS.copy,
+          disabled: item.cards.length >= SORT_LIMITS.maxCards ? true : null,
+          onclick: function () {
+            if (item.cards.length >= SORT_LIMITS.maxCards) return;
+            item.cards.splice(i + 1, 0, {
+              id: uid("i"),
+              text: card.text,
+              category: card.category
+            });
+            changed(true);
+          }
+        }),
+        h("button", {
+          type: "button", class: "icon danger", title: "Remove card",
+          "aria-label": "Remove card " + (i + 1), html: ICONS.trash,
+          disabled: item.cards.length <= SORT_LIMITS.minCards ? true : null,
+          onclick: function () {
+            if (item.cards.length <= SORT_LIMITS.minCards) return;
+            item.cards.splice(i, 1);
+            changed(true);
+          }
+        })
+      ]);
+      entry.appendChild(h("div", { class: "entry-head" }, [
+        h("span", { class: "entry-num", style: "background:#737373", text: String(i + 1) }),
+        text,
+        sel,
+        tools
+      ]));
+      cards.appendChild(entry);
     });
-    box.appendChild(h("button", { type: "button", class: "btn small", text: "+ Add card", onclick: function () {
-      item.cards.push(newCard(item.categories[0] && item.categories[0].id)); changed(true);
-    } }));
+    var cAdd = h("div", { class: "sort-add-row" });
+    var addCardBtn = h("button", {
+      type: "button", class: "btn small", text: "+ Add card",
+      disabled: item.cards.length >= SORT_LIMITS.maxCards ? true : null,
+      onclick: function () {
+        if (item.cards.length >= SORT_LIMITS.maxCards) return;
+        item.cards.push(newCard(""));
+        changed(true);
+      }
+    });
+    cAdd.appendChild(addCardBtn);
+    if (item.cards.length >= SORT_LIMITS.maxCards) {
+      cAdd.appendChild(h("span", { class: "muted", text: "That's the most cards allowed." }));
+    }
+    cards.appendChild(cAdd);
+    box.appendChild(cards);
+
     return box;
   }
 
@@ -3160,8 +3625,9 @@
       var local = itemsForLesson(lesson).indexOf(item) + 1;
       var n = "Lesson " + lesson + " question " + local;
       if (!item.prompt.trim()) errs.push([n + " needs a prompt.", null]);
-      if (!item.explanation.trim()) errs.push([n + " needs a one-line explanation.", null]);
-      if (!item.objective.trim()) warns.push([n + " has no objective tag. The end screen groups results by objective.", null]);
+      if (!item.correctFeedback.trim()) errs.push([n + " needs correct feedback.", null]);
+      if (!(item.incorrectFeedback || item.explanation || "").trim()) errs.push([n + " needs incorrect feedback.", null]);
+      if (!item.objective.trim()) warns.push([n + " has no objective. Generate uses it to draft the question.", null]);
       else objectives[item.objective.trim()] = true;
 
       if (item.type === "mc") {
@@ -3174,20 +3640,27 @@
         var pairs = item.pairs.filter(function (p) { return p.left.trim() && p.right.trim(); });
         if (pairs.length < 2) errs.push([n + " needs at least two complete pairs.", null]);
       } else if (item.type === "sort") {
-        if (item.categories.filter(function (c) { return c.label.trim(); }).length < 2) errs.push([n + " needs at least two named groups.", null]);
-        var cards = item.cards.filter(function (c) { return c.text.trim() && c.category; });
-        if (cards.length < 2) errs.push([n + " needs at least two cards with groups.", null]);
+        if (item.categories.length < SORT_LIMITS.minCats) {
+          errs.push([n + " needs at least " + SORT_LIMITS.minCats + " groups.", null]);
+        }
         item.categories.forEach(function (cat, ci) {
-          if (!cat.label.trim()) return;
+          if (!cat.label.trim()) errs.push([n + ": Group " + (ci + 1) + " needs a name.", null]);
           if (!item.cards.some(function (card) { return card.category === cat.id && card.text.trim(); })) {
-            warns.push([n + ": no cards go in " + (cat.label || ("Group " + (ci + 1))) + " yet.", null]);
+            warns.push([n + ": no cards go in " + sortGroupName(cat, ci) + " yet.", null]);
           }
+        });
+        if (item.cards.length < SORT_LIMITS.minCards) {
+          errs.push([n + " needs at least " + SORT_LIMITS.minCards + " cards.", null]);
+        }
+        item.cards.forEach(function (card, ci) {
+          if (!card.text.trim()) errs.push([n + ": Card " + (ci + 1) + " needs text.", null]);
+          if (!card.category) errs.push([n + ": Card " + (ci + 1) + " needs a group.", null]);
         });
       }
       if (item.lessonUrl && !/^https?:\/\//i.test(item.lessonUrl)) warns.push([n + " lesson link should start with https://", null]);
     });
     if (Object.keys(objectives).length < 2 && content.items.length > 1) {
-      warns.push(["Using more than one objective tag helps students see what to study.", null]);
+      warns.push(["Different objectives help Generate write a wider mix of questions.", null]);
     }
     return { errs: errs, warns: warns };
   }
@@ -3244,8 +3717,6 @@
     changed(true);
   });
   $("tries").addEventListener("input", function () { content.settings.triesPerItem = parseInt(this.value, 10) || 3; changed(false); });
-  $("points").addEventListener("input", function () { content.settings.pointsPerCorrect = parseInt(this.value, 10) || 100; changed(false); });
-  $("mastery").addEventListener("input", function () { content.settings.masteryPercent = parseInt(this.value, 10) || 80; changed(false); });
   $("fbCorrect").addEventListener("input", function () { content.feedback.correct = this.value; changed(false); });
   $("fbTry").addEventListener("input", function () { content.feedback.tryAgain = this.value; changed(false); });
   $("fbOut").addEventListener("input", function () { content.feedback.outOfTries = this.value; changed(false); });
@@ -3357,7 +3828,9 @@
       item.lessonIndex = Math.max(1, parseInt(item.lessonIndex, 10) || 1);
       item.objective = item.objective.trim();
       item.prompt = item.prompt.trim();
-      item.explanation = item.explanation.trim();
+      item.correctFeedback = (item.correctFeedback || "").trim();
+      item.incorrectFeedback = (item.incorrectFeedback || item.explanation || "").trim();
+      item.explanation = item.incorrectFeedback;
       item.lessonUrl = item.lessonUrl.trim();
       item.lessonLabel = item.lessonLabel.trim() || "Review this lesson";
       if (item.type === "mc") {
