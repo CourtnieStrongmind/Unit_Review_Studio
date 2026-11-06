@@ -1723,6 +1723,19 @@
     return item.incorrectFeedback || item.explanation || content.feedback.outOfTries;
   }
 
+  function wireExternalLinks(root) {
+    if (!root) return;
+    root.querySelectorAll("a[href]").forEach(function (a) {
+      a.setAttribute("target", "_blank");
+      a.setAttribute("rel", "noopener noreferrer");
+      a.addEventListener("click", function (e) {
+        // Helios iframes can ignore target=_blank; open explicitly so the review stays put.
+        e.preventDefault();
+        window.open(a.href, "_blank", "noopener,noreferrer");
+      });
+    });
+  }
+
   function showItemFeedback(item, correct) {
     var box = $("itemFeedback");
     box.hidden = false;
@@ -1732,6 +1745,7 @@
       html += '<div style="margin-top:8px"><a href="' + escapeAttr(item.lessonUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.lessonLabel) + "</a></div>";
     }
     box.innerHTML = html;
+    wireExternalLinks(box);
   }
 
   function showEnd() {
@@ -1774,6 +1788,7 @@
       html += "</ul>";
     }
     list.innerHTML = html;
+    wireExternalLinks(list);
     $("end").hidden = false;
     $("againBtn").focus();
   }
