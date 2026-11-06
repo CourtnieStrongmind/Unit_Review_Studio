@@ -328,6 +328,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
         Listen
       </button>
+      <button id="resetBtn" class="btn secondary" type="button" hidden>Start over</button>
       <button id="startBtn" class="btn" type="button">Begin</button>
     </div>
   </section>
@@ -398,7 +399,9 @@
 
   function progressKey() {
     var slug = (content && (content.slug || content.title)) || "preview";
-    return "review-quest-progress-v2:" + slug;
+    // Include v= so each refreshed share link starts clean in the same tab.
+    var bust = params.get("v") || "";
+    return "review-quest-progress-v2:" + slug + (bust ? (":" + bust) : "");
   }
 
   function blankProgress() {
@@ -904,6 +907,10 @@
         help.hidden = true;
         $("startBtn").textContent = "Begin";
       }
+    }
+    var resetBtn = $("resetBtn");
+    if (resetBtn) {
+      resetBtn.hidden = !(completedAny || allLessonsComplete() || (nextLesson && nextLesson > 1));
     }
     roadBlock.hidden = false;
   }
@@ -1831,6 +1838,12 @@
     loadItem();
   });
   $("againBtn").addEventListener("click", function () {
+    clearProgress();
+    resetRun(null);
+    showStart();
+  });
+  $("resetBtn").addEventListener("click", function () {
+    stopAudio();
     clearProgress();
     resetRun(null);
     showStart();
