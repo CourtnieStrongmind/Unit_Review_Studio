@@ -1,8 +1,7 @@
 # Unit Review Studio
 
-Authors build **Review Quest** activities here: short, replayable unit reviews that practice exam-style questions. No code required.
+Authors build unit review activities here: short, replayable reviews that practice exam-style questions. No code required.
 
-Student-facing name: **Review Quest**.  
 Authoring tool name: **Unit Review Studio**.
 
 ## Style
@@ -13,7 +12,7 @@ Fanny Pack design system: Poppins for headings and buttons, Nunito Sans for body
 
 ```
 review/
-  index.html                  The Review Quest player students see
+  index.html                  The student player
   sets/
     <activity-name>/          One folder per activity
       content.json            Questions, feedback, and media file names

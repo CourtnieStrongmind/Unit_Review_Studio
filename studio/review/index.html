@@ -167,10 +167,18 @@
     cursor: pointer; color: inherit; font: inherit;
   }
   .plan-outline .plan-lesson-title {
-    display: flex; justify-content: space-between; gap: 8px; align-items: baseline;
+    display: flex; flex-direction: column; gap: 2px; align-items: stretch;
     font-family: var(--font-primary); font-weight: 600; font-size: .88rem; color: var(--ink-strong);
   }
-  .plan-outline .plan-lesson-title span { color: var(--ink-soft); font-weight: 600; font-size: .8rem; }
+  .plan-outline .plan-lesson-title .plan-lesson-head {
+    display: flex; justify-content: space-between; gap: 8px; align-items: baseline;
+  }
+  .plan-outline .plan-lesson-title .plan-lesson-head span.count {
+    color: var(--ink-soft); font-weight: 600; font-size: .8rem;
+  }
+  .plan-outline .plan-lesson-title .plan-lesson-topic {
+    font-weight: 600; font-size: .78rem; color: var(--ink-soft); text-align: left;
+  }
   .plan-outline .plan-lesson.active .plan-lesson-title { color: var(--brand-ink); }
   .plan-outline .plan-qs {
     list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px;
@@ -205,15 +213,21 @@
     transition: transform .15s ease;
   }
   .lesson-section[open] > summary .lesson-chevron { transform: rotate(180deg); }
-  .lesson-section > summary .lesson-title-wrap { flex: 1; min-width: 140px; }
+  .lesson-section > summary .lesson-title-wrap {
+    flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .lesson-section > summary .lesson-number-label {
+    flex: none; font-family: var(--font-primary); font-weight: 700; font-size: 1rem;
+    color: var(--brand-ink); white-space: nowrap;
+  }
   .lesson-section > summary .lesson-title-input {
-    width: 100%; border: 1px solid transparent; background: transparent;
-    font-family: var(--font-primary); font-weight: 600; font-size: 1rem;
-    color: var(--ink-strong); padding: 4px 8px; border-radius: 10px;
+    flex: 1; min-width: 120px; border: 1px solid var(--line); background: #fff;
+    font-family: var(--font-primary); font-weight: 600; font-size: .95rem;
+    color: var(--ink-strong); padding: 6px 10px; border-radius: 10px;
   }
   .lesson-section > summary .lesson-title-input:hover,
   .lesson-section > summary .lesson-title-input:focus {
-    border-color: var(--line); background: #fff;
+    border-color: var(--brand);
   }
   .lesson-section > summary .muted { margin: 0; white-space: nowrap; }
   .lesson-section-body { padding: 0 14px 14px; }
@@ -2622,17 +2636,28 @@
     };
   }
 
-  function lessonTitle(lessonIndex) {
+  function lessonTopic(lessonIndex) {
     var lessons = (content.overview && content.overview.lessons) || [];
     var lesson = lessons[Number(lessonIndex) - 1];
-    return (lesson && lesson.title) || ("Lesson " + lessonIndex);
+    var title = String((lesson && lesson.title) || "").trim();
+    // Older drafts stored "Lesson 1" as the title. Treat that as no custom topic.
+    if (!title || /^Lesson\s+\d+$/i.test(title)) return "";
+    return title;
+  }
+
+  function lessonTitle(lessonIndex) {
+    var topic = lessonTopic(lessonIndex);
+    var numbered = "Lesson " + lessonIndex;
+    return topic ? (numbered + ": " + topic) : numbered;
   }
 
   function setLessonTitle(lessonIndex, title) {
     content.overview = syncOverview(content.overview);
     var idx = Number(lessonIndex) - 1;
     if (!content.overview.lessons[idx]) content.overview.lessons[idx] = { title: "" };
-    content.overview.lessons[idx].title = String(title || "").trim() || ("Lesson " + lessonIndex);
+    var cleaned = String(title || "").trim();
+    if (/^Lesson\s+\d+$/i.test(cleaned)) cleaned = "";
+    content.overview.lessons[idx].title = cleaned;
   }
 
   function isLessonOpen(lessonIndex) {
@@ -2945,10 +2970,15 @@
           type: "button",
           onclick: function () { focusLesson(lessonIndex); }
         });
-        titleBtn.appendChild(h("div", { class: "plan-lesson-title" }, [
-          document.createTextNode(lessonTitle(lessonIndex)),
-          h("span", { text: String(lessonItems.length) })
-        ]));
+        var topic = lessonTopic(lessonIndex);
+        var titleKids = [
+          h("div", { class: "plan-lesson-head" }, [
+            document.createTextNode("Lesson " + lessonIndex),
+            h("span", { class: "count", text: String(lessonItems.length) })
+          ])
+        ];
+        if (topic) titleKids.push(h("div", { class: "plan-lesson-topic", text: topic }));
+        titleBtn.appendChild(h("div", { class: "plan-lesson-title" }, titleKids));
         li.appendChild(titleBtn);
         if (!lessonItems.length) {
           li.appendChild(h("p", { class: "plan-empty", text: "No questions yet" }));
@@ -3022,9 +3052,10 @@
     var titleInput = h("input", {
       type: "text",
       class: "lesson-title-input",
-      value: lessonTitle(lessonIndex),
+      value: lessonTopic(lessonIndex),
       maxlength: "40",
-      "aria-label": "Lesson " + lessonIndex + " title",
+      placeholder: "Topic or lesson name",
+      "aria-label": "Topic for Lesson " + lessonIndex,
       onclick: function (e) { e.preventDefault(); e.stopPropagation(); },
       onmousedown: function (e) { e.stopPropagation(); }
     });
@@ -3035,7 +3066,7 @@
     });
     titleInput.addEventListener("blur", function () {
       setLessonTitle(lessonIndex, titleInput.value);
-      titleInput.value = lessonTitle(lessonIndex);
+      titleInput.value = lessonTopic(lessonIndex);
       changed(false);
       renderPlanOutline();
     });
@@ -3045,7 +3076,10 @@
       class: "lesson-chevron",
       html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
     }));
-    summary.appendChild(h("div", { class: "lesson-title-wrap" }, [titleInput]));
+    summary.appendChild(h("div", { class: "lesson-title-wrap" }, [
+      h("span", { class: "lesson-number-label", text: "Lesson " + lessonIndex }),
+      titleInput
+    ]));
     summary.appendChild(h("p", {
       class: "muted",
       text: lessonItems.length + (lessonItems.length === 1 ? " question" : " questions")
@@ -4039,7 +4073,7 @@
       var url = j.url || studentLink(content.slug);
       var input = h("input", { type: "text", readonly: true, value: url, "aria-label": "Activity link" });
       body.appendChild(h("div", { class: "result" }, [
-        h("strong", { text: "Published. Paste this Review Quest link into Helios." }),
+        h("strong", { text: "Published. Paste this unit review link into Helios." }),
         h("div", { class: "link-row", style: "display:flex;gap:8px;margin-top:6px" }, [
           input,
           h("button", { type: "button", class: "btn small", text: "Copy", onclick: function () {

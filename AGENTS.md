@@ -17,14 +17,14 @@ This repo is public-facing once published. Don't add secrets, tokens, internal-o
 ## Naming
 
 - **Unit Review Studio** is the repo and the authoring tool.
-- **Review Quest** is the student-facing product name (start screen, titles students see).
+- Students see a unit review. Do not use “Review Quest” as a product name in student or training copy.
 
 ## The goal
 
 A set of authoring studios so the curriculum team can build interactives without code. Related work:
 
 1. Sort and match studio. Separate repo (`Sort_Interactive_Studio`).
-2. Unit Review Studio / Review Quest. This repo.
+2. Unit Review Studio. This repo.
 3. Venn diagram and branching scenario. Not started.
 
 ## Where things stand
