@@ -1380,17 +1380,9 @@
   }
 
   function renderStartOverview() {
+    // Keep course name + unit title only. No grey meta line (grade / lesson count).
     var meta = $("startMeta");
-    var bits = [];
-    if (content.unit) bits.push("Unit " + content.unit);
-    if (content.grade) bits.push("Grade " + content.grade);
-    if (content.overview && content.overview.lessonsInUnit) {
-      bits.push(content.overview.lessonsInUnit + (content.overview.lessonsInUnit === 1 ? " lesson" : " lessons"));
-    }
-    if (bits.length) {
-      meta.textContent = bits.join(" · ");
-      meta.hidden = false;
-    } else {
+    if (meta) {
       meta.textContent = "";
       meta.hidden = true;
     }
@@ -2299,29 +2291,12 @@
     return item.incorrectFeedback || item.explanation || content.feedback.outOfTries;
   }
 
-  function wireExternalLinks(root) {
-    if (!root) return;
-    root.querySelectorAll("a[href]").forEach(function (a) {
-      a.setAttribute("target", "_blank");
-      a.setAttribute("rel", "noopener noreferrer");
-      a.addEventListener("click", function (e) {
-        // Helios iframes can ignore target=_blank; open explicitly so the review stays put.
-        e.preventDefault();
-        window.open(a.href, "_blank", "noopener,noreferrer");
-      });
-    });
-  }
-
   function showItemFeedback(item, correct) {
     var box = $("itemFeedback");
     box.hidden = false;
     box.className = "feedback-box " + (correct ? "good" : "bad");
-    var html = "<div>" + escapeHtml(itemFeedbackText(item, correct)) + "</div>";
-    if (!correct && item.lessonUrl) {
-      html += '<div style="margin-top:8px"><a href="' + escapeAttr(item.lessonUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.lessonLabel) + "</a></div>";
-    }
-    box.innerHTML = html;
-    wireExternalLinks(box);
+    // Tip text only. No lesson hyperlinks in feedback for now.
+    box.innerHTML = "<div>" + escapeHtml(itemFeedbackText(item, correct)) + "</div>";
   }
 
   function showEnd() {
@@ -2331,13 +2306,9 @@
     var byLesson = {};
     content.items.forEach(function (it) {
       var li = Number(it.lessonIndex || 1);
-      if (!byLesson[li]) byLesson[li] = { missed: false, link: "", linkLabel: "" };
+      if (!byLesson[li]) byLesson[li] = { missed: false };
       var r = results[it.id];
       if (!(r && r.correct)) byLesson[li].missed = true;
-      if (!byLesson[li].link && it.lessonUrl) {
-        byLesson[li].link = it.lessonUrl;
-        byLesson[li].linkLabel = it.lessonLabel || "Open this lesson";
-      }
     });
     var revisit = Object.keys(byLesson).map(Number).sort(function (a, b) { return a - b; }).filter(function (li) {
       return byLesson[li].missed;
@@ -2353,18 +2324,12 @@
     if (revisit.length) {
       html += "<h2>Lessons to look at again</h2><ul>";
       revisit.forEach(function (li) {
-        var label = lessonReviewLabel(li);
-        var row = byLesson[li];
-        if (row.link) {
-          html += "<li><a href=\"" + escapeAttr(row.link) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + escapeHtml(label) + "</a></li>";
-        } else {
-          html += "<li>" + escapeHtml(label) + "</li>";
-        }
+        // Plain lesson names only so changing Course Builder links cannot break the interactive.
+        html += "<li>" + escapeHtml(lessonReviewLabel(li)) + "</li>";
       });
       html += "</ul>";
     }
     list.innerHTML = html;
-    wireExternalLinks(list);
     $("end").hidden = false;
     $("againBtn").focus();
   }

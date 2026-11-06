@@ -1,5 +1,7 @@
 # Unit Review Studio developer guide
 
+SharePoint-ready Word copy: [training/Unit-Review-Studio-Developer-Guide.docx](training/Unit-Review-Studio-Developer-Guide.docx)
+
 Self-serve resource for curriculum developers building unit review activities.
 
 **Unit Review Studio** is the authoring tool. Students see a unit review on a lesson road.
