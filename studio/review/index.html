@@ -718,15 +718,11 @@
     display: grid; place-items: center; pointer-events: none; z-index: 2;
   }
   .road-end-star svg {
-    width: 36px; height: 36px; color: var(--neutral-300);
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
-  }
-  .road-end-star.reached svg {
-    color: #E8A317;
-    filter: drop-shadow(0 2px 6px rgba(232, 163, 23, 0.45));
+    width: 36px; height: 36px; color: #FFD400;
+    filter: drop-shadow(0 2px 6px rgba(255, 212, 0, 0.55));
   }
   @media (prefers-reduced-motion: no-preference) {
-    .road-end-star.reached svg {
+    .road-end-star.visible svg {
       animation: road-star-pop 520ms ease-out;
     }
   }
@@ -997,6 +993,13 @@
     var lessons = (content.overview && content.overview.lessons) || [];
     var lesson = lessons[Number(index) - 1];
     return (lesson && lesson.title) || ("Lesson " + index);
+  }
+
+  function lessonReviewLabel(index) {
+    var title = lessonTitleFor(index);
+    var numbered = "Lesson " + index;
+    if (!title || title === numbered) return numbered;
+    return numbered + ": " + title;
   }
 
   function itemsForLesson(lessonIndex) {
@@ -1281,7 +1284,14 @@
     return path;
   }
 
-  function renderTrailTo(endT, animate) {
+  function showRoadStar() {
+    var star = document.querySelector(".road-end-star");
+    if (!star || !star.hidden) return;
+    star.hidden = false;
+    star.classList.add("visible");
+  }
+
+  function renderTrailTo(endT, animate, onDone) {
     var trail = $("roadTrail");
     var lessons = content.overview.lessons || [];
     if (!trail || !lessons.length) return;
@@ -1292,9 +1302,14 @@
       cancelAnimationFrame(trailAnimFrame);
       trailAnimFrame = null;
     }
-    if (!animate || reduceMotion || endT <= (trailTShown == null ? -1 : trailTShown) + 0.001) {
-      setProgressPath(trail, buildTrailPathD(guide, startT, endT));
+    function finishTrail() {
+      trailAnimFrame = null;
       trailTShown = endT;
+      setProgressPath(trail, buildTrailPathD(guide, startT, endT));
+      if (onDone) onDone();
+    }
+    if (!animate || reduceMotion || endT <= (trailTShown == null ? -1 : trailTShown) + 0.001) {
+      finishTrail();
       return;
     }
     var fromT = trailTShown == null ? startT : trailTShown;
@@ -1311,11 +1326,7 @@
       setProgressPath(trail, buildTrailPathD(guide, startT, cur));
       trailTShown = cur;
       if (p < 1) trailAnimFrame = requestAnimationFrame(frame);
-      else {
-        trailAnimFrame = null;
-        trailTShown = toT;
-        setProgressPath(trail, buildTrailPathD(guide, startT, toT));
-      }
+      else finishTrail();
     }
     trailAnimFrame = requestAnimationFrame(frame);
   }
@@ -1435,21 +1446,28 @@
 
     var endPt = roadEndPoint();
     var star = document.createElement("div");
-    star.className = "road-end-star" + (allLessonsComplete() ? " reached" : "");
+    star.className = "road-end-star";
+    star.hidden = true;
     star.style.left = endPt.x + "%";
     star.style.top = endPt.y + "%";
     star.setAttribute("aria-hidden", "true");
     star.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.4 6.2 6.7.4-5.2 4.3 1.7 6.5L12 16.7 6.4 20l1.7-6.5L2.9 9.2l6.7-.4L12 2.6z"/></svg>';
     $("questRoad").appendChild(star);
 
-    // Dotted trail follows the road to the open lesson, or all the way to the star when done.
+    // Dotted trail follows the road to the open lesson, or all the way to the flag when done.
+    // Yellow star appears only after the trail reaches the flag.
     var completedAny = false;
     for (var c = 1; c <= lessons.length; c++) {
       if (isLessonComplete(c)) { completedAny = true; break; }
     }
-    if (trail && lessons.length && (completedAny || allLessonsComplete() || (nextLesson && nextLesson > 1))) {
+    var unitDone = allLessonsComplete();
+    if (trail && lessons.length && (completedAny || unitDone || (nextLesson && nextLesson > 1))) {
       ensureRoadGuide(trail);
-      renderTrailTo(trailTargetProgress(lessons.length, nextLesson), animateTrailOnRender);
+      renderTrailTo(
+        trailTargetProgress(lessons.length, nextLesson),
+        animateTrailOnRender,
+        unitDone ? showRoadStar : null
+      );
     } else if (trail) {
       setProgressPath(trail, "");
     }
@@ -2307,12 +2325,12 @@
     if (revisit.length) {
       html += "<h2>Lessons to look at again</h2><ul>";
       revisit.forEach(function (li) {
-        var title = lessonTitleFor(li);
+        var label = lessonReviewLabel(li);
         var row = byLesson[li];
         if (row.link) {
-          html += "<li><a href=\"" + escapeAttr(row.link) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + escapeHtml(title) + "</a></li>";
+          html += "<li><a href=\"" + escapeAttr(row.link) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + escapeHtml(label) + "</a></li>";
         } else {
-          html += "<li>" + escapeHtml(title) + "</li>";
+          html += "<li>" + escapeHtml(label) + "</li>";
         }
       });
       html += "</ul>";

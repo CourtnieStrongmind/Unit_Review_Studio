@@ -64,8 +64,8 @@
         }
       ],
       "explanation": "Knowing yourself helps you aim for careers that match who you are and what matters to you.",
-      "lessonUrl": "",
-      "lessonLabel": "Open Know yourself",
+      "lessonUrl": "https://example.com/career-planning/lesson-1",
+      "lessonLabel": "Open Lesson 1: Know yourself",
       "incorrectFeedback": "Knowing yourself helps you aim for careers that match who you are and what matters to you.",
       "correctFeedback": "Nice work."
     },
@@ -102,8 +102,8 @@
         }
       ],
       "explanation": "Career research covers skills, education, demand, pay, and day-to-day work.",
-      "lessonUrl": "",
-      "lessonLabel": "Open Research careers",
+      "lessonUrl": "https://example.com/career-planning/lesson-2",
+      "lessonLabel": "Open Lesson 2: Research careers",
       "incorrectFeedback": "Career research covers skills, education, demand, pay, and day-to-day work.",
       "correctFeedback": "Nice work."
     },
@@ -140,8 +140,8 @@
         }
       ],
       "explanation": "Technology and demand can shift which careers grow or shrink.",
-      "lessonUrl": "",
-      "lessonLabel": "Open Research careers",
+      "lessonUrl": "https://example.com/career-planning/lesson-2",
+      "lessonLabel": "Open Lesson 2: Research careers",
       "incorrectFeedback": "Technology and demand can shift which careers grow or shrink.",
       "correctFeedback": "Nice work."
     },
@@ -177,8 +177,8 @@
         }
       ],
       "explanation": "Different careers need different training paths.",
-      "lessonUrl": "",
-      "lessonLabel": "Open Training paths",
+      "lessonUrl": "https://example.com/career-planning/lesson-3",
+      "lessonLabel": "Open Lesson 3: Training paths",
       "incorrectFeedback": "Different careers need different training paths.",
       "correctFeedback": "Nice work."
     },
@@ -215,8 +215,8 @@
         }
       ],
       "explanation": "A good path fits the job and is realistic for your time, goals, and budget.",
-      "lessonUrl": "",
-      "lessonLabel": "Open Training paths",
+      "lessonUrl": "https://example.com/career-planning/lesson-3",
+      "lessonLabel": "Open Lesson 3: Training paths",
       "incorrectFeedback": "A good path fits the job and is realistic for your time, goals, and budget.",
       "correctFeedback": "Nice work."
     },
@@ -272,8 +272,8 @@
         }
       ],
       "explanation": "Career planning includes clear goals and a realistic look at costs.",
-      "lessonUrl": "",
-      "lessonLabel": "Open Goals and costs",
+      "lessonUrl": "https://example.com/career-planning/lesson-4",
+      "lessonLabel": "Open Lesson 4: Goals and costs",
       "incorrectFeedback": "Career planning includes clear goals and a realistic look at costs.",
       "correctFeedback": "Nice work."
     },
@@ -310,8 +310,8 @@
         }
       ],
       "explanation": "Useful goals are clear and include steps you can take.",
-      "lessonUrl": "",
-      "lessonLabel": "Open Goals and costs",
+      "lessonUrl": "https://example.com/career-planning/lesson-4",
+      "lessonLabel": "Open Lesson 4: Goals and costs",
       "incorrectFeedback": "Useful goals are clear and include steps you can take.",
       "correctFeedback": "Nice work."
     }
