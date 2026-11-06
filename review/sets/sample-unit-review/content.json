@@ -2,11 +2,11 @@
   "version": 1,
   "type": "review-quest",
   "slug": "sample-unit-review",
-  "title": "Career Planning Unit 1 Review",
+  "title": "Unit 1 Review",
   "grade": "9-12",
   "unit": "1",
   "subject": "Career Planning",
-  "directions": "Travel the road and answer a few questions from each lesson. If you miss one, you will see a tip you can use later.",
+  "directions": "Travel the road and answer a few questions from each lesson.",
   "directionsAudio": "",
   "overview": {
     "lessonsInUnit": 4,

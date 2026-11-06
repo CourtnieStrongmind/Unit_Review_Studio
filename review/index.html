@@ -87,12 +87,12 @@
   .center-card.start-card .hero-icon { margin-left: 0; }
   .hero-icon svg { width: 42px; height: 42px; }
   .hero-icon.good { background: var(--highland-50); color: var(--highland-800); }
-  .start-meta {
-    display: inline-flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px;
+  .start-course {
+    margin: 0 0 6px; font-family: var(--font-primary); font-weight: 600;
+    font-size: 1rem; color: var(--lilac-bush-700); line-height: 1.3;
   }
-  .start-meta span {
-    background: var(--lilac-bush-50); color: var(--lilac-bush-700); border-radius: 9999px;
-    padding: 6px 12px; font-size: .85rem; font-weight: 700;
+  .start-meta {
+    margin: 0 0 12px; color: var(--ink-soft); font-size: .9rem; font-weight: 600;
   }
   .road-block {
     background: var(--pearl-brush-100); border: 1px solid var(--pearl-brush-200);
@@ -133,7 +133,7 @@
   .road-stops li.done,
   .road-stops li.current { pointer-events: auto; }
   .road-stop-btn {
-    border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center;
     cursor: pointer; font: inherit; color: inherit;
   }
   .road-stop-btn:disabled { cursor: default; }
@@ -145,16 +145,11 @@
   .road-stops li.locked .road-stop-dot {
     background: var(--neutral-300); color: var(--neutral-500); box-shadow: none;
   }
-  .road-stops li.locked .road-stop-label { color: var(--neutral-500); }
   .road-stops li.done .road-stop-dot {
     background: var(--highland-800); color: #fff;
   }
   .road-stops li.current .road-stop-dot {
     box-shadow: 0 0 0 4px var(--lilac-bush-100), 0 2px 8px rgba(77, 26, 114, 0.18);
-  }
-  .road-stop-label {
-    font-size: .72rem; font-weight: 700; color: var(--ink-strong); line-height: 1.2;
-    max-width: 110px; background: rgba(255,255,255,0.88); border-radius: 8px; padding: 2px 6px;
   }
   .road-help {
     margin: 10px 0 0; font-size: .9rem; color: var(--ink-soft); font-weight: 600; text-align: left;
@@ -299,8 +294,9 @@
   <div id="error" class="screen error" hidden></div>
 
   <section id="start" class="screen center-card start-card frosted" hidden>
-    <div class="start-meta" id="startMeta" hidden></div>
+    <p class="start-course" id="startCourse" hidden></p>
     <h1 id="startTitle"></h1>
+    <p class="start-meta" id="startMeta" hidden></p>
     <p id="startDirections" class="directions"></p>
     <div class="road-block" id="roadBlock" hidden>
       <h2 id="roadHeading">Lessons in this unit</h2>
@@ -743,7 +739,21 @@
     opts = opts || {};
     hideAll();
     document.body.classList.add("centered");
-    $("startTitle").textContent = content.title;
+    var course = $("startCourse");
+    if (content.subject) {
+      course.textContent = content.subject;
+      course.hidden = false;
+    } else {
+      course.textContent = "";
+      course.hidden = true;
+    }
+    var title = (content.title || "").trim();
+    if (content.subject && title.toLowerCase().indexOf(String(content.subject).toLowerCase()) === 0) {
+      title = title.slice(content.subject.length).replace(/^[\s\-–—:|]+/, "").trim();
+    }
+    if (!title && content.unit) title = "Unit " + content.unit + " Review";
+    if (!title) title = "Unit review";
+    $("startTitle").textContent = title;
     $("startDirections").textContent = content.directions;
     $("startDirections").hidden = !content.directions;
     $("startListen").hidden = !content.directionsAudio;
@@ -756,19 +766,16 @@
   function renderStartOverview() {
     var meta = $("startMeta");
     var bits = [];
-    if (content.grade) bits.push("Grade " + content.grade);
     if (content.unit) bits.push("Unit " + content.unit);
-    if (content.subject) bits.push(content.subject);
-    bits.push(content.overview.lessonsInUnit + " lessons");
-    meta.innerHTML = "";
+    if (content.grade) bits.push("Grade " + content.grade);
+    if (content.overview && content.overview.lessonsInUnit) {
+      bits.push(content.overview.lessonsInUnit + (content.overview.lessonsInUnit === 1 ? " lesson" : " lessons"));
+    }
     if (bits.length) {
-      bits.forEach(function (b) {
-        var span = document.createElement("span");
-        span.textContent = b;
-        meta.appendChild(span);
-      });
+      meta.textContent = bits.join(" · ");
       meta.hidden = false;
     } else {
+      meta.textContent = "";
       meta.hidden = true;
     }
 
@@ -813,7 +820,7 @@
       btn.disabled = !unlocked;
       btn.setAttribute("aria-label",
         (done ? "Completed. " : current ? "Up next. " : unlocked ? "Available. " : "Locked. ") +
-        (lesson.title || ("Lesson " + lessonIndex))
+        ("Lesson " + lessonIndex)
       );
 
       var dot = document.createElement("span");
@@ -823,11 +830,7 @@
       } else {
         dot.textContent = String(lessonIndex);
       }
-      var label = document.createElement("span");
-      label.className = "road-stop-label";
-      label.textContent = lesson.title || ("Lesson " + lessonIndex);
       btn.appendChild(dot);
-      btn.appendChild(label);
       if (unlocked) {
         btn.addEventListener("click", function () { stopAudio(); startLesson(lessonIndex); });
       }
@@ -854,10 +857,10 @@
         $("startBtn").textContent = "See results";
       } else if (nextLesson) {
         help.textContent = isLessonComplete(1) || nextLesson > 1
-          ? (lessonTitleFor(nextLesson) + " is open. Tap a bright stop or continue.")
-          : ("Start at " + lessonTitleFor(1) + ".");
+          ? ("Lesson " + nextLesson + " is open. Tap a bright stop or continue.")
+          : "Start at Lesson 1.";
         help.hidden = false;
-        $("startBtn").textContent = nextLesson === 1 ? "Begin" : ("Continue to " + lessonTitleFor(nextLesson));
+        $("startBtn").textContent = nextLesson === 1 ? "Begin" : ("Continue to Lesson " + nextLesson);
       } else {
         help.hidden = true;
         $("startBtn").textContent = "Begin";
@@ -926,7 +929,7 @@
     var n = run.order.length;
     var i = Math.min(run.index + 1, n);
     if ($("lessonLabel")) {
-      $("lessonLabel").textContent = run.lessonIndex ? lessonTitleFor(run.lessonIndex) : "Review";
+      $("lessonLabel").textContent = run.lessonIndex ? ("Lesson " + run.lessonIndex) : "Review";
     }
     $("progressLabel").textContent = n === 1 ? "Question 1" : ("Question " + i + " of " + n);
     var filled = run.index + ((run.itemState && run.itemState.resolved) ? 1 : 0);
