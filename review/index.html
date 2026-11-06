@@ -398,7 +398,7 @@
 
   function progressKey() {
     var slug = (content && (content.slug || content.title)) || "preview";
-    return "review-quest-progress-v1:" + slug;
+    return "review-quest-progress-v2:" + slug;
   }
 
   function blankProgress() {
@@ -408,8 +408,9 @@
   function loadProgress() {
     progress = blankProgress();
     if (isPreview) return;
+    // Session only: closing the tab starts fresh. Same-tab refresh still continues.
     try {
-      var raw = localStorage.getItem(progressKey());
+      var raw = sessionStorage.getItem(progressKey());
       if (!raw) return;
       var parsed = JSON.parse(raw);
       progress.completedLessons = parsed.completedLessons || {};
@@ -420,7 +421,7 @@
 
   function saveProgress() {
     if (isPreview || !progress) return;
-    try { localStorage.setItem(progressKey(), JSON.stringify(progress)); } catch (e) {}
+    try { sessionStorage.setItem(progressKey(), JSON.stringify(progress)); } catch (e) {}
   }
 
   function lessonCount() {
@@ -656,7 +657,16 @@
 
   function clearProgress() {
     progress = blankProgress();
-    saveProgress();
+    if (!isPreview) {
+      try { sessionStorage.removeItem(progressKey()); } catch (e) {}
+      // Drop any leftover long-term saves from earlier builds.
+      try {
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf("review-quest-progress") === 0) localStorage.removeItem(k);
+        }
+      } catch (e2) {}
+    }
     trailTShown = null;
     if (trailAnimFrame) {
       cancelAnimationFrame(trailAnimFrame);
