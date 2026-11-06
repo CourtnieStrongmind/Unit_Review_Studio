@@ -713,6 +713,28 @@
   .road-stops li.current .road-stop-dot {
     box-shadow: 0 0 0 4px var(--lilac-bush-100), 0 2px 8px rgba(77, 26, 114, 0.18);
   }
+  .road-end-star {
+    position: absolute; width: 44px; height: 44px; transform: translate(-50%, -50%);
+    display: grid; place-items: center; pointer-events: none; z-index: 2;
+  }
+  .road-end-star svg {
+    width: 36px; height: 36px; color: var(--neutral-300);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
+  }
+  .road-end-star.reached svg {
+    color: #E8A317;
+    filter: drop-shadow(0 2px 6px rgba(232, 163, 23, 0.45));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .road-end-star.reached svg {
+      animation: road-star-pop 520ms ease-out;
+    }
+  }
+  @keyframes road-star-pop {
+    0% { transform: scale(0.6); opacity: 0.4; }
+    60% { transform: scale(1.18); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
   .road-help {
     margin: 10px 0 0; font-size: .9rem; color: var(--ink-soft); font-weight: 600; text-align: left;
   }
@@ -730,13 +752,7 @@
     margin: 0; font-family: var(--font-primary); font-weight: 600;
     font-size: 1.35rem; color: var(--ink-strong); line-height: 1.2;
   }
-  .q-steps { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 2px 0 0; }
-  .q-step {
-    width: 10px; height: 10px; border-radius: 9999px; background: var(--pearl-brush-200); border: 0; padding: 0;
-  }
-  .q-step.done, .q-step.current { background: var(--lilac-bush-600); }
-  .q-step.current { box-shadow: 0 0 0 3px var(--lilac-bush-100); }
-  .progress-track { width: 100%; height: 8px; background: var(--pearl-brush-200); border-radius: 9999px; overflow: hidden; }
+  .progress-track { width: 100%; height: 8px; background: var(--pearl-brush-200); border-radius: 9999px; overflow: hidden; margin: 6px 0 0; }
   .progress-fill { height: 100%; background: var(--lilac-bush-600); width: 0; transition: width 200ms ease; }
 
   .prompt-card { padding: 0 0 14px; margin: 0 0 14px; border-bottom: 1px solid var(--pearl-brush-200); }
@@ -888,7 +904,6 @@
         <p class="q-lesson" id="lessonLabel">Lesson 1</p>
       </div>
       <h2 class="q-number" id="progressLabel">Question 1 of 1</h2>
-      <div class="q-steps" id="questionSteps" aria-hidden="true"></div>
       <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
     </div>
     <div class="road-block">
@@ -901,6 +916,7 @@
       <div id="itemFeedback" class="feedback-box" hidden></div>
       <div class="footer">
         <div id="status" class="status" aria-live="polite"></div>
+        <button id="clearBtn" class="btn secondary" type="button" hidden>Clear</button>
         <button id="checkBtn" class="btn" type="button">Check</button>
         <button id="nextBtn" class="btn" type="button" hidden>Next question</button>
       </div>
@@ -925,7 +941,7 @@
     correct: "Nice work.",
     tryAgain: "Not quite. Try again.",
     outOfTries: "Here's a tip. Review the lesson, then continue.",
-    endMessage: "You finished this review."
+    endMessage: "Nice work finishing this review."
   };
 
   var params = new URLSearchParams(location.search);
@@ -1347,6 +1363,10 @@
     var help = $("roadHelp");
     stops.innerHTML = "";
     if (trail) trail.innerHTML = "";
+    var questRoad = $("questRoad");
+    if (questRoad) {
+      questRoad.querySelectorAll(".road-end-star").forEach(function (el) { el.remove(); });
+    }
     var lessons = content.overview.lessons || [];
     if (!lessons.length) {
       roadBlock.hidden = true;
@@ -1400,7 +1420,16 @@
       stops.appendChild(li);
     });
 
-    // Dotted trail follows the road to the open lesson, or all the way to the flag when done.
+    var endPt = roadEndPoint();
+    var star = document.createElement("div");
+    star.className = "road-end-star" + (allLessonsComplete() ? " reached" : "");
+    star.style.left = endPt.x + "%";
+    star.style.top = endPt.y + "%";
+    star.setAttribute("aria-hidden", "true");
+    star.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.4 6.2 6.7.4-5.2 4.3 1.7 6.5L12 16.7 6.4 20l1.7-6.5L2.9 9.2l6.7-.4L12 2.6z"/></svg>';
+    $("questRoad").appendChild(star);
+
+    // Dotted trail follows the road to the open lesson, or all the way to the star when done.
     var completedAny = false;
     for (var c = 1; c <= lessons.length; c++) {
       if (isLessonComplete(c)) { completedAny = true; break; }
@@ -1414,7 +1443,7 @@
 
     if (help) {
       if (allLessonsComplete()) {
-        help.textContent = "You made it to the flag. Nice work on this unit.";
+        help.textContent = "You made it to the star. Nice work on this unit.";
         help.hidden = false;
         $("startBtn").textContent = "See results";
       } else if (nextLesson) {
@@ -1476,6 +1505,16 @@
     return { x: (pt.x / 1024) * 100, y: (pt.y / 341) * 100 };
   }
 
+  function roadEndPoint() {
+    var svg = $("roadTrail");
+    if (!svg) return { x: 94, y: 28 };
+    var guide = ensureRoadGuide(svg);
+    var len = guide.getTotalLength();
+    var pt = guide.getPointAtLength(flagProgress() * len);
+    // Sit just above the path end so the star reads as the finish marker.
+    return { x: (pt.x / 1024) * 100, y: Math.max(8, (pt.y / 341) * 100 - 10) };
+  }
+
   function showActivity() {
     if (!run || !run.order.length) {
       showError("This review has no playable questions yet.");
@@ -1496,25 +1535,8 @@
     $("progressLabel").textContent = n === 1 ? "Question 1" : ("Question " + i + " of " + n);
     var filled = run.index + ((run.itemState && run.itemState.resolved) ? 1 : 0);
     $("progressFill").style.width = Math.round((filled / Math.max(n, 1)) * 100) + "%";
+    $("prevBtn").hidden = run.index <= 0;
     $("prevBtn").disabled = run.index <= 0;
-    renderQuestionSteps(i, n);
-  }
-
-  function renderQuestionSteps(current, total) {
-    var wrap = $("questionSteps");
-    if (!wrap) return;
-    wrap.innerHTML = "";
-    if (total <= 1) {
-      wrap.hidden = true;
-      return;
-    }
-    wrap.hidden = false;
-    for (var s = 1; s <= total; s++) {
-      var dot = document.createElement("span");
-      dot.className = "q-step" + (s < current ? " done" : s === current ? " current" : "");
-      dot.title = "Question " + s;
-      wrap.appendChild(dot);
-    }
   }
 
   function loadItem() {
@@ -1548,13 +1570,12 @@
     $("status").className = "status";
 
     if (run.itemState.resolved) {
+      $("clearBtn").hidden = true;
       $("checkBtn").hidden = true;
       $("nextBtn").hidden = false;
       $("nextBtn").textContent = run.index >= run.order.length - 1 ? "Back to road" : "Next question";
       if (run.results[item.id]) {
         showItemFeedback(item, !!run.results[item.id].correct);
-        $("status").className = "status " + (run.results[item.id].correct ? "good" : "bad");
-        $("status").textContent = run.results[item.id].correct ? content.feedback.correct : content.feedback.outOfTries;
       }
       if (item.type === "mc") renderMcReveal(item, !!run.results[item.id] && run.results[item.id].correct);
       else renderWorkArea(item);
@@ -1567,6 +1588,7 @@
     $("nextBtn").hidden = true;
     $("nextBtn").textContent = "Next question";
     renderWorkArea(item);
+    updateClearBtn(item);
   }
 
   function finishLesson() {
@@ -1791,6 +1813,7 @@
     }
     $("checkBtn").hidden = false;
     updateCheckEnabled();
+    updateClearBtn(item);
     requestAnimationFrame(function () { drawMatchLines(item); });
   }
 
@@ -1898,6 +1921,7 @@
     area.appendChild(bankWrap);
     $("checkBtn").hidden = false;
     $("checkBtn").disabled = left > 0 || st.resolved;
+    updateClearBtn(item);
   }
 
   function makeSortCard(item, id) {
@@ -1987,6 +2011,57 @@
     } else if (item.type === "match") {
       $("checkBtn").disabled = Object.keys(st.links).length < item.pairs.length;
     }
+  }
+
+  function updateClearBtn(item) {
+    var btn = $("clearBtn");
+    if (!btn) return;
+    var st = run && run.itemState;
+    var show = !!(item && st && !st.resolved && (item.type === "match" || item.type === "sort"));
+    btn.hidden = !show;
+    if (!show) return;
+    var hasWork = false;
+    if (item.type === "match") {
+      Object.keys(st.links).forEach(function (id) {
+        if (!st.locked[id]) hasWork = true;
+      });
+      if (st.selectedLeft || st.selectedRight) hasWork = true;
+    } else {
+      Object.keys(st.place).forEach(function (id) {
+        if (st.place[id] && !st.locked[id]) hasWork = true;
+      });
+      if (st.selectedId) hasWork = true;
+    }
+    btn.disabled = !hasWork;
+  }
+
+  function clearWork() {
+    var item = currentItem();
+    var st = run && run.itemState;
+    if (!item || !st || st.resolved) return;
+    if (item.type === "match") {
+      Object.keys(st.links).forEach(function (id) {
+        if (!st.locked[id]) {
+          delete st.links[id];
+          delete st.resultClass[id];
+        }
+      });
+      st.selectedLeft = null;
+      st.selectedRight = null;
+    } else if (item.type === "sort") {
+      Object.keys(st.place).forEach(function (id) {
+        if (!st.locked[id]) delete st.place[id];
+      });
+      st.selectedId = null;
+    } else {
+      return;
+    }
+    $("status").textContent = "";
+    $("status").className = "status";
+    renderWorkArea(item);
+    updateCheckEnabled();
+    updateClearBtn(item);
+    announce("Cleared.");
   }
 
   function checkAnswer() {
@@ -2135,13 +2210,11 @@
     var st = run.itemState;
     st.resolved = true;
     run.results[item.id] = { correct: !!correct, objective: item.objective || "General" };
+    $("status").textContent = "";
+    $("status").className = "status";
     if (correct) {
-      $("status").className = "status good";
-      $("status").textContent = content.feedback.correct;
       showItemFeedback(item, true);
     } else {
-      $("status").className = "status bad";
-      $("status").textContent = content.feedback.outOfTries;
       showItemFeedback(item, false);
       if (item.type === "mc") {
         item.choices.forEach(function (ch) { st.selected[ch.id] = !!ch.correct; });
@@ -2163,7 +2236,8 @@
       progress.results = Object.assign({}, progress.results, run.results);
       saveProgress();
     }
-    announce($("status").textContent);
+    announce(itemFeedbackText(item, correct));
+    $("clearBtn").hidden = true;
     $("checkBtn").hidden = true;
     $("nextBtn").hidden = false;
     $("nextBtn").textContent = run.index >= run.order.length - 1 ? "Back to road" : "Next question";
@@ -2206,10 +2280,10 @@
       return byLesson[li].missed;
     });
 
-    $("endMessage").textContent = content.endMessage || "You finished this review.";
+    $("endMessage").textContent = content.endMessage || "Nice work finishing this review.";
     $("endSummary").textContent = revisit.length
-      ? "If anything felt shaky, these lessons are good ones to open again."
-      : "You made it through every lesson. Nice work.";
+      ? "Revisit a lesson below if something still feels unclear."
+      : "You made it through every lesson.";
 
     var list = $("objResults");
     var html = "";
@@ -2296,6 +2370,7 @@
     loadItem();
   });
   $("checkBtn").addEventListener("click", checkAnswer);
+  $("clearBtn").addEventListener("click", clearWork);
   $("nextBtn").addEventListener("click", function () {
     var st = run && run.itemState;
     // Allow browsing forward to unanswered questions, or finish after the last resolved one.
@@ -2345,7 +2420,7 @@
     correct: "Nice work.",
     tryAgain: "Not quite. Try again.",
     outOfTries: "Here's a tip. Review the lesson, then continue.",
-    endMessage: "You finished this review."
+    endMessage: "Nice work finishing this review."
   };
   var DRAFT_KEY = "review-studio-draft-v6";
   var ICONS = {
