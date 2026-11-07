@@ -6,7 +6,7 @@
   "grade": "9-12",
   "unit": "1",
   "subject": "Career Planning",
-  "directions": "Travel the road and answer a few questions from each lesson.",
+  "directions": "Practice the unit words, then travel the road and answer a few questions from each lesson.",
   "directionsAudio": "",
   "overview": {
     "lessonsInUnit": 4,
@@ -22,6 +22,89 @@
       },
       {
         "title": "Goals and costs"
+      }
+    ]
+  },
+  "vocabulary": {
+    "flashcardsFirst": true,
+    "terms": [
+      {
+        "id": "v1",
+        "term": "interest",
+        "definition": "an activity or subject a person enjoys and chooses to spend time on",
+        "lessonIndex": 1
+      },
+      {
+        "id": "v2",
+        "term": "strength",
+        "definition": "a skill or ability a person does well",
+        "lessonIndex": 1
+      },
+      {
+        "id": "v3",
+        "term": "value",
+        "definition": "a belief that matters deeply to a person and guides their choices",
+        "lessonIndex": 1
+      },
+      {
+        "id": "v4",
+        "term": "median pay",
+        "definition": "the middle salary for a career, where half of workers earn more and half earn less",
+        "lessonIndex": 2
+      },
+      {
+        "id": "v5",
+        "term": "job outlook",
+        "definition": "a prediction of how much a career is expected to grow or shrink over the next ten years",
+        "lessonIndex": 2
+      },
+      {
+        "id": "v6",
+        "term": "credible",
+        "definition": "trustworthy and reliable, based on accurate and well-sourced information",
+        "lessonIndex": 2
+      },
+      {
+        "id": "v7",
+        "term": "hard skill",
+        "definition": "a specific, teachable ability tied to a job, such as welding or coding",
+        "lessonIndex": 3
+      },
+      {
+        "id": "v8",
+        "term": "soft skill",
+        "definition": "a personal quality that affects how you work with others, such as teamwork or communication",
+        "lessonIndex": 3
+      },
+      {
+        "id": "v9",
+        "term": "certification",
+        "definition": "an official credential proving a person passed a test or completed a program",
+        "lessonIndex": 3
+      },
+      {
+        "id": "v10",
+        "term": "SMART goal",
+        "definition": "a goal that is Specific, Measurable, Achievable, Relevant, and Time-bound",
+        "lessonIndex": 4
+      },
+      {
+        "id": "v11",
+        "term": "net cost",
+        "definition": "the amount a student actually pays for school after financial aid is subtracted",
+        "lessonIndex": 4
+      },
+      {
+        "id": "v12",
+        "term": "take-home pay",
+        "definition": "the money left in a paycheck after taxes and deductions are removed",
+        "lessonIndex": 4
+      },
+      {
+        "id": "v13",
+        "term": "work plan",
+        "definition": "a list of the tasks needed to finish a project, with a due date for each task",
+        "lessonIndex": 4
       }
     ]
   },
@@ -64,8 +147,8 @@
         }
       ],
       "explanation": "Knowing yourself helps you aim for careers that match who you are and what matters to you.",
-      "lessonUrl": "https://example.com/career-planning/lesson-1",
-      "lessonLabel": "Open Lesson 1: Know yourself",
+      "lessonUrl": "",
+      "lessonLabel": "",
       "incorrectFeedback": "Knowing yourself helps you aim for careers that match who you are and what matters to you.",
       "correctFeedback": "Nice work."
     },
@@ -102,8 +185,8 @@
         }
       ],
       "explanation": "Career research covers skills, education, demand, pay, and day-to-day work.",
-      "lessonUrl": "https://example.com/career-planning/lesson-2",
-      "lessonLabel": "Open Lesson 2: Research careers",
+      "lessonUrl": "",
+      "lessonLabel": "",
       "incorrectFeedback": "Career research covers skills, education, demand, pay, and day-to-day work.",
       "correctFeedback": "Nice work."
     },
@@ -140,8 +223,8 @@
         }
       ],
       "explanation": "Technology and demand can shift which careers grow or shrink.",
-      "lessonUrl": "https://example.com/career-planning/lesson-2",
-      "lessonLabel": "Open Lesson 2: Research careers",
+      "lessonUrl": "",
+      "lessonLabel": "",
       "incorrectFeedback": "Technology and demand can shift which careers grow or shrink.",
       "correctFeedback": "Nice work."
     },
@@ -177,8 +260,8 @@
         }
       ],
       "explanation": "Different careers need different training paths.",
-      "lessonUrl": "https://example.com/career-planning/lesson-3",
-      "lessonLabel": "Open Lesson 3: Training paths",
+      "lessonUrl": "",
+      "lessonLabel": "",
       "incorrectFeedback": "Different careers need different training paths.",
       "correctFeedback": "Nice work."
     },
@@ -215,8 +298,8 @@
         }
       ],
       "explanation": "A good path fits the job and is realistic for your time, goals, and budget.",
-      "lessonUrl": "https://example.com/career-planning/lesson-3",
-      "lessonLabel": "Open Lesson 3: Training paths",
+      "lessonUrl": "",
+      "lessonLabel": "",
       "incorrectFeedback": "A good path fits the job and is realistic for your time, goals, and budget.",
       "correctFeedback": "Nice work."
     },
@@ -272,8 +355,8 @@
         }
       ],
       "explanation": "Career planning includes clear goals and a realistic look at costs.",
-      "lessonUrl": "https://example.com/career-planning/lesson-4",
-      "lessonLabel": "Open Lesson 4: Goals and costs",
+      "lessonUrl": "",
+      "lessonLabel": "",
       "incorrectFeedback": "Career planning includes clear goals and a realistic look at costs.",
       "correctFeedback": "Nice work."
     },
@@ -310,8 +393,8 @@
         }
       ],
       "explanation": "Useful goals are clear and include steps you can take.",
-      "lessonUrl": "https://example.com/career-planning/lesson-4",
-      "lessonLabel": "Open Lesson 4: Goals and costs",
+      "lessonUrl": "",
+      "lessonLabel": "",
       "incorrectFeedback": "Useful goals are clear and include steps you can take.",
       "correctFeedback": "Nice work."
     }

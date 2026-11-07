@@ -1,192 +1,121 @@
-# Unit Review Studio developer guide
+# Unit Review Studio guide
 
-SharePoint-ready Word copy: [training/Unit-Review-Studio-Developer-Guide.docx](training/Unit-Review-Studio-Developer-Guide.docx)
+For curriculum developers building unit reviews in Unit Review Studio, then placing them in Course Builder.
 
-Self-serve resource for curriculum developers building unit review activities.
-
-**Unit Review Studio** is the authoring tool. Students see a unit review on a lesson road.
-
-You do not need to write code. You fill in the studio, preview as a student, then publish a zip into the repo.
-
----
-
-## Links
-
-Studio:  
+**Studio**  
 https://courtniestrongmind.github.io/Unit_Review_Studio/studio/
 
-Sample student view:  
-https://courtniestrongmind.github.io/Unit_Review_Studio/review/index.html?set=sample-unit-review
-
-Open these in Chrome or Edge.
-
-Progress only lasts while the browser tab is open. Close the tab or use **Start over** on the road screen to begin at Lesson 1 again.
+Open in Chrome or Edge. No coding required.
 
 ---
 
-## What students get
+## Contents
 
-Students travel a road of lessons for one unit.
-
-1. They see the course name, unit title, short directions, and numbered stops.
-2. They answer a few questions per lesson. Types can be multiple choice, select all, match, or sort.
-3. They get a few tries. After a miss, they see a tip. Correct answers show short feedback.
-4. When the dotted trail reaches the flag, a yellow star appears.
-5. The end screen congratulates them. If anything was missed, it lists **Lessons to look at again** with the lesson number and name. Those names can link to Course Builder in a new tab.
-
-### Student start / road
-
-![Student road map with numbered lesson stops](training/screenshots/01-student-road.png)
-
-### A question
-
-![Multiple choice question with Check button](training/screenshots/02-student-question.png)
-
-### Match with Clear
-
-![Match activity with Clear and Check](training/screenshots/03-student-match.png)
-
-### Finished road
-
-![Completed road with yellow star at the flag](training/screenshots/04-student-road-complete.png)
-
-### End screen with lesson to revisit
-
-![End screen listing Lesson 3 Training paths as a link](training/screenshots/05-student-end.png)
+- [Build in the studio](#build-in-the-studio)
+- [Question types](#question-types)
+- [Name and publish](#name-and-publish)
+- [Put the review in Course Builder](#put-the-review-in-course-builder)
+- [Checklist](#checklist)
 
 ---
 
-## Before you build
-
-Have ready:
-
-- The course, grade, and unit number
-- Lesson titles for that unit
-- Rough ideas for the questions you want in each lesson
-- Course Builder lesson links if you want the end screen to open those lessons
-
-Try the sample student link once so you know the experience you are building.
-
----
-
-## Build a review in the studio
-
-### 1. About this unit and questions
+## Build in the studio
 
 Open the studio and click **Start**.
 
-Under **About this unit**, set:
+Under **About this unit**, set **Grade**, **This unit**, **Course**, and **Lessons in this unit**. That lesson count builds the road stops. Optional: open **Tries per question** if you want something other than 3.
 
-- **Grade**
-- **This unit**
-- **Course**
-- **Lessons in this unit** (this builds the road stops)
+### Vocabulary
 
-Optional: open **Tries per question** if you want something other than 3 tries.
+Under **Vocabulary flashcards**, keep **Flashcards at the start** on unless you want to skip the warm-up.
+
+Open each lesson and use **Vocabulary Match** to add that lesson’s words and meanings. Students see every unit word as flashcards before the road. When they enter a lesson, a short Match with that lesson’s words comes first, then your other questions. Put at least two words on a lesson if you want that Match to appear.
+
+Use the **Outline** on the left to jump between lessons and questions. The preview on the right updates as you work.
 
 ![Studio About this unit, outline, and question editor](training/screenshots/06-studio-about.png)
 
-### 2. Name each lesson
+Each lesson keeps a fixed **Lesson 1**, **Lesson 2** label. Next to it, type the topic or lesson name.
 
-Each lesson keeps a fixed **Lesson 1**, **Lesson 2** label. Next to it, type the topic or lesson name in its own box.
-
-That topic helps authors stay oriented. Students mainly see numbered stops on the road. On the end-screen revisit list, topics show as **Lesson 3: Training paths**.
-
-### 3. Add questions
+### Add a question
 
 1. Open a lesson and add a question.
-2. Pick a type:
-   - **Multiple choice** — one right answer
-   - **Select all** — more than one can be right
-   - **Match** — pair left with right
-   - **Sort** — put cards into groups
-3. Use **Generate a question** for a starting draft, or choose **I will write this question myself**.
-4. Fill in objective, prompt, answers, correct feedback, and incorrect feedback.
-5. Add a **Lesson URL** when you have the Course Builder link.
-   - You only need the URL on one question in that lesson.
-   - The end screen uses it for **Lessons to look at again**.
-   - Links open in a new tab so the review stays open.
+2. Pick a type, then use **Generate a question** (not currently ready) or **I will write this question myself**.
+3. Fill in the objective, prompt, answers, correct feedback, and incorrect feedback.
 
-Repeat for each lesson on the road.
+Repeat for each lesson on the road. Keep tips short and clear.
 
-### Question-type tips
+---
 
-**Multiple choice / Select all**
+## Question types
 
-- Keep choices short and parallel.
-- Avoid making the longest choice the only correct one every time.
-- For select all, mark every correct choice.
+### Multiple choice
 
-**Match**
+One right answer. Mark the correct choice.
 
-- Keep left and right items short enough to read at a glance.
-- Students connect pairs, then press Check.
-- **Clear** removes unlocked connections.
+![Multiple choice editor in the studio](training/screenshots/10-studio-multiple-choice.png)
 
-**Sort**
+### Select all
 
-- Name groups clearly.
-- Assign each card to the correct group in the authoring view.
-- Students sort cards into bins, then press Check.
-- **Clear** sends unlocked cards back.
+More than one can be right. Mark every correct choice with a checkbox.
 
-### 4. Name and publish
+![Select all editor in the studio](training/screenshots/11-studio-select-all.png)
+
+### Match
+
+Pair left with right. Each row is one correct match. Keep terms short enough to read at a glance. Students get a **Clear** button before Check.
+
+![Match editor in the studio](training/screenshots/12-studio-match.png)
+
+### Sort
+
+Name the groups, then assign each card to the correct group. Students sort cards into bins and can **Clear** before Check.
+
+![Sort editor in the studio](training/screenshots/13-studio-sort.png)
+
+---
+
+## Name and publish
 
 Click **Name and publish**.
 
 ![Name and publish step with checklist](training/screenshots/07-studio-publish.png)
 
 1. Set the **Title students see** and **Directions for students**.
-2. Optional: edit shared feedback lines and the end message.
+2. Optional: edit shared feedback messages and the end message.
 3. Read the **Checklist** and fix anything it flags.
-4. Click **Publish** and save the downloaded zip.
+4. Click **Publish**.
 
-The studio also saves a draft in **that browser** automatically. Drafts do not sync to other computers. Publish is how you get the files that belong in the repo.
+After you publish, copy the StrongMind interactives link. That is what you paste into Course Builder.
 
----
-
-## Put it in the repo and ship it
-
-1. Unzip the publish folder into `review/sets/`.
-   - You should get something like `review/sets/my-activity-name/content.json`.
-2. Activity folder names use lowercase letters, numbers, and dashes only.
-3. Branch, commit, open a PR, merge, then run Dev Deploy and Prod Deploy the usual way.
-4. Student link pattern after hosting is live:
-
-`.../review/index.html?set=<activity-name>`
-
-5. Embed that player URL in Helios in an iframe, same as other interactives.
-
-Until the shared StrongMind interactives host is pointed at this repo, use the GitHub Pages links above for review.
+Click **Save draft** to keep your work if you refresh the tab. Closing the tab clears that draft. **Publish** is how you get the live link.
 
 ---
 
-## Ship checklist
+## Put the review in Course Builder
+
+1. In Unit Review Studio, click **Publish** and copy the StrongMind interactives link.
+2. Open the Course Builder page where the unit review should appear.
+3. In the editor toolbar, click the **interactive** control (the game controller icon).
+
+![Interactive icon in the Course Builder toolbar](training/screenshots/09-course-builder-interactive-icon.png)
+
+4. Paste the link into **Interactive URL**.
+5. Add optional alt text if you want.
+6. Click **Insert Interactive**.
+7. Save the page and use preview to confirm the road loads.
+
+![Course Builder Insert Interactive panel](training/screenshots/08-course-builder-insert.png)
+
+---
+
+## Checklist
 
 - [ ] Course, unit, grade, and lesson count match the real unit
-- [ ] Every road lesson has at least one question
+- [ ] Every lesson has at least one question
 - [ ] Each question has clear correct and incorrect feedback
 - [ ] Match and sort items are short and readable on a phone
-- [ ] Lesson URLs are added for lessons you want linked from the end screen
-- [ ] You played the whole road once in preview or the published sample
-- [ ] Publish zip is in `review/sets/` and named correctly
-- [ ] Helios embed uses the player link with the right `?set=`
-
----
-
-## Common questions
-
-**Why did my review open on Lesson 2?**  
-You already finished Lesson 1 in that same browser tab. Close the tab, use **Start over**, or open a fresh link.
-
-**Where did my draft go?**  
-Drafts live in local browser storage on that computer. Another browser or computer will not see them. Publish and save the zip if you need a lasting copy.
-
-**Why is a lesson name on the end screen not a link?**  
-That lesson has no Lesson URL on any of its questions yet. Add the Course Builder URL and publish again.
-
-**Do students see points or a percent score?**  
-No. This review is light. The focus is finishing the road and knowing which lessons to reopen.
-
-**Can I change the player design later?**  
-Yes, but that is a code change in `review/index.html`. After player edits, someone needs to run `python tools/build_studio.py` so the studio preview stays in sync.
+- [ ] You played through once before publishing
+- [ ] You copied the StrongMind interactives link after Publish
+- [ ] Course Builder uses that link in an Insert Interactive block
+- [ ] Course Builder preview shows the review correctly

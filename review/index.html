@@ -151,6 +151,18 @@
   .road-stops li.current .road-stop-dot {
     box-shadow: 0 0 0 4px var(--lilac-bush-100), 0 2px 8px rgba(77, 26, 114, 0.18);
   }
+  .road-stops li.vocab .road-stop-dot {
+    background: var(--lilac-bush-600); color: #FFD400;
+  }
+  .road-stops li.vocab.done .road-stop-dot {
+    background: var(--highland-800); color: #FFD400;
+  }
+  .road-stops li.vocab.current .road-stop-dot {
+    box-shadow: 0 0 0 4px var(--lilac-bush-100), 0 2px 8px rgba(77, 26, 114, 0.18);
+  }
+  .road-stops li.vocab .road-stop-dot svg {
+    width: 16px; height: 16px; display: block;
+  }
   .road-end-star {
     position: absolute; width: 44px; height: 44px; transform: translate(-50%, -50%);
     display: grid; place-items: center; pointer-events: none; z-index: 2;
@@ -298,6 +310,76 @@
   .error { background: var(--bad-bg); color: var(--bad-ink); border-radius: 16px; padding: 20px; font-weight: 700; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
   @media (prefers-reduced-motion: reduce) { .card.wrong, .match-item.wrong { animation: none; } .drag-clone { transform: none; } .progress-fill, .btn, .choice { transition: none; } }
+
+  /* Vocabulary flashcards — index-card shape (5×3) with side arrows */
+  .flash-wrap { margin: 8px 0 18px; width: 100%; }
+  .flash-count { margin: 0 0 12px; color: var(--ink-soft); font-weight: 600; font-size: .95rem; text-align: center; }
+  .flash-deck {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    width: 100%; margin: 0 0 12px;
+  }
+  .flash-stage {
+    perspective: 1200px; flex: 1 1 auto; min-width: 0; max-width: 440px; width: 100%;
+  }
+  .flash-card {
+    display: block; width: 100%; aspect-ratio: 5 / 3; height: auto; border: 0; padding: 0;
+    background: transparent; border-radius: 16px; cursor: pointer;
+    position: relative; appearance: none; -webkit-appearance: none;
+  }
+  .flash-inner {
+    position: relative; display: block; width: 100%; height: 100%;
+    transform-style: preserve-3d; transition: transform 420ms ease;
+  }
+  .flash-card.is-flipped .flash-inner { transform: rotateY(180deg); }
+  .flash-face {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%; box-sizing: border-box;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 24px 28px; border-radius: 16px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border: 2px solid var(--frost-line); background: rgba(255,255,255,.95);
+    box-shadow: 0 10px 24px rgba(77, 26, 114, 0.12);
+  }
+  .flash-face .flash-text {
+    display: block; width: 100%; max-width: 100%;
+    font-family: var(--font-primary); font-weight: 600; color: var(--ink-strong);
+    font-size: 1.25rem; line-height: 1.35; overflow-wrap: break-word; word-break: normal;
+  }
+  .flash-face.back { transform: rotateY(180deg); background: var(--lilac-bush-50); border-color: var(--lilac-bush-100); }
+  .flash-face.back .flash-text { font-family: var(--font-secondary); font-weight: 600; font-size: 1rem; }
+  .flash-hint { margin: 0 0 16px; color: var(--ink-soft); font-size: .95rem; font-weight: 600; text-align: center; }
+  .flash-arrow {
+    width: 44px; height: 44px; border-radius: 9999px; padding: 0;
+    display: inline-grid; place-items: center; flex: none;
+    border: 1px solid var(--line); background: var(--surface); color: var(--neutral-700);
+    transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  }
+  .flash-arrow svg { width: 22px; height: 22px; }
+  .flash-arrow:hover:not(:disabled) {
+    background: var(--pearl-brush-100); border-color: var(--lilac-bush-600); color: var(--lilac-bush-700);
+  }
+  .flash-arrow:disabled {
+    opacity: .4; cursor: not-allowed; background: var(--neutral-200); border-color: var(--neutral-200); color: var(--neutral-500);
+  }
+  .flash-arrow.next {
+    border-color: var(--btn-primary-bg); background: var(--btn-primary-bg); color: var(--neutral-0);
+  }
+  .flash-arrow.next:hover:not(:disabled) {
+    background: var(--btn-primary-hover-bg); border-color: var(--btn-primary-hover-bg); color: var(--neutral-0);
+  }
+  .flash-continue {
+    display: flex; margin-top: 8px; justify-content: center; gap: 12px; flex-wrap: wrap;
+  }
+  @media (max-width: 480px) {
+    .flash-deck { gap: 8px; }
+    .flash-arrow { width: 40px; height: 40px; }
+    .flash-face { padding: 18px 16px; }
+    .flash-face .flash-text { font-size: 1.1rem; }
+    .flash-face.back .flash-text { font-size: .95rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flash-inner { transition: none; }
+  }
 </style>
 </head>
 <body class="centered">
@@ -326,6 +408,40 @@
       </button>
       <button id="resetBtn" class="btn secondary" type="button" hidden>Start over</button>
       <button id="startBtn" class="btn" type="button">Begin</button>
+    </div>
+  </section>
+
+  <section id="flashcards" class="screen center-card start-card frosted" hidden>
+    <p class="start-course" id="flashCourse" hidden></p>
+    <h1 id="flashTitle">Unit words</h1>
+    <p class="directions" id="flashDirections">Tap each card to see the meaning. Then continue to the lesson road.</p>
+    <div class="flash-wrap">
+      <p class="flash-count" id="flashCount">Word 1 of 1</p>
+      <div class="flash-deck" role="group" aria-label="Flashcard navigation">
+        <button id="flashPrev" class="flash-arrow" type="button" aria-label="Previous word">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="flash-stage">
+          <button type="button" class="flash-card" id="flashCard" aria-live="polite">
+            <span class="flash-inner" id="flashInner">
+              <span class="flash-face front">
+                <span class="flash-text" id="flashTerm"></span>
+              </span>
+              <span class="flash-face back">
+                <span class="flash-text" id="flashDef"></span>
+              </span>
+            </span>
+          </button>
+        </div>
+        <button id="flashNext" class="flash-arrow next" type="button" aria-label="Next word">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+      <p class="flash-hint" id="flashHint">Tap the card to flip</p>
+    </div>
+    <div class="flash-continue" id="flashContinueWrap">
+      <button id="flashShuffle" class="btn secondary" type="button">Shuffle</button>
+      <button id="flashDone" class="btn" type="button">Done</button>
     </div>
   </section>
 
@@ -390,6 +506,7 @@
   var trailTShown = null;
   var trailAnimFrame = null;
   var animateTrailOnRender = false;
+  var flashState = null;
 
   var $ = function (id) { return document.getElementById(id); };
 
@@ -401,7 +518,7 @@
   }
 
   function blankProgress() {
-    return { completedLessons: {}, results: {}, points: 0 };
+    return { completedLessons: {}, results: {}, points: 0, flashcardsDone: false };
   }
 
   function loadProgress() {
@@ -415,6 +532,7 @@
       progress.completedLessons = parsed.completedLessons || {};
       progress.results = parsed.results || {};
       progress.points = parseInt(parsed.points, 10) || 0;
+      progress.flashcardsDone = !!parsed.flashcardsDone;
     } catch (e) {}
   }
 
@@ -522,10 +640,33 @@
     };
   }
 
+  function normalizeVocabulary(c) {
+    var src = (c && c.vocabulary) || {};
+    var terms = (src.terms || []).filter(function (t) {
+      return t && String(t.term || "").trim() && String(t.definition || "").trim();
+    }).map(function (t, i) {
+      return {
+        id: t.id || ("v" + i),
+        term: String(t.term).trim(),
+        definition: String(t.definition).trim(),
+        lessonIndex: Math.max(1, parseInt(t.lessonIndex, 10) || 1)
+      };
+    });
+    return {
+      flashcardsFirst: src.flashcardsFirst !== false,
+      terms: terms
+    };
+  }
+
   function normalize(c) {
     c = c || {};
     var settings = c.settings || {};
     var items = (c.items || []).filter(Boolean).map(normalizeItem).filter(Boolean);
+    var overview = normalizeOverview(c);
+    var vocabulary = normalizeVocabulary(c);
+    vocabulary.terms.forEach(function (t) {
+      if (t.lessonIndex > overview.lessonsInUnit) t.lessonIndex = overview.lessonsInUnit;
+    });
     return {
       title: c.title || "Unit review",
       slug: c.slug || "",
@@ -534,7 +675,8 @@
       subject: c.subject || "",
       directions: c.directions || "",
       directionsAudio: c.directionsAudio || "",
-      overview: normalizeOverview(c),
+      overview: overview,
+      vocabulary: vocabulary,
       settings: {
         triesPerItem: clampInt(settings.triesPerItem, 1, 5, 3),
         pointsPerCorrect: clampInt(settings.pointsPerCorrect, 10, 1000, 100),
@@ -547,6 +689,54 @@
         outOfTries: (c.feedback && c.feedback.outOfTries) || DEFAULTS.outOfTries
       },
       endMessage: c.endMessage || DEFAULTS.endMessage
+    };
+  }
+
+  function vocabTerms() {
+    return (content && content.vocabulary && content.vocabulary.terms) || [];
+  }
+
+  function vocabPracticeEnabled() {
+    if (!content || !content.vocabulary || !content.vocabulary.flashcardsFirst) return false;
+    return vocabTerms().length > 0;
+  }
+
+  function needsFlashcards() {
+    if (!vocabPracticeEnabled()) return false;
+    return !(progress && progress.flashcardsDone);
+  }
+
+  function needsVocabWarmup() {
+    return needsFlashcards();
+  }
+
+  function vocabTermsForLesson(lessonIndex) {
+    return vocabTerms().filter(function (t) {
+      return Number(t.lessonIndex) === Number(lessonIndex);
+    });
+  }
+
+  function buildVocabMatchItem(lessonIndex) {
+    var terms = vocabTermsForLesson(lessonIndex);
+    if (terms.length < 2) return null;
+    return {
+      id: "vocab-lesson-" + lessonIndex,
+      type: "match",
+      lessonIndex: Number(lessonIndex),
+      isVocab: true,
+      objective: "Lesson " + lessonIndex + " vocabulary",
+      prompt: "Match each word with its meaning.",
+      promptImage: "",
+      promptImageAlt: "",
+      promptAudio: "",
+      pairs: terms.map(function (t) {
+        return { id: t.id, left: t.term, right: t.definition };
+      }),
+      correctFeedback: "Nice work.",
+      incorrectFeedback: "Check each pair, then try again.",
+      explanation: "Check each pair, then try again.",
+      lessonUrl: "",
+      lessonLabel: ""
     };
   }
 
@@ -613,7 +803,9 @@
   }
 
   function hideAll() {
-    ["loading", "error", "start", "activity", "end"].forEach(function (id) { $(id).hidden = true; });
+    ["loading", "error", "start", "flashcards", "activity", "end"].forEach(function (id) {
+      if ($(id)) $(id).hidden = true;
+    });
     document.body.classList.add("centered");
   }
 
@@ -637,18 +829,25 @@
       points: progress ? progress.points : 0,
       results: Object.assign({}, progress && progress.results || {}),
       itemState: null,
-      itemStates: {}
+      itemStates: {},
+      vocabItems: {}
     };
   }
 
   function startLesson(lessonIndex) {
     var items = itemsForLesson(lessonIndex);
-    if (!items.length) {
+    var vocabItem = buildVocabMatchItem(lessonIndex);
+    if (!items.length && !vocabItem) {
       showError("This lesson does not have any questions yet.");
       return;
     }
     resetRun(lessonIndex);
-    run.order = items.map(function (it) { return it.id; });
+    run.order = [];
+    if (vocabItem) {
+      run.vocabItems[vocabItem.id] = vocabItem;
+      run.order.push(vocabItem.id);
+    }
+    items.forEach(function (it) { run.order.push(it.id); });
     run.index = 0;
     showActivity();
   }
@@ -684,10 +883,26 @@
     return 0.98;
   }
 
+  function hasVocabRoadStop() {
+    return vocabTerms().length > 0;
+  }
+
+  function roadSlotTotal() {
+    var n = (content.overview && content.overview.lessons || []).length;
+    return hasVocabRoadStop() ? n + 1 : n;
+  }
+
+  function lessonSlotIndex(lessonIndex) {
+    // lessonIndex is 1-based. Vocab takes slot 0 when present, so lessons shift toward the flag.
+    return hasVocabRoadStop() ? Number(lessonIndex) : Number(lessonIndex) - 1;
+  }
+
   function trailTargetProgress(lessonTotal, nextLesson) {
+    var slots = hasVocabRoadStop() ? lessonTotal + 1 : lessonTotal;
     if (allLessonsComplete()) return flagProgress();
-    if (nextLesson) return stopProgress(nextLesson - 1, lessonTotal);
-    return stopProgress(0, lessonTotal);
+    if (needsVocabWarmup()) return stopProgress(0, slots);
+    if (nextLesson) return stopProgress(lessonSlotIndex(nextLesson), slots);
+    return stopProgress(0, slots);
   }
 
   function buildTrailPathD(guide, startT, endT) {
@@ -734,7 +949,7 @@
     var lessons = content.overview.lessons || [];
     if (!trail || !lessons.length) return;
     var guide = ensureRoadGuide(trail);
-    var startT = stopProgress(0, lessons.length);
+    var startT = stopProgress(0, roadSlotTotal());
     var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (trailAnimFrame) {
       cancelAnimationFrame(trailAnimFrame);
@@ -771,29 +986,100 @@
 
   function currentItem() {
     var id = run.order[run.index];
+    if (run.vocabItems && run.vocabItems[id]) return run.vocabItems[id];
     for (var i = 0; i < content.items.length; i++) if (content.items[i].id === id) return content.items[i];
     return null;
   }
 
-  function showStart(opts) {
-    opts = opts || {};
-    hideAll();
-    document.body.classList.add("centered");
-    var course = $("startCourse");
-    if (content.subject) {
-      course.textContent = content.subject;
-      course.hidden = false;
-    } else {
-      course.textContent = "";
-      course.hidden = true;
-    }
+  function unitDisplayTitle() {
     var title = (content.title || "").trim();
     if (content.subject && title.toLowerCase().indexOf(String(content.subject).toLowerCase()) === 0) {
       title = title.slice(content.subject.length).replace(/^[\s\-–—:|]+/, "").trim();
     }
     if (!title && content.unit) title = "Unit " + content.unit + " Review";
     if (!title) title = "Unit review";
-    $("startTitle").textContent = title;
+    return title;
+  }
+
+  function setCourseLabel(el) {
+    if (!el) return;
+    if (content.subject) {
+      el.textContent = content.subject;
+      el.hidden = false;
+    } else {
+      el.textContent = "";
+      el.hidden = true;
+    }
+  }
+
+  function showFlashcards() {
+    hideAll();
+    document.body.classList.add("centered");
+    setCourseLabel($("flashCourse"));
+    $("flashTitle").textContent = "Unit words";
+    $("flashDirections").textContent = "Tap each card to see the meaning. Press Shuffle to practice again in a new order, or Done when you are ready for the lesson questions.";
+    flashState = {
+      index: 0,
+      flipped: false,
+      terms: vocabTerms().slice()
+    };
+    renderFlashcard();
+    $("flashcards").hidden = false;
+    if ($("flashCard")) $("flashCard").focus();
+  }
+
+  function shuffleFlashcards() {
+    if (!flashState || !flashState.terms.length) return;
+    flashState.terms = shuffle(flashState.terms.slice());
+    flashState.index = 0;
+    flashState.flipped = false;
+    renderFlashcard();
+    if ($("flashCard")) $("flashCard").focus();
+  }
+
+  function renderFlashcard() {
+    if (!flashState || !flashState.terms.length) {
+      finishFlashcards();
+      return;
+    }
+    var term = flashState.terms[flashState.index];
+    var n = flashState.terms.length;
+    var i = flashState.index + 1;
+    $("flashCount").textContent = "Word " + i + " of " + n;
+    $("flashTerm").textContent = term.term;
+    $("flashDef").textContent = term.definition;
+    var card = $("flashCard");
+    card.classList.toggle("is-flipped", !!flashState.flipped);
+    card.setAttribute("aria-label",
+      flashState.flipped
+        ? (term.definition + ". Tap to flip.")
+        : (term.term + ". Tap to flip.")
+    );
+    $("flashHint").textContent = flashState.flipped ? "Tap to show the word again" : "Tap the card to flip";
+    $("flashPrev").disabled = flashState.index <= 0;
+    var last = flashState.index >= n - 1;
+    $("flashNext").disabled = last;
+    $("flashNext").setAttribute("aria-label", last ? "Last word" : "Next word");
+  }
+
+  function markFlashcardsDone() {
+    if (!progress) loadProgress();
+    progress.flashcardsDone = true;
+    saveProgress();
+  }
+
+  function finishFlashcards() {
+    markFlashcardsDone();
+    flashState = null;
+    showStart({ animateTrail: true });
+  }
+
+  function showStart(opts) {
+    opts = opts || {};
+    hideAll();
+    document.body.classList.add("centered");
+    setCourseLabel($("startCourse"));
+    $("startTitle").textContent = unitDisplayTitle();
     $("startDirections").textContent = content.directions;
     $("startDirections").hidden = !content.directions;
     $("startListen").hidden = !content.directionsAudio;
@@ -821,6 +1107,7 @@
     if (questRoad) {
       questRoad.querySelectorAll(".road-end-star").forEach(function (el) { el.remove(); });
     }
+
     var lessons = content.overview.lessons || [];
     if (!lessons.length) {
       roadBlock.hidden = true;
@@ -837,13 +1124,43 @@
       catch (e) { art.src = "assets/road-path.jpg"; }
     }
 
+    // Keep the familiar road on first view. Vocabulary is the first stop when present.
+    var wordsFirst = needsVocabWarmup();
     var nextLesson = nextPlayableLesson();
+    var slots = roadSlotTotal();
+    var starSvg = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.4 6.2 6.7.4-5.2 4.3 1.7 6.5L12 16.7 6.4 20l1.7-6.5L2.9 9.2l6.7-.4L12 2.6z"/></svg>';
+
+    if (hasVocabRoadStop()) {
+      var vPt = roadStopPoint(0, slots);
+      var vDone = !wordsFirst;
+      var vLi = document.createElement("li");
+      vLi.style.left = vPt.x + "%";
+      vLi.style.top = vPt.y + "%";
+      vLi.className = "vocab " + (vDone ? "done" : "current available");
+      var vBtn = document.createElement("button");
+      vBtn.type = "button";
+      vBtn.className = "road-stop-btn";
+      vBtn.disabled = vDone;
+      vBtn.setAttribute("aria-label",
+        vDone ? "Vocabulary review complete." : "Vocabulary review. Up next."
+      );
+      var vDot = document.createElement("span");
+      vDot.className = "road-stop-dot";
+      vDot.innerHTML = starSvg;
+      vBtn.appendChild(vDot);
+      if (!vDone) {
+        vBtn.addEventListener("click", function () { stopAudio(); showFlashcards(); });
+      }
+      vLi.appendChild(vBtn);
+      stops.appendChild(vLi);
+    }
+
     lessons.forEach(function (lesson, i) {
       var lessonIndex = i + 1;
-      var pt = roadStopPoint(i, lessons.length);
+      var pt = roadStopPoint(lessonSlotIndex(lessonIndex), slots);
       var done = isLessonComplete(lessonIndex);
-      var unlocked = isLessonUnlocked(lessonIndex);
-      var current = nextLesson === lessonIndex;
+      var unlocked = !wordsFirst && isLessonUnlocked(lessonIndex);
+      var current = !wordsFirst && nextLesson === lessonIndex;
 
       var li = document.createElement("li");
       li.style.left = pt.x + "%";
@@ -891,7 +1208,7 @@
       if (isLessonComplete(c)) { completedAny = true; break; }
     }
     var unitDone = allLessonsComplete();
-    if (trail && lessons.length && (completedAny || unitDone || (nextLesson && nextLesson > 1))) {
+    if (trail && lessons.length && (wordsFirst || completedAny || unitDone || (nextLesson && nextLesson > 1))) {
       ensureRoadGuide(trail);
       renderTrailTo(
         trailTargetProgress(lessons.length, nextLesson),
@@ -907,12 +1224,26 @@
         help.textContent = "You made it to the star. Nice work on this unit.";
         help.hidden = false;
         $("startBtn").textContent = "See results";
-      } else if (nextLesson) {
-        help.textContent = isLessonComplete(1) || nextLesson > 1
-          ? ("Lesson " + nextLesson + " is open. Tap a bright stop or continue.")
-          : "Start at Lesson 1.";
+      } else if (needsFlashcards()) {
+        help.textContent = "Start with vocabulary review, then Lesson 1.";
         help.hidden = false;
-        $("startBtn").textContent = nextLesson === 1 ? "Begin" : ("Continue to Lesson " + nextLesson);
+        $("startBtn").textContent = "Start: Vocabulary Review";
+      } else if (nextLesson) {
+        // After flashcards they already began, so do not say "Start at Lesson 1."
+        var afterVocab = hasVocabRoadStop() && !needsFlashcards();
+        if (afterVocab && nextLesson === 1) {
+          help.textContent = "Now go to Lesson 1.";
+        } else if (isLessonComplete(1) || nextLesson > 1) {
+          help.textContent = "Lesson " + nextLesson + " is open. Tap a bright stop or continue.";
+        } else {
+          help.textContent = "Start at Lesson 1.";
+        }
+        help.hidden = false;
+        if (nextLesson === 1) {
+          $("startBtn").textContent = afterVocab ? "Continue to Lesson 1." : "Begin";
+        } else {
+          $("startBtn").textContent = "Continue to Lesson " + nextLesson;
+        }
       } else {
         help.hidden = true;
         $("startBtn").textContent = "Begin";
@@ -920,7 +1251,9 @@
     }
     var resetBtn = $("resetBtn");
     if (resetBtn) {
-      resetBtn.hidden = !(completedAny || allLessonsComplete() || (nextLesson && nextLesson > 1));
+      resetBtn.hidden = wordsFirst
+        ? true
+        : !(completedAny || allLessonsComplete() || (nextLesson && nextLesson > 1));
     }
     roadBlock.hidden = false;
   }
@@ -957,8 +1290,12 @@
   }
 
   function stopProgress(index, total) {
-    if (total <= 1) return 0.12;
-    return 0.12 + (index / (total - 1)) * 0.76;
+    // Keep the path end for the flag. With a vocab stop, slots start earlier and
+    // lesson numbers land closer to the flag.
+    if (total <= 1) return hasVocabRoadStop() ? 0.22 : 0.12;
+    var start = hasVocabRoadStop() ? 0.08 : 0.12;
+    var span = hasVocabRoadStop() ? 0.80 : 0.76;
+    return start + (index / (total - 1)) * span;
   }
 
   function roadStopPoint(index, total) {
@@ -994,10 +1331,22 @@
   function updateHud() {
     var n = run.order.length;
     var i = Math.min(run.index + 1, n);
+    var item = currentItem();
     if ($("lessonLabel")) {
       $("lessonLabel").textContent = run.lessonIndex ? ("Lesson " + run.lessonIndex) : "Review";
     }
-    $("progressLabel").textContent = n === 1 ? "Question 1" : ("Question " + i + " of " + n);
+    if (item && item.isVocab) {
+      $("progressLabel").textContent = "Word match";
+    } else {
+      var qIndex = run.order.slice(0, run.index + 1).filter(function (id) {
+        return !(run.vocabItems && run.vocabItems[id]);
+      }).length;
+      var qTotal = run.order.filter(function (id) {
+        return !(run.vocabItems && run.vocabItems[id]);
+      }).length;
+      if (!qTotal) $("progressLabel").textContent = "Question " + i + " of " + n;
+      else $("progressLabel").textContent = qTotal === 1 ? "Question 1" : ("Question " + qIndex + " of " + qTotal);
+    }
     var filled = run.index + ((run.itemState && run.itemState.resolved) ? 1 : 0);
     $("progressFill").style.width = Math.round((filled / Math.max(n, 1)) * 100) + "%";
     $("prevBtn").hidden = run.index <= 0;
@@ -1795,12 +2144,40 @@
 
   $("startBtn").addEventListener("click", function () {
     stopAudio();
+    if (needsFlashcards()) {
+      showFlashcards();
+      return;
+    }
     if (allLessonsComplete()) {
       showEnd();
       return;
     }
     var lesson = nextPlayableLesson() || 1;
     startLesson(lesson);
+  });
+  $("flashCard").addEventListener("click", function () {
+    if (!flashState) return;
+    flashState.flipped = !flashState.flipped;
+    renderFlashcard();
+  });
+  $("flashPrev").addEventListener("click", function () {
+    if (!flashState || flashState.index <= 0) return;
+    flashState.index -= 1;
+    flashState.flipped = false;
+    renderFlashcard();
+  });
+  $("flashNext").addEventListener("click", function () {
+    if (!flashState) return;
+    if (flashState.index >= flashState.terms.length - 1) return;
+    flashState.index += 1;
+    flashState.flipped = false;
+    renderFlashcard();
+  });
+  $("flashShuffle").addEventListener("click", function () {
+    shuffleFlashcards();
+  });
+  $("flashDone").addEventListener("click", function () {
+    finishFlashcards();
   });
   $("startListen").addEventListener("click", function () { playAudio(content.directionsAudio, $("startListen")); });
   $("promptListen").addEventListener("click", function () {

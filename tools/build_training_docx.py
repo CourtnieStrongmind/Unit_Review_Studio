@@ -280,7 +280,7 @@ def main():
             "They answer a few questions per lesson. Types can be multiple choice, select all, match, or sort.",
             "They get a few tries. After a miss, they see a tip. Correct answers show short feedback.",
             "When the dotted trail reaches the flag, a yellow star appears.",
-            "The end screen congratulates them. If anything was missed, it lists **Lessons to look at again** with the lesson number and name. Those names can link to Course Builder in a new tab.",
+            "The end screen congratulates them. If anything was missed, it lists **Lessons to look at again** with the lesson number and topic as plain text. There are no Course Builder hyperlinks in the interactive.",
         ],
     )
 
@@ -297,7 +297,7 @@ def main():
     add_image(doc, "04-student-road-complete.png", "Completed road with yellow star at the flag")
 
     add_heading(doc, "End screen with lesson to revisit", 2, bookmark="student-end")
-    add_image(doc, "05-student-end.png", "End screen with a numbered lesson link")
+    add_image(doc, "05-student-end.png", "End screen listing lessons as plain text")
     add_back_to_contents(doc)
 
     add_heading(doc, "Before you build", 1, bookmark="before")
@@ -308,7 +308,7 @@ def main():
             "The course, grade, and unit number",
             "Lesson titles for that unit",
             "Rough ideas for the questions you want in each lesson",
-            "Course Builder lesson links if you want the end screen to open those lessons",
+            "Topic names for each lesson on the road",
         ],
     )
     add_body(
@@ -355,10 +355,14 @@ def main():
             "Pick a type: **Multiple choice**, **Select all**, **Match**, or **Sort**.",
             "Use **Generate a question** for a starting draft, or choose **I will write this question myself**.",
             "Fill in objective, prompt, answers, correct feedback, and incorrect feedback.",
-            "Add a **Lesson URL** when you have the Course Builder link. You only need the URL on one question in that lesson. The end screen uses it for **Lessons to look at again**. Links open in a new tab so the review stays open.",
+            "Fill in objective, prompt, answers, correct feedback, and incorrect feedback.",
         ],
     )
     add_body(doc, "Repeat for each lesson on the road.")
+    add_body(
+        doc,
+        "Wrong-answer tips and the end screen do not link out to Course Builder. The end list is only a reminder of which lessons felt shaky.",
+    )
 
     add_heading(doc, "Question-type tips", 2, bookmark="build-tips")
     add_body(doc, "**Multiple choice / Select all**")
@@ -433,7 +437,6 @@ def main():
             "Every road lesson has at least one question",
             "Each question has clear correct and incorrect feedback",
             "Match and sort items are short and readable on a phone",
-            "Lesson URLs are added for lessons you want linked from the end screen",
             "You played the whole road once in preview or the published sample",
             "Publish zip is in review/sets/ and named correctly",
             "Helios embed uses the player link with the right ?set=",
@@ -452,10 +455,10 @@ def main():
         doc,
         "Drafts live in local browser storage on that computer. Another browser or computer will not see them. Publish and save the zip if you need a lasting copy.",
     )
-    add_body(doc, "**Why is a lesson name on the end screen not a link?**")
+    add_body(doc, "**Why are end-screen lesson names not links?**")
     add_body(
         doc,
-        "That lesson has no Lesson URL on any of its questions yet. Add the Course Builder URL and publish again.",
+        "By design. The list only reminds students which lessons to reopen in the course, so changing Course Builder URLs cannot break the interactive.",
     )
     add_body(doc, "**Do students see points or a percent score?**")
     add_body(

@@ -321,6 +321,30 @@
   details.settings summary { cursor: pointer; font-weight: 700; color: var(--brand-ink); list-style: none; }
   details.settings summary::-webkit-details-marker { display: none; }
   details.settings[open] summary { margin-bottom: 10px; }
+  .vocab-help { margin: 0 0 12px; color: var(--ink-soft); font-size: .92rem; }
+  .vocab-toggle { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-weight: 600; color: var(--neutral-700); }
+  .vocab-toggle input { width: auto; }
+  .lesson-vocab {
+    margin: 0 0 14px; padding: 14px; border-radius: 16px; background: var(--pearl-brush-50);
+    border: 1px solid var(--line-soft); border-left: 5px solid #008FA9;
+  }
+  .lesson-vocab-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px;
+  }
+  .lesson-vocab-head h3 {
+    margin: 0; font-family: var(--font-primary); font-size: 1rem; font-weight: 700; color: var(--brand-ink);
+  }
+  .lesson-vocab-head .muted { margin: 0; font-size: .85rem; }
+  .lesson-vocab .vocab-help { margin-bottom: 10px; }
+  .lesson-vocab-list { display: grid; gap: 10px; margin-bottom: 10px; }
+  .lesson-vocab-row {
+    display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+    align-items: start; padding: 10px; border-radius: 14px; background: #fff; border: 1px solid var(--line-soft);
+  }
+  .lesson-vocab-row .field { margin: 0; }
+  @media (max-width: 720px) {
+    .lesson-vocab-row { grid-template-columns: 1fr; }
+  }
   .entry {
     border: 1px solid var(--line-soft); border-radius: 18px; padding: 14px; margin: 0;
     background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.04); border-left: 5px solid var(--brand);
@@ -424,7 +448,8 @@
 <body spellcheck="true">
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">Unit Review Studio <small id="saveState">Draft saved in this browser</small></div>
+    <div class="brand">Unit Review Studio <small id="saveState">Not saved yet</small></div>
+    <button class="btn" id="saveDraftBtn" type="button">Save draft</button>
     <button class="btn" id="newBtn" type="button">Start over</button>
     <button class="btn primary" id="publishBtn" type="button">Publish</button>
   </div>
@@ -516,8 +541,17 @@
         </div>
       </details>
 
+      <details class="settings" id="vocabPanel" open>
+        <summary>Vocabulary flashcards</summary>
+        <p class="vocab-help">Students can warm up with all unit words as flashcards before the road. Add Match words inside each lesson below.</p>
+        <label class="vocab-toggle">
+          <input type="checkbox" id="vocabFlashcards" checked>
+          <span>Flashcards at the start</span>
+        </label>
+      </details>
+
       <h2 style="margin-top:20px">Write questions</h2>
-      <p class="help" id="questionsHelp">Use the outline to jump around. Open a lesson to add or edit its questions.</p>
+      <p class="help" id="questionsHelp">Open a lesson to add Vocabulary Match words and questions. Use the outline to jump around.</p>
       <div class="write-split">
         <details class="plan-outline" id="planOutline" aria-label="Question outline"></details>
         <div id="items"></div>
@@ -727,6 +761,18 @@
   .road-stops li.current .road-stop-dot {
     box-shadow: 0 0 0 4px var(--lilac-bush-100), 0 2px 8px rgba(77, 26, 114, 0.18);
   }
+  .road-stops li.vocab .road-stop-dot {
+    background: var(--lilac-bush-600); color: #FFD400;
+  }
+  .road-stops li.vocab.done .road-stop-dot {
+    background: var(--highland-800); color: #FFD400;
+  }
+  .road-stops li.vocab.current .road-stop-dot {
+    box-shadow: 0 0 0 4px var(--lilac-bush-100), 0 2px 8px rgba(77, 26, 114, 0.18);
+  }
+  .road-stops li.vocab .road-stop-dot svg {
+    width: 16px; height: 16px; display: block;
+  }
   .road-end-star {
     position: absolute; width: 44px; height: 44px; transform: translate(-50%, -50%);
     display: grid; place-items: center; pointer-events: none; z-index: 2;
@@ -874,6 +920,76 @@
   .error { background: var(--bad-bg); color: var(--bad-ink); border-radius: 16px; padding: 20px; font-weight: 700; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
   @media (prefers-reduced-motion: reduce) { .card.wrong, .match-item.wrong { animation: none; } .drag-clone { transform: none; } .progress-fill, .btn, .choice { transition: none; } }
+
+  /* Vocabulary flashcards — index-card shape (5×3) with side arrows */
+  .flash-wrap { margin: 8px 0 18px; width: 100%; }
+  .flash-count { margin: 0 0 12px; color: var(--ink-soft); font-weight: 600; font-size: .95rem; text-align: center; }
+  .flash-deck {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    width: 100%; margin: 0 0 12px;
+  }
+  .flash-stage {
+    perspective: 1200px; flex: 1 1 auto; min-width: 0; max-width: 440px; width: 100%;
+  }
+  .flash-card {
+    display: block; width: 100%; aspect-ratio: 5 / 3; height: auto; border: 0; padding: 0;
+    background: transparent; border-radius: 16px; cursor: pointer;
+    position: relative; appearance: none; -webkit-appearance: none;
+  }
+  .flash-inner {
+    position: relative; display: block; width: 100%; height: 100%;
+    transform-style: preserve-3d; transition: transform 420ms ease;
+  }
+  .flash-card.is-flipped .flash-inner { transform: rotateY(180deg); }
+  .flash-face {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%; box-sizing: border-box;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 24px 28px; border-radius: 16px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border: 2px solid var(--frost-line); background: rgba(255,255,255,.95);
+    box-shadow: 0 10px 24px rgba(77, 26, 114, 0.12);
+  }
+  .flash-face .flash-text {
+    display: block; width: 100%; max-width: 100%;
+    font-family: var(--font-primary); font-weight: 600; color: var(--ink-strong);
+    font-size: 1.25rem; line-height: 1.35; overflow-wrap: break-word; word-break: normal;
+  }
+  .flash-face.back { transform: rotateY(180deg); background: var(--lilac-bush-50); border-color: var(--lilac-bush-100); }
+  .flash-face.back .flash-text { font-family: var(--font-secondary); font-weight: 600; font-size: 1rem; }
+  .flash-hint { margin: 0 0 16px; color: var(--ink-soft); font-size: .95rem; font-weight: 600; text-align: center; }
+  .flash-arrow {
+    width: 44px; height: 44px; border-radius: 9999px; padding: 0;
+    display: inline-grid; place-items: center; flex: none;
+    border: 1px solid var(--line); background: var(--surface); color: var(--neutral-700);
+    transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  }
+  .flash-arrow svg { width: 22px; height: 22px; }
+  .flash-arrow:hover:not(:disabled) {
+    background: var(--pearl-brush-100); border-color: var(--lilac-bush-600); color: var(--lilac-bush-700);
+  }
+  .flash-arrow:disabled {
+    opacity: .4; cursor: not-allowed; background: var(--neutral-200); border-color: var(--neutral-200); color: var(--neutral-500);
+  }
+  .flash-arrow.next {
+    border-color: var(--btn-primary-bg); background: var(--btn-primary-bg); color: var(--neutral-0);
+  }
+  .flash-arrow.next:hover:not(:disabled) {
+    background: var(--btn-primary-hover-bg); border-color: var(--btn-primary-hover-bg); color: var(--neutral-0);
+  }
+  .flash-continue {
+    display: flex; margin-top: 8px; justify-content: center; gap: 12px; flex-wrap: wrap;
+  }
+  @media (max-width: 480px) {
+    .flash-deck { gap: 8px; }
+    .flash-arrow { width: 40px; height: 40px; }
+    .flash-face { padding: 18px 16px; }
+    .flash-face .flash-text { font-size: 1.1rem; }
+    .flash-face.back .flash-text { font-size: .95rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flash-inner { transition: none; }
+  }
 </style>
 </head>
 <body class="centered">
@@ -902,6 +1018,40 @@
       </button>
       <button id="resetBtn" class="btn secondary" type="button" hidden>Start over</button>
       <button id="startBtn" class="btn" type="button">Begin</button>
+    </div>
+  </section>
+
+  <section id="flashcards" class="screen center-card start-card frosted" hidden>
+    <p class="start-course" id="flashCourse" hidden></p>
+    <h1 id="flashTitle">Unit words</h1>
+    <p class="directions" id="flashDirections">Tap each card to see the meaning. Then continue to the lesson road.</p>
+    <div class="flash-wrap">
+      <p class="flash-count" id="flashCount">Word 1 of 1</p>
+      <div class="flash-deck" role="group" aria-label="Flashcard navigation">
+        <button id="flashPrev" class="flash-arrow" type="button" aria-label="Previous word">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="flash-stage">
+          <button type="button" class="flash-card" id="flashCard" aria-live="polite">
+            <span class="flash-inner" id="flashInner">
+              <span class="flash-face front">
+                <span class="flash-text" id="flashTerm"></span>
+              </span>
+              <span class="flash-face back">
+                <span class="flash-text" id="flashDef"></span>
+              </span>
+            </span>
+          </button>
+        </div>
+        <button id="flashNext" class="flash-arrow next" type="button" aria-label="Next word">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+      <p class="flash-hint" id="flashHint">Tap the card to flip</p>
+    </div>
+    <div class="flash-continue" id="flashContinueWrap">
+      <button id="flashShuffle" class="btn secondary" type="button">Shuffle</button>
+      <button id="flashDone" class="btn" type="button">Done</button>
     </div>
   </section>
 
@@ -966,6 +1116,7 @@
   var trailTShown = null;
   var trailAnimFrame = null;
   var animateTrailOnRender = false;
+  var flashState = null;
 
   var $ = function (id) { return document.getElementById(id); };
 
@@ -977,7 +1128,7 @@
   }
 
   function blankProgress() {
-    return { completedLessons: {}, results: {}, points: 0 };
+    return { completedLessons: {}, results: {}, points: 0, flashcardsDone: false };
   }
 
   function loadProgress() {
@@ -991,6 +1142,7 @@
       progress.completedLessons = parsed.completedLessons || {};
       progress.results = parsed.results || {};
       progress.points = parseInt(parsed.points, 10) || 0;
+      progress.flashcardsDone = !!parsed.flashcardsDone;
     } catch (e) {}
   }
 
@@ -1098,10 +1250,33 @@
     };
   }
 
+  function normalizeVocabulary(c) {
+    var src = (c && c.vocabulary) || {};
+    var terms = (src.terms || []).filter(function (t) {
+      return t && String(t.term || "").trim() && String(t.definition || "").trim();
+    }).map(function (t, i) {
+      return {
+        id: t.id || ("v" + i),
+        term: String(t.term).trim(),
+        definition: String(t.definition).trim(),
+        lessonIndex: Math.max(1, parseInt(t.lessonIndex, 10) || 1)
+      };
+    });
+    return {
+      flashcardsFirst: src.flashcardsFirst !== false,
+      terms: terms
+    };
+  }
+
   function normalize(c) {
     c = c || {};
     var settings = c.settings || {};
     var items = (c.items || []).filter(Boolean).map(normalizeItem).filter(Boolean);
+    var overview = normalizeOverview(c);
+    var vocabulary = normalizeVocabulary(c);
+    vocabulary.terms.forEach(function (t) {
+      if (t.lessonIndex > overview.lessonsInUnit) t.lessonIndex = overview.lessonsInUnit;
+    });
     return {
       title: c.title || "Unit review",
       slug: c.slug || "",
@@ -1110,7 +1285,8 @@
       subject: c.subject || "",
       directions: c.directions || "",
       directionsAudio: c.directionsAudio || "",
-      overview: normalizeOverview(c),
+      overview: overview,
+      vocabulary: vocabulary,
       settings: {
         triesPerItem: clampInt(settings.triesPerItem, 1, 5, 3),
         pointsPerCorrect: clampInt(settings.pointsPerCorrect, 10, 1000, 100),
@@ -1123,6 +1299,54 @@
         outOfTries: (c.feedback && c.feedback.outOfTries) || DEFAULTS.outOfTries
       },
       endMessage: c.endMessage || DEFAULTS.endMessage
+    };
+  }
+
+  function vocabTerms() {
+    return (content && content.vocabulary && content.vocabulary.terms) || [];
+  }
+
+  function vocabPracticeEnabled() {
+    if (!content || !content.vocabulary || !content.vocabulary.flashcardsFirst) return false;
+    return vocabTerms().length > 0;
+  }
+
+  function needsFlashcards() {
+    if (!vocabPracticeEnabled()) return false;
+    return !(progress && progress.flashcardsDone);
+  }
+
+  function needsVocabWarmup() {
+    return needsFlashcards();
+  }
+
+  function vocabTermsForLesson(lessonIndex) {
+    return vocabTerms().filter(function (t) {
+      return Number(t.lessonIndex) === Number(lessonIndex);
+    });
+  }
+
+  function buildVocabMatchItem(lessonIndex) {
+    var terms = vocabTermsForLesson(lessonIndex);
+    if (terms.length < 2) return null;
+    return {
+      id: "vocab-lesson-" + lessonIndex,
+      type: "match",
+      lessonIndex: Number(lessonIndex),
+      isVocab: true,
+      objective: "Lesson " + lessonIndex + " vocabulary",
+      prompt: "Match each word with its meaning.",
+      promptImage: "",
+      promptImageAlt: "",
+      promptAudio: "",
+      pairs: terms.map(function (t) {
+        return { id: t.id, left: t.term, right: t.definition };
+      }),
+      correctFeedback: "Nice work.",
+      incorrectFeedback: "Check each pair, then try again.",
+      explanation: "Check each pair, then try again.",
+      lessonUrl: "",
+      lessonLabel: ""
     };
   }
 
@@ -1189,7 +1413,9 @@
   }
 
   function hideAll() {
-    ["loading", "error", "start", "activity", "end"].forEach(function (id) { $(id).hidden = true; });
+    ["loading", "error", "start", "flashcards", "activity", "end"].forEach(function (id) {
+      if ($(id)) $(id).hidden = true;
+    });
     document.body.classList.add("centered");
   }
 
@@ -1213,18 +1439,25 @@
       points: progress ? progress.points : 0,
       results: Object.assign({}, progress && progress.results || {}),
       itemState: null,
-      itemStates: {}
+      itemStates: {},
+      vocabItems: {}
     };
   }
 
   function startLesson(lessonIndex) {
     var items = itemsForLesson(lessonIndex);
-    if (!items.length) {
+    var vocabItem = buildVocabMatchItem(lessonIndex);
+    if (!items.length && !vocabItem) {
       showError("This lesson does not have any questions yet.");
       return;
     }
     resetRun(lessonIndex);
-    run.order = items.map(function (it) { return it.id; });
+    run.order = [];
+    if (vocabItem) {
+      run.vocabItems[vocabItem.id] = vocabItem;
+      run.order.push(vocabItem.id);
+    }
+    items.forEach(function (it) { run.order.push(it.id); });
     run.index = 0;
     showActivity();
   }
@@ -1260,10 +1493,26 @@
     return 0.98;
   }
 
+  function hasVocabRoadStop() {
+    return vocabTerms().length > 0;
+  }
+
+  function roadSlotTotal() {
+    var n = (content.overview && content.overview.lessons || []).length;
+    return hasVocabRoadStop() ? n + 1 : n;
+  }
+
+  function lessonSlotIndex(lessonIndex) {
+    // lessonIndex is 1-based. Vocab takes slot 0 when present, so lessons shift toward the flag.
+    return hasVocabRoadStop() ? Number(lessonIndex) : Number(lessonIndex) - 1;
+  }
+
   function trailTargetProgress(lessonTotal, nextLesson) {
+    var slots = hasVocabRoadStop() ? lessonTotal + 1 : lessonTotal;
     if (allLessonsComplete()) return flagProgress();
-    if (nextLesson) return stopProgress(nextLesson - 1, lessonTotal);
-    return stopProgress(0, lessonTotal);
+    if (needsVocabWarmup()) return stopProgress(0, slots);
+    if (nextLesson) return stopProgress(lessonSlotIndex(nextLesson), slots);
+    return stopProgress(0, slots);
   }
 
   function buildTrailPathD(guide, startT, endT) {
@@ -1310,7 +1559,7 @@
     var lessons = content.overview.lessons || [];
     if (!trail || !lessons.length) return;
     var guide = ensureRoadGuide(trail);
-    var startT = stopProgress(0, lessons.length);
+    var startT = stopProgress(0, roadSlotTotal());
     var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (trailAnimFrame) {
       cancelAnimationFrame(trailAnimFrame);
@@ -1347,29 +1596,100 @@
 
   function currentItem() {
     var id = run.order[run.index];
+    if (run.vocabItems && run.vocabItems[id]) return run.vocabItems[id];
     for (var i = 0; i < content.items.length; i++) if (content.items[i].id === id) return content.items[i];
     return null;
   }
 
-  function showStart(opts) {
-    opts = opts || {};
-    hideAll();
-    document.body.classList.add("centered");
-    var course = $("startCourse");
-    if (content.subject) {
-      course.textContent = content.subject;
-      course.hidden = false;
-    } else {
-      course.textContent = "";
-      course.hidden = true;
-    }
+  function unitDisplayTitle() {
     var title = (content.title || "").trim();
     if (content.subject && title.toLowerCase().indexOf(String(content.subject).toLowerCase()) === 0) {
       title = title.slice(content.subject.length).replace(/^[\s\-–—:|]+/, "").trim();
     }
     if (!title && content.unit) title = "Unit " + content.unit + " Review";
     if (!title) title = "Unit review";
-    $("startTitle").textContent = title;
+    return title;
+  }
+
+  function setCourseLabel(el) {
+    if (!el) return;
+    if (content.subject) {
+      el.textContent = content.subject;
+      el.hidden = false;
+    } else {
+      el.textContent = "";
+      el.hidden = true;
+    }
+  }
+
+  function showFlashcards() {
+    hideAll();
+    document.body.classList.add("centered");
+    setCourseLabel($("flashCourse"));
+    $("flashTitle").textContent = "Unit words";
+    $("flashDirections").textContent = "Tap each card to see the meaning. Press Shuffle to practice again in a new order, or Done when you are ready for the lesson questions.";
+    flashState = {
+      index: 0,
+      flipped: false,
+      terms: vocabTerms().slice()
+    };
+    renderFlashcard();
+    $("flashcards").hidden = false;
+    if ($("flashCard")) $("flashCard").focus();
+  }
+
+  function shuffleFlashcards() {
+    if (!flashState || !flashState.terms.length) return;
+    flashState.terms = shuffle(flashState.terms.slice());
+    flashState.index = 0;
+    flashState.flipped = false;
+    renderFlashcard();
+    if ($("flashCard")) $("flashCard").focus();
+  }
+
+  function renderFlashcard() {
+    if (!flashState || !flashState.terms.length) {
+      finishFlashcards();
+      return;
+    }
+    var term = flashState.terms[flashState.index];
+    var n = flashState.terms.length;
+    var i = flashState.index + 1;
+    $("flashCount").textContent = "Word " + i + " of " + n;
+    $("flashTerm").textContent = term.term;
+    $("flashDef").textContent = term.definition;
+    var card = $("flashCard");
+    card.classList.toggle("is-flipped", !!flashState.flipped);
+    card.setAttribute("aria-label",
+      flashState.flipped
+        ? (term.definition + ". Tap to flip.")
+        : (term.term + ". Tap to flip.")
+    );
+    $("flashHint").textContent = flashState.flipped ? "Tap to show the word again" : "Tap the card to flip";
+    $("flashPrev").disabled = flashState.index <= 0;
+    var last = flashState.index >= n - 1;
+    $("flashNext").disabled = last;
+    $("flashNext").setAttribute("aria-label", last ? "Last word" : "Next word");
+  }
+
+  function markFlashcardsDone() {
+    if (!progress) loadProgress();
+    progress.flashcardsDone = true;
+    saveProgress();
+  }
+
+  function finishFlashcards() {
+    markFlashcardsDone();
+    flashState = null;
+    showStart({ animateTrail: true });
+  }
+
+  function showStart(opts) {
+    opts = opts || {};
+    hideAll();
+    document.body.classList.add("centered");
+    setCourseLabel($("startCourse"));
+    $("startTitle").textContent = unitDisplayTitle();
     $("startDirections").textContent = content.directions;
     $("startDirections").hidden = !content.directions;
     $("startListen").hidden = !content.directionsAudio;
@@ -1397,6 +1717,7 @@
     if (questRoad) {
       questRoad.querySelectorAll(".road-end-star").forEach(function (el) { el.remove(); });
     }
+
     var lessons = content.overview.lessons || [];
     if (!lessons.length) {
       roadBlock.hidden = true;
@@ -1413,13 +1734,43 @@
       catch (e) { art.src = "assets/road-path.jpg"; }
     }
 
+    // Keep the familiar road on first view. Vocabulary is the first stop when present.
+    var wordsFirst = needsVocabWarmup();
     var nextLesson = nextPlayableLesson();
+    var slots = roadSlotTotal();
+    var starSvg = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.4 6.2 6.7.4-5.2 4.3 1.7 6.5L12 16.7 6.4 20l1.7-6.5L2.9 9.2l6.7-.4L12 2.6z"/></svg>';
+
+    if (hasVocabRoadStop()) {
+      var vPt = roadStopPoint(0, slots);
+      var vDone = !wordsFirst;
+      var vLi = document.createElement("li");
+      vLi.style.left = vPt.x + "%";
+      vLi.style.top = vPt.y + "%";
+      vLi.className = "vocab " + (vDone ? "done" : "current available");
+      var vBtn = document.createElement("button");
+      vBtn.type = "button";
+      vBtn.className = "road-stop-btn";
+      vBtn.disabled = vDone;
+      vBtn.setAttribute("aria-label",
+        vDone ? "Vocabulary review complete." : "Vocabulary review. Up next."
+      );
+      var vDot = document.createElement("span");
+      vDot.className = "road-stop-dot";
+      vDot.innerHTML = starSvg;
+      vBtn.appendChild(vDot);
+      if (!vDone) {
+        vBtn.addEventListener("click", function () { stopAudio(); showFlashcards(); });
+      }
+      vLi.appendChild(vBtn);
+      stops.appendChild(vLi);
+    }
+
     lessons.forEach(function (lesson, i) {
       var lessonIndex = i + 1;
-      var pt = roadStopPoint(i, lessons.length);
+      var pt = roadStopPoint(lessonSlotIndex(lessonIndex), slots);
       var done = isLessonComplete(lessonIndex);
-      var unlocked = isLessonUnlocked(lessonIndex);
-      var current = nextLesson === lessonIndex;
+      var unlocked = !wordsFirst && isLessonUnlocked(lessonIndex);
+      var current = !wordsFirst && nextLesson === lessonIndex;
 
       var li = document.createElement("li");
       li.style.left = pt.x + "%";
@@ -1467,7 +1818,7 @@
       if (isLessonComplete(c)) { completedAny = true; break; }
     }
     var unitDone = allLessonsComplete();
-    if (trail && lessons.length && (completedAny || unitDone || (nextLesson && nextLesson > 1))) {
+    if (trail && lessons.length && (wordsFirst || completedAny || unitDone || (nextLesson && nextLesson > 1))) {
       ensureRoadGuide(trail);
       renderTrailTo(
         trailTargetProgress(lessons.length, nextLesson),
@@ -1483,12 +1834,26 @@
         help.textContent = "You made it to the star. Nice work on this unit.";
         help.hidden = false;
         $("startBtn").textContent = "See results";
-      } else if (nextLesson) {
-        help.textContent = isLessonComplete(1) || nextLesson > 1
-          ? ("Lesson " + nextLesson + " is open. Tap a bright stop or continue.")
-          : "Start at Lesson 1.";
+      } else if (needsFlashcards()) {
+        help.textContent = "Start with vocabulary review, then Lesson 1.";
         help.hidden = false;
-        $("startBtn").textContent = nextLesson === 1 ? "Begin" : ("Continue to Lesson " + nextLesson);
+        $("startBtn").textContent = "Start: Vocabulary Review";
+      } else if (nextLesson) {
+        // After flashcards they already began, so do not say "Start at Lesson 1."
+        var afterVocab = hasVocabRoadStop() && !needsFlashcards();
+        if (afterVocab && nextLesson === 1) {
+          help.textContent = "Now go to Lesson 1.";
+        } else if (isLessonComplete(1) || nextLesson > 1) {
+          help.textContent = "Lesson " + nextLesson + " is open. Tap a bright stop or continue.";
+        } else {
+          help.textContent = "Start at Lesson 1.";
+        }
+        help.hidden = false;
+        if (nextLesson === 1) {
+          $("startBtn").textContent = afterVocab ? "Continue to Lesson 1." : "Begin";
+        } else {
+          $("startBtn").textContent = "Continue to Lesson " + nextLesson;
+        }
       } else {
         help.hidden = true;
         $("startBtn").textContent = "Begin";
@@ -1496,7 +1861,9 @@
     }
     var resetBtn = $("resetBtn");
     if (resetBtn) {
-      resetBtn.hidden = !(completedAny || allLessonsComplete() || (nextLesson && nextLesson > 1));
+      resetBtn.hidden = wordsFirst
+        ? true
+        : !(completedAny || allLessonsComplete() || (nextLesson && nextLesson > 1));
     }
     roadBlock.hidden = false;
   }
@@ -1533,8 +1900,12 @@
   }
 
   function stopProgress(index, total) {
-    if (total <= 1) return 0.12;
-    return 0.12 + (index / (total - 1)) * 0.76;
+    // Keep the path end for the flag. With a vocab stop, slots start earlier and
+    // lesson numbers land closer to the flag.
+    if (total <= 1) return hasVocabRoadStop() ? 0.22 : 0.12;
+    var start = hasVocabRoadStop() ? 0.08 : 0.12;
+    var span = hasVocabRoadStop() ? 0.80 : 0.76;
+    return start + (index / (total - 1)) * span;
   }
 
   function roadStopPoint(index, total) {
@@ -1570,10 +1941,22 @@
   function updateHud() {
     var n = run.order.length;
     var i = Math.min(run.index + 1, n);
+    var item = currentItem();
     if ($("lessonLabel")) {
       $("lessonLabel").textContent = run.lessonIndex ? ("Lesson " + run.lessonIndex) : "Review";
     }
-    $("progressLabel").textContent = n === 1 ? "Question 1" : ("Question " + i + " of " + n);
+    if (item && item.isVocab) {
+      $("progressLabel").textContent = "Word match";
+    } else {
+      var qIndex = run.order.slice(0, run.index + 1).filter(function (id) {
+        return !(run.vocabItems && run.vocabItems[id]);
+      }).length;
+      var qTotal = run.order.filter(function (id) {
+        return !(run.vocabItems && run.vocabItems[id]);
+      }).length;
+      if (!qTotal) $("progressLabel").textContent = "Question " + i + " of " + n;
+      else $("progressLabel").textContent = qTotal === 1 ? "Question 1" : ("Question " + qIndex + " of " + qTotal);
+    }
     var filled = run.index + ((run.itemState && run.itemState.resolved) ? 1 : 0);
     $("progressFill").style.width = Math.round((filled / Math.max(n, 1)) * 100) + "%";
     $("prevBtn").hidden = run.index <= 0;
@@ -2371,12 +2754,40 @@
 
   $("startBtn").addEventListener("click", function () {
     stopAudio();
+    if (needsFlashcards()) {
+      showFlashcards();
+      return;
+    }
     if (allLessonsComplete()) {
       showEnd();
       return;
     }
     var lesson = nextPlayableLesson() || 1;
     startLesson(lesson);
+  });
+  $("flashCard").addEventListener("click", function () {
+    if (!flashState) return;
+    flashState.flipped = !flashState.flipped;
+    renderFlashcard();
+  });
+  $("flashPrev").addEventListener("click", function () {
+    if (!flashState || flashState.index <= 0) return;
+    flashState.index -= 1;
+    flashState.flipped = false;
+    renderFlashcard();
+  });
+  $("flashNext").addEventListener("click", function () {
+    if (!flashState) return;
+    if (flashState.index >= flashState.terms.length - 1) return;
+    flashState.index += 1;
+    flashState.flipped = false;
+    renderFlashcard();
+  });
+  $("flashShuffle").addEventListener("click", function () {
+    shuffleFlashcards();
+  });
+  $("flashDone").addEventListener("click", function () {
+    finishFlashcards();
   });
   $("startListen").addEventListener("click", function () { playAudio(content.directionsAudio, $("startListen")); });
   $("promptListen").addEventListener("click", function () {
@@ -2457,7 +2868,16 @@
     outOfTries: "Here's a tip. Review the lesson, then continue.",
     endMessage: "Nice work finishing this review."
   };
-  var DRAFT_KEY = "review-studio-draft-v6";
+  // sessionStorage: survives refresh, clears when this tab is closed.
+  var DRAFT_KEY = "review-studio-draft-v7";
+  var LEGACY_DRAFT_KEYS = [
+    "review-studio-draft-v1",
+    "review-studio-draft-v2",
+    "review-studio-draft-v3",
+    "review-studio-draft-v4",
+    "review-studio-draft-v5",
+    "review-studio-draft-v6"
+  ];
   var ICONS = {
     trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
     copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
@@ -2580,7 +3000,32 @@
     return MC_CHOICE_EXAMPLES[i % MC_CHOICE_EXAMPLES.length];
   }
 
-  var DEFAULT_DIRECTIONS = "Travel the road and answer a few questions from each lesson.";
+  var DEFAULT_DIRECTIONS = "Practice the unit words, then travel the road and answer a few questions from each lesson.";
+
+  function newVocabTerm(lessonIndex) {
+    return {
+      id: uid("v"),
+      term: "",
+      definition: "",
+      lessonIndex: Math.max(1, parseInt(lessonIndex, 10) || 1)
+    };
+  }
+
+  function normalizeStudioVocabulary(src) {
+    src = src || {};
+    var terms = (src.terms || []).map(function (t) {
+      return {
+        id: t.id || uid("v"),
+        term: t.term == null ? "" : String(t.term),
+        definition: t.definition == null ? "" : String(t.definition),
+        lessonIndex: Math.max(1, parseInt(t.lessonIndex, 10) || 1)
+      };
+    });
+    return {
+      flashcardsFirst: src.flashcardsFirst !== false,
+      terms: terms
+    };
+  }
 
   function defaultOverview() {
     return syncOverview({ lessonsInUnit: 4 });
@@ -2679,6 +3124,7 @@
       directions: DEFAULT_DIRECTIONS,
       directionsAudio: "",
       overview: overview,
+      vocabulary: { flashcardsFirst: true, terms: [] },
       settings: { triesPerItem: 3, pointsPerCorrect: 100, masteryPercent: 80 },
       items: items,
       feedback: { correct: DEFAULT_FB.correct, tryAgain: DEFAULT_FB.tryAgain, outOfTries: DEFAULT_FB.outOfTries },
@@ -2715,6 +3161,10 @@
       return item;
     });
     if (!items.length) items = b.items;
+    var vocabulary = normalizeStudioVocabulary(c.vocabulary || b.vocabulary);
+    vocabulary.terms.forEach(function (t) {
+      if (t.lessonIndex > overview.lessonsInUnit) t.lessonIndex = overview.lessonsInUnit;
+    });
     var filled = {
       version: 1,
       type: "review-quest",
@@ -2726,6 +3176,7 @@
       directions: (c.directions && String(c.directions).trim()) ? c.directions : b.directions,
       directionsAudio: c.directionsAudio || "",
       overview: overview,
+      vocabulary: vocabulary,
       settings: Object.assign({}, b.settings, c.settings || {}),
       items: items,
       feedback: Object.assign({}, b.feedback, c.feedback || {}),
@@ -2750,33 +3201,65 @@
     return "Grade " + content.grade + " · Unit " + content.unit + " · " + content.subject;
   }
 
-  var saveTimer = null;
-  function saveDraft(now) {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(writeDraft, now ? 0 : 400);
+  var draftDirty = false;
+  var draftSavedThisSession = false;
+
+  function clearLegacyLocalDrafts() {
+    try {
+      LEGACY_DRAFT_KEYS.forEach(function (k) { localStorage.removeItem(k); });
+      localStorage.removeItem(DRAFT_KEY);
+    } catch (e) {}
   }
+
+  function setSaveState(msg) {
+    if ($("saveState")) $("saveState").textContent = msg;
+  }
+
+  function markDraftDirty() {
+    draftDirty = true;
+    setSaveState(draftSavedThisSession ? "Unsaved changes" : "Not saved yet");
+  }
+
+  function clearDraftStorage() {
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    draftDirty = false;
+    draftSavedThisSession = false;
+    setSaveState("Not saved yet");
+  }
+
   function writeDraft() {
     try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ content: content, media: media, slugTouched: slugTouched }));
-      $("saveState").textContent = "Draft saved in this browser";
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ content: content, media: media, slugTouched: slugTouched }));
+      draftDirty = false;
+      draftSavedThisSession = true;
+      setSaveState("Draft saved for this tab");
+      return true;
     } catch (e) {
       try {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify({ content: content, media: {}, slugTouched: slugTouched }));
-        $("saveState").textContent = "Text saved. Media is too big to keep here, so Publish to save it.";
+        sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ content: content, media: {}, slugTouched: slugTouched }));
+        draftDirty = false;
+        draftSavedThisSession = true;
+        setSaveState("Text saved for this tab. Media is too big, so Publish to keep it.");
+        return true;
       } catch (e2) {
-        $("saveState").textContent = "Couldn't save a draft here. Publish to keep your work.";
+        setSaveState("Couldn't save a draft here. Publish to keep your work.");
+        return false;
       }
     }
   }
+
   function loadDraft() {
     try {
-      var raw = localStorage.getItem(DRAFT_KEY);
+      var raw = sessionStorage.getItem(DRAFT_KEY);
       if (!raw) return false;
       var d = JSON.parse(raw);
       if (!d || !d.content || d.content.type !== "review-quest") return false;
       content = fill(d.content);
       media = d.media || {};
       slugTouched = !!d.slugTouched;
+      draftDirty = false;
+      draftSavedThisSession = true;
+      setSaveState("Draft saved for this tab");
       return true;
     } catch (e) { return false; }
   }
@@ -2877,9 +3360,84 @@
     $("fbTry").value = content.feedback.tryAgain;
     $("fbOut").value = content.feedback.outOfTries;
     $("endMessage").value = content.endMessage;
+    content.vocabulary = normalizeStudioVocabulary(content.vocabulary);
+    syncVocabFlashcardsToggle();
     renderItemsOnly();
     renderChecks();
     showStep(studioStep);
+  }
+
+  function syncVocabFlashcardsToggle() {
+    var flash = $("vocabFlashcards");
+    if (!flash) return;
+    content.vocabulary = normalizeStudioVocabulary(content.vocabulary);
+    flash.checked = content.vocabulary.flashcardsFirst !== false;
+  }
+
+  function vocabTermsForLessonStudio(lessonIndex) {
+    content.vocabulary = normalizeStudioVocabulary(content.vocabulary);
+    return content.vocabulary.terms.filter(function (t) {
+      return Number(t.lessonIndex) === Number(lessonIndex);
+    });
+  }
+
+  function renderLessonVocabMatch(lessonIndex) {
+    var terms = vocabTermsForLessonStudio(lessonIndex);
+    var block = h("div", {
+      class: "lesson-vocab",
+      "data-lesson-vocab": String(lessonIndex)
+    });
+    block.appendChild(h("div", { class: "lesson-vocab-head" }, [
+      h("h3", { text: "Vocabulary Match" }),
+      h("p", {
+        class: "muted",
+        text: terms.length
+          ? (terms.length + (terms.length === 1 ? " word" : " words"))
+          : "No words yet"
+      })
+    ]));
+    block.appendChild(h("p", {
+      class: "vocab-help",
+      text: "Students match these words at the start of this lesson, before your other questions. Add at least two words for Match to appear."
+    }));
+    var list = h("div", { class: "lesson-vocab-list" });
+    terms.forEach(function (term) {
+      var idx = content.vocabulary.terms.indexOf(term);
+      var row = h("div", { class: "lesson-vocab-row" });
+      row.appendChild(fieldText("Word", term.term, function (v) {
+        term.term = v;
+        changed(false);
+      }, "interest", !String(term.term || "").trim()));
+      row.appendChild(fieldText("Meaning", term.definition, function (v) {
+        term.definition = v;
+        changed(false);
+      }, "an activity a person enjoys", !String(term.definition || "").trim()));
+      row.appendChild(h("button", {
+        type: "button",
+        class: "btn link",
+        text: "Remove",
+        "aria-label": "Remove vocabulary word from Lesson " + lessonIndex,
+        onclick: function () {
+          if (idx >= 0) content.vocabulary.terms.splice(idx, 1);
+          changed(true);
+        }
+      }));
+      list.appendChild(row);
+    });
+    block.appendChild(list);
+    block.appendChild(h("button", {
+      type: "button",
+      class: "btn secondary",
+      text: "+ Add word",
+      "aria-label": "Add vocabulary word to Lesson " + lessonIndex,
+      onclick: function () {
+        content.vocabulary = normalizeStudioVocabulary(content.vocabulary);
+        content.vocabulary.terms.push(newVocabTerm(lessonIndex));
+        openLessons[lessonIndex] = true;
+        changed(true);
+      }
+    }));
+    return block;
   }
 
   function renderItemsOnly() {
@@ -2945,10 +3503,30 @@
         if (topic) titleKids.push(h("div", { class: "plan-lesson-topic", text: topic }));
         titleBtn.appendChild(h("div", { class: "plan-lesson-title" }, titleKids));
         li.appendChild(titleBtn);
+        var vocabCount = vocabTermsForLessonStudio(lessonIndex).length;
+        var qs = h("ul", { class: "plan-qs" });
+        var vocabBtn = h("button", {
+          type: "button",
+          onclick: function () { focusLessonVocab(lessonIndex); }
+        });
+        vocabBtn.appendChild(h("span", {
+          class: "plan-dot",
+          style: "background:#008FA9",
+          title: "Vocabulary Match",
+          "aria-hidden": "true"
+        }));
+        vocabBtn.appendChild(h("span", {
+          class: "plan-q-label",
+          text: vocabCount
+            ? ("Vocabulary Match (" + vocabCount + ")")
+            : "Vocabulary Match"
+        }));
+        qs.appendChild(h("li", {}, [vocabBtn]));
         if (!lessonItems.length) {
-          li.appendChild(h("p", { class: "plan-empty", text: "No questions yet" }));
+          qs.appendChild(h("li", {}, [
+            h("p", { class: "plan-empty", text: "No questions yet" })
+          ]));
         } else {
-          var qs = h("ul", { class: "plan-qs" });
           lessonItems.forEach(function (item, localIdx) {
             var typeKey = itemTypeKey(item);
             var btn = h("button", {
@@ -2968,8 +3546,8 @@
             }));
             qs.appendChild(h("li", {}, [btn]));
           });
-          li.appendChild(qs);
         }
+        li.appendChild(qs);
         list.appendChild(li);
       })(L);
     }
@@ -2987,6 +3565,15 @@
     renderItemsOnly();
     setTimeout(function () {
       var el = document.querySelector('.lesson-section[data-lesson="' + lessonIndex + '"]');
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 40);
+  }
+
+  function focusLessonVocab(lessonIndex) {
+    openLessons[lessonIndex] = true;
+    renderItemsOnly();
+    setTimeout(function () {
+      var el = document.querySelector('.lesson-vocab[data-lesson-vocab="' + lessonIndex + '"]');
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 40);
   }
@@ -3045,13 +3632,20 @@
       h("span", { class: "lesson-number-label", text: "Lesson " + lessonIndex }),
       titleInput
     ]));
+    var vocabCount = vocabTermsForLessonStudio(lessonIndex).length;
+    var summaryBits = [];
+    if (vocabCount) {
+      summaryBits.push(vocabCount + (vocabCount === 1 ? " vocab word" : " vocab words"));
+    }
+    summaryBits.push(lessonItems.length + (lessonItems.length === 1 ? " question" : " questions"));
     summary.appendChild(h("p", {
       class: "muted",
-      text: lessonItems.length + (lessonItems.length === 1 ? " question" : " questions")
+      text: summaryBits.join(" · ")
     }));
     section.appendChild(summary);
 
     var body = h("div", { class: "lesson-section-body" });
+    body.appendChild(renderLessonVocabMatch(lessonIndex));
     var grid = h("div", { class: "lesson-items" });
     lessonItems.forEach(function (item, localIdx) {
       var globalIdx = content.items.indexOf(item);
@@ -3262,12 +3856,6 @@
       item.explanation = v;
       changed(false);
     }, ex.incorrect, !item.incorrectFeedback.trim()));
-
-    var extras = h("details", { class: "settings" });
-    extras.appendChild(h("summary", { text: "Lesson link (optional)" }));
-    extras.appendChild(fieldText("Lesson URL", item.lessonUrl, function (v) { item.lessonUrl = v; changed(false); }, "https://..."));
-    extras.appendChild(fieldText("Link label", item.lessonLabel, function (v) { item.lessonLabel = v; changed(false); }, "Review this lesson"));
-    body.appendChild(extras);
 
     entry.appendChild(body);
     return entry;
@@ -3790,11 +4378,25 @@
           if (!card.category) errs.push([n + ": Card " + (ci + 1) + " needs a group.", null]);
         });
       }
-      if (item.lessonUrl && !/^https?:\/\//i.test(item.lessonUrl)) warns.push([n + " lesson link should start with https://", null]);
     });
     if (Object.keys(objectives).length < 2 && content.items.length > 1) {
       warns.push(["Different objectives help Generate write a wider mix of questions.", null]);
     }
+
+    content.vocabulary = normalizeStudioVocabulary(content.vocabulary);
+    var vocabByLesson = {};
+    content.vocabulary.terms.forEach(function (t, i) {
+      var label = "Vocabulary word " + (i + 1);
+      if (!String(t.term || "").trim()) errs.push([label + " needs a word.", "vocabFlashcards"]);
+      if (!String(t.definition || "").trim()) errs.push([label + " needs a meaning.", "vocabFlashcards"]);
+      var L = Math.max(1, parseInt(t.lessonIndex, 10) || 1);
+      vocabByLesson[L] = (vocabByLesson[L] || 0) + 1;
+    });
+    Object.keys(vocabByLesson).forEach(function (L) {
+      if (vocabByLesson[L] === 1) {
+        warns.push(["Lesson " + L + " has only one vocabulary word. Match needs at least two.", "vocabFlashcards"]);
+      }
+    });
     return { errs: errs, warns: warns };
   }
 
@@ -3811,7 +4413,7 @@
   function checkLi(cls, mark, e) {
     var li = h("li", { class: cls }, [h("span", { html: mark, "aria-hidden": "true" }), h("span", { text: (cls === "err" ? "Needed: " : "Check: ") + e[0] })]);
     if (e[1]) li.appendChild(h("button", { type: "button", class: "btn small link", text: "Fix", onclick: function () {
-      var step = (e[1] === "grade" || e[1] === "unit" || e[1] === "subject" || e[1] === "tries") ? 1 : 2;
+      var step = (e[1] === "grade" || e[1] === "unit" || e[1] === "subject" || e[1] === "tries" || e[1] === "vocabFlashcards") ? 1 : 2;
       showStep(step);
       var field = $(e[1]);
       if (field) field.focus();
@@ -3823,7 +4425,7 @@
   function changed(rerender) {
     if (rerender) renderForm();
     else renderChecks();
-    saveDraft();
+    markDraftDirty();
     clearTimeout(previewTimer);
     previewTimer = setTimeout(sendPreview, 300);
   }
@@ -3850,6 +4452,13 @@
     changed(true);
   });
   $("tries").addEventListener("input", function () { content.settings.triesPerItem = parseInt(this.value, 10) || 3; changed(false); });
+  if ($("vocabFlashcards")) {
+    $("vocabFlashcards").addEventListener("change", function () {
+      content.vocabulary = normalizeStudioVocabulary(content.vocabulary);
+      content.vocabulary.flashcardsFirst = !!this.checked;
+      changed(false);
+    });
+  }
   $("fbCorrect").addEventListener("input", function () { content.feedback.correct = this.value; changed(false); });
   $("fbTry").addEventListener("input", function () { content.feedback.tryAgain = this.value; changed(false); });
   $("fbOut").addEventListener("input", function () { content.feedback.outOfTries = this.value; changed(false); });
@@ -3880,6 +4489,16 @@
     if (previewOpen) sendPreview();
   });
 
+  if ($("saveDraftBtn")) {
+    $("saveDraftBtn").addEventListener("click", function () {
+      if (writeDraft()) {
+        toast("Draft saved. Refresh keeps it. Closing this tab clears it.");
+      } else {
+        toast("Couldn't save the draft. Publish to keep a copy.");
+      }
+    });
+  }
+
   var newArmed = false;
   $("newBtn").addEventListener("click", function () {
     var b = this;
@@ -3896,9 +4515,10 @@
     openItemId = content.items[0] && content.items[0].id;
     studioStep = 1;
     $("publishPanel").hidden = true;
-    changed(true);
-    clearTimeout(saveTimer);
-    writeDraft();
+    clearDraftStorage();
+    renderForm();
+    showStep(1);
+    sendPreview();
     setWelcome(true);
     toast("Started over.");
   });
@@ -3957,6 +4577,20 @@
     c.slug = content.slug;
     c.overview = syncOverview(content.overview);
     c.directions = (c.directions || "").trim() || DEFAULT_DIRECTIONS;
+    content.vocabulary = normalizeStudioVocabulary(content.vocabulary);
+    c.vocabulary = {
+      flashcardsFirst: content.vocabulary.flashcardsFirst !== false,
+      terms: content.vocabulary.terms.filter(function (t) {
+        return String(t.term || "").trim() && String(t.definition || "").trim();
+      }).map(function (t) {
+        return {
+          id: t.id || uid("v"),
+          term: String(t.term).trim(),
+          definition: String(t.definition).trim(),
+          lessonIndex: Math.max(1, Math.min(c.overview.lessonsInUnit, parseInt(t.lessonIndex, 10) || 1))
+        };
+      })
+    };
     c.items = sortItemsByLesson(c.items).map(function (item) {
       item.lessonIndex = Math.max(1, parseInt(item.lessonIndex, 10) || 1);
       item.objective = item.objective.trim();
@@ -3964,8 +4598,9 @@
       item.correctFeedback = (item.correctFeedback || "").trim();
       item.incorrectFeedback = (item.incorrectFeedback || item.explanation || "").trim();
       item.explanation = item.incorrectFeedback;
-      item.lessonUrl = item.lessonUrl.trim();
-      item.lessonLabel = item.lessonLabel.trim() || "Review this lesson";
+      // Lesson links are not used in the student player; keep fields empty on publish.
+      item.lessonUrl = "";
+      item.lessonLabel = "";
       if (item.type === "mc") {
         item.choices = item.choices.filter(function (ch) { return ch.text.trim(); }).map(function (ch) {
           return { id: ch.id, text: ch.text.trim(), correct: !!ch.correct };
@@ -4017,9 +4652,19 @@
     showStep(2);
     if (!CONFIG.publishUrl) {
       downloadPublishZip().then(function () {
+        var url = studentLink(content.slug);
+        var input = h("input", { type: "text", readonly: true, value: url, "aria-label": "Student activity link" });
         body.appendChild(h("div", { class: "result" }, [
-          h("strong", { text: "Published as a zip download." }),
-          h("p", { text: "Unzip it into review/sets, then commit and deploy as usual. Lesson links will use " + unitLabel() + " once this set is live." })
+          h("strong", { text: "Published." }),
+          h("p", { text: "Copy this StrongMind interactives link, then paste it into Course Builder." }),
+          h("div", { class: "link-row", style: "display:flex;gap:8px;margin-top:6px;flex-wrap:wrap" }, [
+            input,
+            h("button", { type: "button", class: "btn small", text: "Copy link", onclick: function () {
+              input.select();
+              (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () { toast("Link copied"); }, function () { document.execCommand("copy"); toast("Link copied"); });
+            } })
+          ]),
+          h("p", { style: "margin-top:10px", text: "In Course Builder, open Insert Interactive, paste the link into Interactive URL, and click Insert Interactive." })
         ]));
         panel.scrollIntoView({ behavior: "smooth", block: "start" });
       });
@@ -4038,7 +4683,7 @@
       var url = j.url || studentLink(content.slug);
       var input = h("input", { type: "text", readonly: true, value: url, "aria-label": "Activity link" });
       body.appendChild(h("div", { class: "result" }, [
-        h("strong", { text: "Published. Paste this unit review link into Helios." }),
+        h("strong", { text: "Published. Paste this unit review link into Course Builder." }),
         h("div", { class: "link-row", style: "display:flex;gap:8px;margin-top:6px" }, [
           input,
           h("button", { type: "button", class: "btn small", text: "Copy", onclick: function () {
@@ -4056,6 +4701,7 @@
     });
   });
 
+  clearLegacyLocalDrafts();
   if (!loadDraft()) startFresh();
   if (content.items.length && !openItemId) openItemId = content.items[0].id;
   content.items.forEach(function (item) {
